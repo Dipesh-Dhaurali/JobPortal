@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard - Job Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #e3f2fd, #ffffff);
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #0d6efd;
+            font-size: 24px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .job-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .applied-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        /* Added status-specific badge styles */
+        .shortlisted-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffc107;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .selected-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h2>Welcome, {{ user.username }}!</h2>
+    <div>
+        <a href="{% url 'logout_user' %}" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
+
+<!-- Added messages display block for candidate alerts -->
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    <h3 class="mb-4">Available Jobs</h3>
+    
+    {% if jobs %}
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card job-card h-100 position-relative">
+                <!-- Display status badge based on application status using job attribute -->
+                {% if job.id in applied_job_ids %}
+                    {% if job.application_status == 'selected' %}
+                    <span class="selected-badge"><i class="fas fa-trophy"></i> Selected</span>
+                    {% elif job.application_status == 'shortlisted' %}
+                    <span class="shortlisted-badge"><i class="fas fa-star"></i> Shortlisted</span>
+                    {% else %}
+                    <span class="applied-badge"><i class="fas fa-check"></i> Applied</span>
+                    {% endif %}
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-building"></i> {{ job.CompanyName }}
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-map-marker-alt"></i> {{ job.address }}
+                    </p>
+                    <p class="card-text">
+                        <strong> Salary:</strong> 
+                        Rs {{ job.salaryLow }} - Rs {{ job.salaryHigh }}
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-calendar"></i> Apply by: {{ job.lastDateToApply }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-users"></i> {{ job.applycount }} applicants
+                    </p>
+                    <a href="{% url 'job_detail' job.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        No jobs available at the moment. Check back later!
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
