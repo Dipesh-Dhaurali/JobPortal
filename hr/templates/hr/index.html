@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobPortal | Your Future Starts Here</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #3b82f6;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--primary-color);
+            background-color: #fff;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            padding: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.025em;
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-brand span {
+            color: var(--accent-color);
+        }
+
+        .hero-section {
+            padding: 100px 0;
+            background: radial-gradient(circle at top right, #eff6ff 0%, #ffffff 50%);
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+
+        .btn-primary-custom {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-custom {
+            border: 2px solid #e2e8f0;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: all 0.2s;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .stats-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .stats-card:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: -0.025em;
+            margin-bottom: 3rem;
+        }
+
+        .blog-card {
+            border: none;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            background: var(--bg-light);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .blog-img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .about-section {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 100px 0;
+            border-radius: 40px;
+            margin: 50px 20px;
+        }
+
+        .footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .badge-new {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .role-card {
+            border: 2px solid #f1f5f9;
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            background: #fff;
+        }
+
+        .role-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1);
+        }
+
+        .role-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+            transition: all 0.3s;
+        }
+
+        .role-card:hover .role-icon-wrapper {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar sticky-top navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">JOB<span>PORTAL</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 fw-medium" href="{% url 'login_user' %}">Login</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <!-- Changed Register to trigger a modal for role selection instead of a simple dropdown -->
+                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            Register
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Role Selection Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content p-4">
+                <div class="modal-header border-0">
+                    <h4 class="modal-title fw-bold" id="registerModalLabel">Choose Your Role to Continue</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <a href="{% url 'register_candidate' %}" class="role-card">
+                                <div class="role-icon-wrapper">
+                                    <i class="bi bi-person-fill fs-1"></i>
+                                </div>
+                                <h3 class="fw-bold mb-2">Jobseeker</h3>
+                                <p class="text-muted mb-0">Create account to apply for your dream jobs!</p>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="position-absolute start-50 top-50 translate-middle d-none d-md-block">
+                                <span class="bg-white px-3 fw-bold text-muted small">OR</span>
+                            </div>
+                            <a href="{% url 'register_hr' %}" class="role-card">
+                                <div class="role-icon-wrapper">
+                                    <i class="bi bi-building-fill fs-1"></i>
+                                </div>
+                                <h3 class="fw-bold mb-2">Employer</h3>
+                                <p class="text-muted mb-0">Create account to post jobs and find top talent!</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <span class="badge-new">✨ Over 500+ New Vacancies Today</span>
+                    <h1 class="hero-title">Find your next <br><span style="color: var(--accent-color)">dream job</span> here.</h1>
+                    <p class="hero-subtitle">Connecting elite talent with top-tier organizations. Your professional journey begins with a single click. No noise, just opportunities.</p>
+                    <div class="d-flex gap-3">
+                        <!-- Hero buttons now trigger the same role selection modal for consistency -->
+                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#registerModal">Get Started</button>
+                        <a href="#about" class="btn btn-outline-custom">Learn More</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 mt-5 mt-lg-0 text-center">
+                    <img src="{% static 'hr/images/hero-illustration.jpg' %}" alt="Career Growth" class="img-fluid rounded-4 shadow-lg" style="max-height: 500px;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h2 class="fw-bold mb-1">550+</h2>
+                        <p class="text-muted mb-0">Live Vacancies</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h2 class="fw-bold mb-1">180+</h2>
+                        <p class="text-muted mb-0">Verified Companies</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h2 class="fw-bold mb-1">12k+</h2>
+                        <p class="text-muted mb-0">Successful Placements</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-5">
+                    <h2 class="display-5 fw-bold mb-4">About the Project</h2>
+                    <p class="lead opacity-75">This JobPortal is a modern ecosystem built with Django to bridge the gap between human potential and organizational growth.</p>
+                    <p class="opacity-75">Our platform prioritizes simplicity and effectiveness. Unlike traditional boards cluttered with irrelevant data, we focus on direct connections, secure candidate management, and an intuitive experience for both HR professionals and job seekers.</p>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-4 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10">
+                        <h4 class="mb-3">Core Features</h4>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-3 d-flex align-items-center"><i class="bi bi-check2-circle me-3 text-info"></i> Seamless Job Application Workflow</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="bi bi-check2-circle me-3 text-info"></i> Advanced HR Management Dashboard</li>
+                            <li class="mb-3 d-flex align-items-center"><i class="bi bi-check2-circle me-3 text-info"></i> Real-time Application Tracking</li>
+                            <li class="d-flex align-items-center"><i class="bi bi-check2-circle me-3 text-info"></i> Secure Profile & Resume Hosting</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center">Career Insights</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="blog-card card h-100">
+                        <img src="{% static 'hr/images/blog-remote-interview.jpg' %}" class="card-img-top blog-img" alt="Resume Tips">
+                        <div class="card-body p-4">
+                            <span class="text-primary fw-bold small">CAREER ADVICE</span>
+                            <h5 class="card-title mt-2 fw-bold">Mastering the Remote Interview</h5>
+                            <p class="card-text text-muted">Learn the essential tips to stand out in a digital-first hiring world...</p>
+                            <a href="{% url 'blog_detail' 'mastering-remote-interview' %}" class="text-decoration-none fw-bold">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="blog-card card h-100">
+                        <img src="{% static 'hr/images/blog-hr-trends.jpg' %}" class="card-img-top blog-img" alt="HR Trends">
+                        <div class="card-body p-4">
+                            <span class="text-primary fw-bold small">HIRING TRENDS</span>
+                            <h5 class="card-title mt-2 fw-bold">What HR Looks for in 2026</h5>
+                            <p class="card-text text-muted">A deep dive into the skills that are dominating the job market this year...</p>
+                            <a href="{% url 'blog_detail' 'what-hr-looks-for-2026' %}" class="text-decoration-none fw-bold">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="blog-card card h-100">
+                        <img src="{% static 'hr/images/blog-work-life.jpg' %}" class="card-img-top blog-img" alt="Work Life">
+                        <div class="card-body p-4">
+                            <span class="text-primary fw-bold small">LIFESTYLE</span>
+                            <h5 class="card-title mt-2 fw-bold">Balancing Hustle and Health</h5>
+                            <p class="card-text text-muted">Maintaining your mental well-being while climbing the corporate ladder...</p>
+                            <a href="{% url 'blog_detail' 'balancing-hustle-and-health' %}" class="text-decoration-none fw-bold">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <a class="navbar-brand mb-4 d-inline-block" href="/">JOB<span>PORTAL</span></a>
+            <p class="text-muted mb-4">Empowering careers through technology and human-centric design.</p>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank" class="text-muted"><i class="bi bi-facebook fs-4"></i></a>
+                <a href="https://www.instagram.com/dipeshdhaurali/" target="_blank" class="text-muted"><i class="bi bi-instagram fs-4"></i></a>
+                <a href="https://github.com/Dipesh-Dhaurali/JobPortal" target="_blank" class="text-muted"><i class="bi bi-github fs-4"></i></a>
+            </div>
+            <p class="small text-muted mb-0">&copy; 2026 JobPortal. Built with Django, Bootstrap5, and ❤️.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -59,11 +59,37 @@
     .footer-links a:hover {
       text-decoration: underline;
     }
+    /* Add styles for home button */
+    .home-button {
+      background: #6c757d;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 20px;
+      font-weight: 600;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      transition: 0.3s;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .home-button:hover {
+      background: #5a6268;
+      color: white;
+    }
   </style>
 </head>
 <body>
 
   <div class="register-card">
+    <!-- Add home button at the top -->
+    <div class="text-center">
+      <a href="{% url 'home' %}" class="home-button">
+        <i class="bi bi-house-door-fill"></i> Home
+      </a>
+    </div>
+
     <div class="logo">
       <p>Your Path to Success</p>
     </div>

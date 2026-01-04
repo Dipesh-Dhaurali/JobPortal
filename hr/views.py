@@ -6,6 +6,63 @@ from django.views.decorators.http import require_http_methods
 from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate
 from hr.forms import JobPostForm
 
+def home(request):
+    """View for the main landing page"""
+    return render(request, 'hr/index.html')
+
+def blog_detail(request, slug):
+    """View for displaying individual blog/article content"""
+    blogs = {
+        'mastering-remote-interview': {
+            'title': 'Mastering the Remote Interview',
+            'category': 'CAREER ADVICE',
+            'image': 'hr/images/blog-remote-interview.jpg',
+            'content': """
+                <p>In 2026, remote interviews have become the standard for the first round of recruitment. To stand out, you need more than just technical skills; you need to master the digital medium.</p>
+                <h3>1. Perfect Your Technical Setup</h3>
+                <p>Ensure your internet connection is stable and your audio is crystal clear. A high-quality microphone can make a significant difference in how professional you sound.</p>
+                <h3>2. Master Your Background</h3>
+                <p>Your background should be clean and professional. Avoid distractions. Good lighting is essential—natural light from the front is usually best.</p>
+                <h3>3. Engage with the Camera</h3>
+                <p>Look into the camera lens, not at the screen, to simulate eye contact. This small adjustment makes you appear much more engaged and confident.</p>
+            """
+        },
+        'what-hr-looks-for-2026': {
+            'title': 'What HR Looks for in 2026',
+            'category': 'HIRING TRENDS',
+            'image': 'hr/images/blog-hr-trends.jpg',
+            'content': """
+                <p>The job market is evolving rapidly. HR professionals are no longer just looking for specific degrees; they are looking for adaptability and specialized soft skills.</p>
+                <h3>1. AI Literacy</h3>
+                <p>Being able to work alongside AI tools is now a fundamental requirement across almost all industries. Demonstrate how you use technology to improve your efficiency.</p>
+                <h3>2. Emotional Intelligence (EQ)</h3>
+                <p>As technical tasks become more automated, the human element—empathy, leadership, and collaboration—becomes even more valuable.</p>
+                <h3>3. Continuous Learning Mindset</h3>
+                <p>Show that you are a self-starter who proactively seeks out new knowledge and stays ahead of industry trends.</p>
+            """
+        },
+        'balancing-hustle-and-health': {
+            'title': 'Balancing Hustle and Health',
+            'category': 'LIFESTYLE',
+            'image': 'hr/images/blog-work-life.jpg',
+            'content': """
+                <p>Climbing the corporate ladder shouldn't come at the cost of your mental and physical well-being. True success is sustainable.</p>
+                <h3>1. Set Clear Boundaries</h3>
+                <p>Define your working hours and stick to them. Avoid checking emails after your designated 'off' time to allow your brain to fully disconnect.</p>
+                <h3>2. Prioritize Movement</h3>
+                <p>Even a 15-minute walk during lunch can significantly boost your mood and cognitive function. Regular exercise is the best defense against burnout.</p>
+                <h3>3. Practice Mindfulness</h3>
+                <p>Taking moments throughout the day to breathe and center yourself can help manage stress and maintain focus during high-pressure situations.</p>
+            """
+        }
+    }
+    
+    blog = blogs.get(slug)
+    if not blog:
+        return redirect('home')
+        
+    return render(request, 'hr/blog_detail.html', {'blog': blog})
+
 @login_required(login_url='login_user')
 def hrhome(request):
     # Get all jobs posted by this HR
