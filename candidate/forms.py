@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from hr.models import candidateApplication, EDUCATION_CHOICES
+from candidate.models import CandidateProfile
 
 
 class CandidateRegistrationForm(forms.ModelForm):
@@ -133,3 +134,163 @@ class JobApplicationForm(forms.ModelForm):
             if year < 1990:
                 raise ValidationError("Passing year seems too old. Please verify.")
         return year
+
+
+class CandidateProfileForm(forms.ModelForm):
+    class Meta:
+        model = CandidateProfile
+        fields = [
+            'profile_photo',
+            'job_preference_title',
+            'preferred_job_level',
+            'preferred_job_type',
+            'work_experience',
+            'education_level',
+            'course_or_program',
+            'gpa_percentage_type',
+            'gpa_percentage_value',
+            'school_college_name',
+            'graduation_year',
+            'skills',
+            'languages',
+            'social_account_name_1',
+            'social_account_url_1',
+            'social_account_name_2',
+            'social_account_url_2',
+        ]
+        widgets = {
+            'profile_photo': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*',
+            }),
+            'job_preference_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Document Officer',
+            }),
+            'preferred_job_level': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'preferred_job_type': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'work_experience': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'step': '1',
+                'placeholder': 'Years of experience',
+            }),
+            'education_level': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'course_or_program': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., BIM',
+            }),
+            'gpa_percentage_type': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'gpa_percentage_value': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'placeholder': 'Enter your GPA or Percentage',
+            }),
+            'school_college_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Name of school/college/institute',
+            }),
+            'graduation_year': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1990',
+                'placeholder': '2022',
+            }),
+            'skills': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'e.g., Public Speaking, Computer Operation',
+            }),
+            'languages': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Nepali, English',
+            }),
+            'social_account_name_1': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Facebook',
+            }),
+            'social_account_url_1': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://example.com',
+            }),
+            'social_account_name_2': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., LinkedIn',
+            }),
+            'social_account_url_2': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://example.com',
+            }),
+        }
+        labels = {
+            'profile_photo': 'Profile Photo (Passport size)',
+            'job_preference_title': 'Job Preference Title',
+            'preferred_job_level': 'Preferred Job Level',
+            'preferred_job_type': 'Preferred Job Type',
+            'work_experience': 'Work Experience (Years)',
+            'education_level': 'Education Level',
+            'course_or_program': 'Course or Program',
+            'gpa_percentage_type': 'GPA or Percentage',
+            'gpa_percentage_value': 'GPA/Percentage Value',
+            'school_college_name': 'School/College/Institute Name',
+            'graduation_year': 'Graduation Year',
+            'skills': 'Skills',
+            'languages': 'Languages',
+            'social_account_name_1': 'Social Account Name 1',
+            'social_account_url_1': 'Social Account URL 1',
+            'social_account_name_2': 'Social Account Name 2',
+            'social_account_url_2': 'Social Account URL 2',
+        }
+    
+    def clean_work_experience(self):
+        experience = self.cleaned_data.get('work_experience')
+        if experience is not None:
+            if experience < 0:
+                raise ValidationError("Work experience cannot be negative.")
+        return experience
+    
+    def clean_gpa_percentage_value(self):
+        value = self.cleaned_data.get('gpa_percentage_value')
+        gpa_type = self.cleaned_data.get('gpa_percentage_type')
+        
+        if value is not None:
+            if value < 0:
+                raise ValidationError("GPA/Percentage cannot be negative.")
+            
+            if gpa_type == 'gpa':
+                if value > 10:
+                    raise ValidationError("GPA cannot exceed 10.")
+            elif gpa_type == 'percentage':
+                if value > 100:
+                    raise ValidationError("Percentage cannot exceed 100.")
+        
+        return value
+    
+    def clean_graduation_year(self):
+        year = self.cleaned_data.get('graduation_year')
+        from datetime import datetime
+        current_year = datetime.now().year
+        
+        if year:
+            if year > current_year:
+                raise ValidationError(f"Graduation year cannot be in the future. Current year is {current_year}.")
+            if year < 1990:
+                raise ValidationError("Graduation year cannot be before 1990.")
+        
+        return year
+    
+    def clean_profile_photo(self):
+        photo = self.cleaned_data.get('profile_photo')
+        if photo:
+            if photo.size > 5242880:  # 5MB
+                raise ValidationError("Profile photo size must not exceed 5MB.")
+            if not photo.name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                raise ValidationError("Only image files (JPG, PNG, GIF) are accepted.")
+        return photo
