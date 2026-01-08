@@ -48,9 +48,14 @@ class CandidateProfile(models.Model):
     )
     
     GPA_PERCENTAGE_CHOICES = (
-        ('gpa', 'GPA (out of 10)'),
+        ('gpa_4', 'GPA (out of 4)'),
+        ('gpa_10', 'GPA (out of 10)'),
         ('percentage', 'Percentage (out of 100)'),
     )
+    
+    GRADUATION_YEAR_CHOICES = (
+        ('currently_running', 'Currently Running'),
+    ) + tuple((str(year), str(year)) for year in range(2030, 1899, -1))
     
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_photo = models.FileField(upload_to='candidate_photos/', null=True, blank=True)
@@ -65,7 +70,11 @@ class CandidateProfile(models.Model):
     gpa_percentage_type = models.CharField(max_length=10, choices=GPA_PERCENTAGE_CHOICES)
     gpa_percentage_value = models.FloatField()
     school_college_name = models.CharField(max_length=200)
-    graduation_year = models.IntegerField()
+    graduation_year = models.CharField(
+        max_length=20, 
+        choices=GRADUATION_YEAR_CHOICES,
+        default='currently_running'
+    )
     
     # Skills and languages
     skills = models.TextField(help_text="e.g., Public Speaking, Computer Operation")

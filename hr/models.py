@@ -32,13 +32,17 @@ STATUS_CHOICE=(
 )
 
 EDUCATION_CHOICES = (
-    ('SEE', 'SEE (School Leaving Exam)'),
+    ('SEE', 'SEE (Secondary Education Examination)'),  # Updated full form from School Leaving Exam to Secondary Education Examination
     ('SLC', 'SLC (School Leaving Certificate)'),
     ('PLUS2', '+2 (Higher Secondary)'),
     ('DIPLOMA', 'Diploma'),
     ('BACHELOR', 'Bachelor'),
     ('MASTERS', 'Masters'),
 )
+
+PASSING_YEAR_CHOICES = (
+    ('currently_running', 'Currently Running'),
+) + tuple((str(year), str(year)) for year in range(2030, 1989, -1))
 
 class candidateApplication(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -48,7 +52,11 @@ class candidateApplication(models.Model):
         choices=EDUCATION_CHOICES, 
         default='BACHELOR'
     )
-    passingYear=models.IntegerField()
+    passingYear = models.CharField(
+        max_length=20,
+        choices=PASSING_YEAR_CHOICES,
+        default='currently_running'
+    )
     yearOfExp=models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)]
@@ -71,7 +79,7 @@ class candidateApplication(models.Model):
     
     def get_education_display(self):
         education_map = {
-            'SEE': 'SEE (School Leaving Exam)',
+            'SEE': 'SEE (Secondary Education Examination)',  # Updated to match the corrected full form
             'SLC': 'SLC (School Leaving Certificate)',
             'PLUS2': '+2 (Higher Secondary)',
             'DIPLOMA': 'Diploma',

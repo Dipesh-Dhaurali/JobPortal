@@ -72,9 +72,8 @@ class JobApplicationForm(forms.ModelForm):
             'education_level': forms.Select(attrs={
                 'class': 'form-control',
             }),
-            'passingYear': forms.NumberInput(attrs={
+            'passingYear': forms.Select(attrs={
                 'class': 'form-control',
-                'placeholder': 'Year of passing (e.g., 2023)',
             }),
             'yearOfExp': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -93,7 +92,7 @@ class JobApplicationForm(forms.ModelForm):
         }
         labels = {
             'education_level': 'Highest Education Level',
-            'passingYear': 'Passing Year',
+            'passingYear': 'Graduation Year',  # Renamed from "Passing Year" to "Graduation Year"
             'yearOfExp': 'Years of Experience',
             'resume': 'CV/Resume (PDF, max 5MB)',
             'support_documents': 'Supporting Documents (Optional - PDF, max 5MB)',
@@ -126,13 +125,19 @@ class JobApplicationForm(forms.ModelForm):
     
     def clean_passingYear(self):
         year = self.cleaned_data.get('passingYear')
-        from datetime import datetime
-        current_year = datetime.now().year
-        if year:
-            if year > current_year:
-                raise ValidationError("Passing year cannot be in the future.")
-            if year < 1990:
-                raise ValidationError("Passing year seems too old. Please verify.")
+        
+        if year and year != 'currently_running':
+            from datetime import datetime
+            current_year = datetime.now().year
+            try:
+                year_int = int(year)
+                if year_int > current_year:
+                    raise ValidationError(f"Passing year cannot be in the future. Current year is {current_year}.")
+                if year_int < 1990:
+                    raise ValidationError("Passing year cannot be before 1990.")
+            except ValueError:
+                raise ValidationError("Invalid year format.")
+        
         return year
 
 
@@ -198,10 +203,8 @@ class CandidateProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Name of school/college/institute',
             }),
-            'graduation_year': forms.NumberInput(attrs={
+            'graduation_year': forms.Select(attrs={
                 'class': 'form-control',
-                'min': '1990',
-                'placeholder': '2022',
             }),
             'skills': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -262,27 +265,34 @@ class CandidateProfileForm(forms.ModelForm):
         
         if value is not None:
             if value < 0:
-                raise ValidationError("GPA/Percentage cannot be negative.")
+                raise ValidationError("GPA/Percentage cannot be negative. Minimum value is 0.")
             
-            if gpa_type == 'gpa':
+            if gpa_type == 'gpa_4':
+                if value > 4:
+                    raise ValidationError("GPA (out of 4) cannot exceed 4.0.")
+            elif gpa_type == 'gpa_10':
                 if value > 10:
-                    raise ValidationError("GPA cannot exceed 10.")
+                    raise ValidationError("GPA (out of 10) cannot exceed 10.0.")
             elif gpa_type == 'percentage':
                 if value > 100:
-                    raise ValidationError("Percentage cannot exceed 100.")
+                    raise ValidationError("Percentage cannot exceed 100%.")
         
         return value
     
     def clean_graduation_year(self):
         year = self.cleaned_data.get('graduation_year')
-        from datetime import datetime
-        current_year = datetime.now().year
         
-        if year:
-            if year > current_year:
-                raise ValidationError(f"Graduation year cannot be in the future. Current year is {current_year}.")
-            if year < 1990:
-                raise ValidationError("Graduation year cannot be before 1990.")
+        if year and year != 'currently_running':
+            from datetime import datetime
+            current_year = datetime.now().year
+            try:
+                year_int = int(year)
+                if year_int > current_year:
+                    raise ValidationError(f"Graduation year cannot be in the future. Current year is {current_year}.")
+                if year_int < 1900:
+                    raise ValidationError("Graduation year cannot be before 1900.")
+            except ValueError:
+                raise ValidationError("Invalid year format.")
         
         return year
     

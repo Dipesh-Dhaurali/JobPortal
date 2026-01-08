@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
 from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate
 from hr.forms import JobPostForm
+from candidate.models import CandidateProfile
 
 def home(request):
     """View for the main landing page"""
@@ -216,3 +217,21 @@ def reject_from_shortlist(request, pk):
     
     messages.success(request, f"Candidate {application.user.username} rejected successfully!")
     return redirect('candidate_details', pk=application.job.id)
+
+
+@login_required(login_url='login_user')
+def view_candidate_profile(request, user_id):
+    """View a candidate's complete profile"""
+    candidate_user = get_object_or_404(User, id=user_id)
+    
+    try:
+        profile = CandidateProfile.objects.get(user=candidate_user)
+    except CandidateProfile.DoesNotExist:
+        messages.warning(request, f"Candidate {candidate_user.username} has not created a profile yet.")
+        return redirect('hrdash')
+    
+    context = {
+        'candidate_user': candidate_user,
+        'profile': profile,
+    }
+    return render(request, 'hr/view_candidate_profile.html', context)

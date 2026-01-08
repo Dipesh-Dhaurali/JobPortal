@@ -153,6 +153,11 @@
                     </td>
                     <td>{{ application.applied_at|date:"M d, Y" }}</td>
                     <td>
+                        <!-- Added View Profile button -->
+                        <a href="{% url 'view_candidate_profile' application.user.id %}" class="btn btn-sm btn-info mb-1">
+                            <i class="fas fa-user"></i> View Profile
+                        </a>
+                        <br>
                         {% if application.status == 'pending' %}
                         <!-- Converted links to POST forms with CSRF tokens -->
                         <form method="post" action="{% url 'select_candidate' application.id %}" class="inline-form">

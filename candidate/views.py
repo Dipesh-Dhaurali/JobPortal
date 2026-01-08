@@ -115,4 +115,14 @@ def candidate_profile(request):
     }
     return render(request, 'candidate/profile.html', context)
 
-# The original candidate_dashboard_with_nav function is now redundant and can be removed
+@login_required(login_url='login_user')
+def delete_profile(request):
+    """Delete candidate profile"""
+    try:
+        profile = CandidateProfile.objects.get(user=request.user)
+        profile.delete()
+        messages.success(request, "Profile deleted successfully!")
+    except CandidateProfile.DoesNotExist:
+        messages.error(request, "No profile found to delete.")
+    
+    return redirect('candidate_profile')

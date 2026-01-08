@@ -109,7 +109,8 @@
             {% endif %}
         </div>
         <div class="mb-3">
-            <label for="id_passingYear" class="form-label">Passing Year *</label>
+            <!-- Updated label from "Passing Year *" to "Graduation Year *" -->
+            <label for="id_passingYear" class="form-label">Graduation Year *</label>
             {{ form.passingYear }}
             {% if form.passingYear.errors %}
                 <small class="text-danger d-block mt-2">{{ form.passingYear.errors }}</small>

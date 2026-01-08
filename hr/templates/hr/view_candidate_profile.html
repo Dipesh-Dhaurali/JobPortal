@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Profile - {{ candidate_user.username }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #007BFF;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid #007BFF;
+        }
+
+        .section-title {
+            color: #007BFF;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .info-row {
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+            width: 200px;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .social-links a {
+            color: #007BFF;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        .social-links a:hover {
+            text-decoration: underline;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'hr/navbar.html' %}
+
+    <div class="container">
+        <a href="javascript:history.back()" class="btn btn-secondary back-button">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+
+        <div class="profile-header">
+            {% if profile.profile_photo %}
+                <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="profile-photo">
+            {% else %}
+                <div class="profile-photo d-flex align-items-center justify-content-center bg-secondary text-white" style="font-size: 48px;">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+            <h2>{{ candidate_user.get_full_name|default:candidate_user.username }}</h2>
+            <p class="text-muted">{{ candidate_user.email }}</p>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-briefcase"></i> Job Preference</h3>
+        <div class="info-row">
+            <span class="info-label">Job Title:</span>
+            <span class="info-value">{{ profile.job_preference_title|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Preferred Job Level:</span>
+            <span class="info-value">{{ profile.get_preferred_job_level_display|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Preferred Job Type:</span>
+            <span class="info-value">{{ profile.get_preferred_job_type_display|default:"Not specified" }}</span>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Education</h3>
+        <div class="info-row">
+            <span class="info-label">Education Level:</span>
+            <span class="info-value">{{ profile.get_education_level_display|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Course/Program:</span>
+            <span class="info-value">{{ profile.course_or_program|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">School/College:</span>
+            <span class="info-value">{{ profile.school_college_name|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Graduation Year:</span>
+            <span class="info-value">{{ profile.graduation_year|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">GPA/Percentage:</span>
+            <span class="info-value">
+                {% if profile.gpa_percentage_value %}
+                    {{ profile.gpa_percentage_value }} ({{ profile.get_gpa_percentage_type_display }})
+                {% else %}
+                    Not specified
+                {% endif %}
+            </span>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-briefcase"></i> Work Experience</h3>
+        <div class="info-row">
+            <span class="info-label">Years of Experience:</span>
+            <span class="info-value">{{ profile.work_experience|default:"0" }} years</span>
+        </div>
+
+        <h3 class="section-title"><i class="fas fa-tools"></i> Skills & Languages</h3>
+        <div class="info-row">
+            <span class="info-label">Skills:</span>
+            <span class="info-value">{{ profile.skills|default:"Not specified" }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Languages:</span>
+            <span class="info-value">{{ profile.languages|default:"Not specified" }}</span>
+        </div>
+
+        {% if profile.social_account_name_1 or profile.social_account_name_2 %}
+        <h3 class="section-title"><i class="fas fa-link"></i> Social Accounts</h3>
+        <div class="social-links">
+            {% if profile.social_account_name_1 and profile.social_account_url_1 %}
+            <div class="info-row">
+                <span class="info-label">{{ profile.social_account_name_1 }}:</span>
+                <a href="{{ profile.social_account_url_1 }}" target="_blank" class="info-value">
+                    {{ profile.social_account_url_1 }} <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+            {% endif %}
+            {% if profile.social_account_name_2 and profile.social_account_url_2 %}
+            <div class="info-row">
+                <span class="info-label">{{ profile.social_account_name_2 }}:</span>
+                <a href="{{ profile.social_account_url_2 }}" target="_blank" class="info-value">
+                    {{ profile.social_account_url_2 }} <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
