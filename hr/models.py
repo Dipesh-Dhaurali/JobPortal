@@ -9,6 +9,20 @@ class hr(models.Model):
     def __str__(self):
         return self.user.username
 
+EMPLOYMENT_TYPE_CHOICES = (
+    ('full-time', 'Full-time'),
+    ('part-time', 'Part-time'),
+    ('internship', 'Internship'),
+    ('contract', 'Contract'),
+    ('freelance', 'Freelance'),
+)
+
+WORK_MODE_CHOICES = (
+    ('on-site', 'On-site'),
+    ('remote', 'Remote'),
+    ('hybrid', 'Hybrid'),
+)
+
 class JobPost(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     title=models.CharField(max_length=200)
@@ -19,6 +33,8 @@ class JobPost(models.Model):
     applycount=models.IntegerField(default=0)
     lastDateToApply=models.DateField()
     created_at=models.DateTimeField(auto_now_add=True, null=True)
+    employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='full-time', null=True, blank=True)
+    work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, default='on-site', null=True, blank=True)
 
     def __str__(self):
         return str(self.title)
