@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applied Jobs - Job Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        #offcanvasExample {
+            width: 250px !important;
+            max-width: 90%;
+            background-color: #0e0e0e !important;
+        }
+
+        .offcanvas-header {
+            display: none;
+        }
+
+        .offcanvas-body {
+            padding: 0 !important;
+            margin-top: 50px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #e3f2fd, #ffffff);
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .top-bar .menu-btn {
+            position: absolute;
+            left: 20px;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #0d6efd;
+            text-align: center;
+            font-size: 24px;
+            flex-grow: 1;
+        }
+
+        .nav-link {
+            color: #fff !important;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #0d6efd;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .applied-job-card {
+            background: white;
+            border-left: 4px solid #0d6efd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .applied-job-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .job-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0d6efd;
+            margin-bottom: 8px;
+        }
+
+        .job-company {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        .job-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .job-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #495057;
+        }
+
+        .job-detail-item i {
+            color: #0d6efd;
+            width: 18px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-shortlisted {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-selected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .applied-date {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: #0d6efd;
+            border-bottom-color: #0d6efd;
+        }
+
+        .tab-btn:hover {
+            color: #0d6efd;
+        }
+
+        .count-badge {
+            background-color: #0d6efd;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Yellow Menu Button - CHANGE: Using consistent navbar structure from dashboard -->
+    <div class="top-bar">
+        <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+            <strong>☰ Menu</strong>
+        </a>
+        <h2>My Applied Jobs</h2>
+    </div>
+
+    <!-- Sidebar Navigation - CHANGE: Using consistent sidebar structure -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample">
+        <div class="offcanvas-body">
+            <div class="d-flex flex-column gap-2">
+                <nav class="navbar navbar-expand-lg navbar-dark w-100">
+                    <div class="container-fluid">
+                        <div class="navbar-collapse" id="navbarNav">
+                            <div class="nav flex-column nav-pills me-3 w-100">
+                                <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
+                                <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
+                                <a class="nav-link active" href="{% url 'applied_jobs' %}"><i class="fas fa-file-alt me-2"></i>Applied Jobs</a>
+                                <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tabs-container">
+            <button class="tab-btn active" data-status="all" onclick="filterJobs(this)">  
+                <i class="fas fa-briefcase me-2"></i>All Applied<span class="count-badge">{{ total_count }}</span>
+            </button>
+            <button class="tab-btn" data-status="pending" onclick="filterJobs(this)">
+                <i class="fas fa-clock me-2"></i>Not Reviewed<span class="count-badge">{{ pending_count }}</span>
+            </button>
+            <button class="tab-btn" data-status="shortlisted" onclick="filterJobs(this)">
+                <i class="fas fa-star me-2"></i>Shortlisted<span class="count-badge">{{ shortlisted_count }}</span>
+            </button>
+            <button class="tab-btn" data-status="selected" onclick="filterJobs(this)">
+                <i class="fas fa-check me-2"></i>Selected<span class="count-badge">{{ selected_count }}</span>
+            </button>
+            <button class="tab-btn" data-status="rejected" onclick="filterJobs(this)">
+                <i class="fas fa-times me-2"></i>Rejected<span class="count-badge">{{ rejected_count }}</span>
+            </button>
+        </div>
+
+        <!-- Applied Jobs List -->
+        {% if applied_jobs %}
+        <div id="jobs-container">
+            {% for item in applied_jobs %}
+            <div class="applied-job-card" data-status="{{ item.status }}">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="job-title">{{ item.job.title }}</h5>
+                        <p class="job-company"><i class="fas fa-building me-2"></i>{{ item.job.CompanyName }}</p>
+                    </div>
+                    <span class="status-badge status-{{ item.status }}">
+                        {% if item.status == 'pending' %}
+                            <i class="fas fa-clock me-1"></i>Not Reviewed
+                        {% elif item.status == 'shortlisted' %}
+                            <i class="fas fa-star me-1"></i>Shortlisted
+                        {% elif item.status == 'selected' %}
+                            <i class="fas fa-check me-1"></i>Selected
+                        {% elif item.status == 'rejected' %}
+                            <i class="fas fa-times me-1"></i>Rejected
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- Job Details -->
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ item.job.address }}</span>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-rupee-sign"></i>
+                        <span>Rs {{ item.job.salaryLow }}.0 - Rs {{ item.job.salaryHigh }}.0</span>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-briefcase"></i>
+                        <span>{{ item.job.employment_type|title }}</span>
+                    </div>
+                    <div class="job-detail-item">
+                        <i class="fas fa-laptop"></i>
+                        <span>{{ item.job.work_mode|title }}</span>
+                    </div>
+                </div>
+
+                <!-- Applied Date -->
+                <div class="applied-date">
+                    <i class="fas fa-calendar-alt me-2"></i>Applied on {{ item.applied_at|date:"M d, Y" }}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <a href="{% url 'job_detail' item.job.id %}" class="btn btn-primary btn-small">
+                        <i class="fas fa-eye me-1"></i>View Details
+                    </a>
+                    {% if item.status == 'rejected' %}
+                    <a href="{% url 'candidate_dashboard' %}" class="btn btn-outline-secondary btn-small">
+                        <i class="fas fa-search me-1"></i>Find Similar Jobs
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No Applications Yet</h3>
+            <p>Start browsing and apply for jobs to track your applications here.</p>
+            <a href="{% url 'candidate_dashboard' %}" class="btn btn-primary">
+                <i class="fas fa-search me-2"></i>Browse Jobs
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function filterJobs(button) {
+            const container = document.getElementById('jobs-container');
+            if (!container) return;
+            
+            const cards = container.querySelectorAll('.applied-job-card');
+            const buttons = document.querySelectorAll('.tab-btn');
+            const status = button.getAttribute('data-status');
+
+            // Update active tab
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // Filter cards
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else if (card.dataset.status === status) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

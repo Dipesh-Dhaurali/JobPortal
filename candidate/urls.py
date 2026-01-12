@@ -7,4 +7,5 @@ urlpatterns = [
     path("profile/delete/", views.delete_profile, name='delete_profile'),
     path("job/<int:pk>/", views.job_detail, name='job_detail'),
     path("shortlisted/", views.shortlisted_jobs, name='shortlisted_jobs'),
+    path("applied-jobs/", views.applied_jobs, name='applied_jobs'),  # Added applied jobs route
 ]

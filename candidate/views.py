@@ -86,6 +86,14 @@ def candidate_dashboard(request):
     elif filter_by == 'work_hybrid':
         jobs = jobs.filter(work_mode='hybrid')
         search_placeholder = 'Showing Hybrid jobs'
+    elif filter_by == 'salary_range' and min_salary and max_salary:
+        try:
+            min_val = float(min_salary)
+            max_val = float(max_salary)
+            jobs = jobs.filter(salaryLow__gte=min_val, salaryHigh__lte=max_val)
+            search_placeholder = f'Salary range: {min_salary} - {max_salary}'
+        except (ValueError, TypeError):
+            pass
     
     # Legacy Location filter (for backward compatibility)
     if location:
@@ -101,7 +109,7 @@ def candidate_dashboard(request):
             pass
     
     # Salary Range filters
-    if min_salary:
+    if min_salary and not filter_by.startswith('salary'):
         try:
             min_sal = float(min_salary)
             if min_sal < 0:
@@ -110,7 +118,7 @@ def candidate_dashboard(request):
         except (ValueError, TypeError):
             pass
     
-    if max_salary:
+    if max_salary and not filter_by.startswith('salary'):
         try:
             max_sal = float(max_salary)
             if max_sal <= 0:
@@ -120,7 +128,7 @@ def candidate_dashboard(request):
             pass
     
     # Legacy Sort By (only if not already sorted by filter_by)
-    if filter_by not in ['salary_high', 'salary_low', 'newest']:
+    if filter_by not in ['salary_high', 'salary_low', 'newest', 'salary_range']:
         if sort_by == 'newest':
             jobs = jobs.order_by('-created_at')
         elif sort_by == 'salary_high':
@@ -253,3 +261,36 @@ def delete_profile(request):
         messages.error(request, "No profile found to delete.")
     
     return redirect('candidate_profile')
+
+@login_required(login_url='login_user')
+def applied_jobs(request):
+    """Display all jobs the candidate has applied to with their application status"""
+    # Get all applications for the current user with related job details
+    applications = candidateApplication.objects.filter(
+        user=request.user
+    ).select_related('job').order_by('-applied_at')
+    
+    # Create a list with job and application status
+    applied_jobs_list = []
+    for app in applications:
+        applied_jobs_list.append({
+            'job': app.job,
+            'application': app,
+            'status': app.status,
+            'applied_at': app.applied_at,
+        })
+    
+    pending_count = applications.filter(status='pending').count()
+    shortlisted_count = applications.filter(status='shortlisted').count()
+    selected_count = applications.filter(status='selected').count()
+    rejected_count = applications.filter(status='rejected').count()
+    
+    context = {
+        'applied_jobs': applied_jobs_list,
+        'total_count': applications.count(),
+        'pending_count': pending_count,
+        'shortlisted_count': shortlisted_count,
+        'selected_count': selected_count,
+        'rejected_count': rejected_count,
+    }
+    return render(request, 'candidate/applied_jobs.html', context)

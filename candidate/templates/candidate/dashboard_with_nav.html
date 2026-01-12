@@ -324,10 +324,12 @@
         }
 
         .salary-input-group {
+            position: relative;
+            width: 140px;
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .salary-input-group label {
@@ -337,45 +339,80 @@
             min-width: 55px;
         }
 
-        .salary-input-wrapper {
+        .salary-inputs-wrapper {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 4px;
-            flex: 1;
+            justify-content: center;
+            gap: 3px;
+            margin-bottom: 8px;
         }
 
-        .salary-input-wrapper input {
-            flex: 1;
-            padding: 6px 8px;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .salary-adjust-btn {
+        .salary-input-group input[type="number"] {
+            width: 100%;
             padding: 4px 8px;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
             font-size: 12px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            min-width: 28px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
-        .salary-adjust-btn:hover {
-            background-color: #0a58ca;
-            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        .salary-input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background-color: #f0f9ff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
 
-        .salary-adjust-btn:active {
-            transform: scale(0.95);
+        .salary-input-group input[type="number"]:invalid,
+        .salary-input-group input.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
         }
 
-        .salary-apply-btn {
+        .salary-input-group .error-message {
+            color: #ef4444;
+            font-size: 10px;
+            margin-top: 1px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .salary-input-group .error-message.show {
+            display: block;
+        }
+
+        .salary-dash {
+            font-size: 16px;
+            font-weight: 300;
+            color: #999;
+            margin: 2px 0;
+        }
+
+        .salary-range-container {
+            padding: 12px 8px;
+        }
+
+        .salary-instruction {
+            text-align: center;
+            font-size: 13px;
+            color: #555;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+        }
+
+        .salary-inputs-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .salary-apply-btn-clean {
             width: 100%;
             padding: 8px 12px;
             margin-top: 8px;
@@ -389,127 +426,12 @@
             transition: all 0.2s ease;
         }
 
-        .salary-apply-btn:hover {
-            background-color: #0a58ca;
-            box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-        }
-
-        .salary-apply-btn:active {
-            transform: scale(0.98);
-        }
-
-        .salary-range-container {
-            padding: 20px 16px;
-        }
-
-        .salary-instruction {
-            text-align: center;
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-
-        .salary-inputs-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .salary-input-compact {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .salary-input-field {
-            width: 120px;
-            padding: 8px 40px 8px 12px;
-            font-size: 14px;
-            border: 2px solid #333;
-            border-radius: 4px;
-            text-align: left;
-            font-weight: 500;
-        }
-
-        .salary-input-field:focus {
-            outline: none;
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-        }
-
-        .salary-spinner {
-            position: absolute;
-            right: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .spinner-btn {
-            width: 24px;
-            height: 14px;
-            padding: 0;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 0;
-            cursor: pointer;
-            font-size: 10px;
-            color: #333;
-            font-weight: 600;
-            transition: all 0.15s ease;
-        }
-
-        .spinner-btn:hover {
-            background-color: #e8e8e8;
-        }
-
-        .spinner-btn:active {
-            background-color: #ddd;
-        }
-
-        .up-btn {
-            border-bottom: none;
-            border-radius: 3px 3px 0 0;
-        }
-
-        .down-btn {
-            border-radius: 0 0 3px 3px;
-        }
-
-        .salary-separator {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            min-width: 30px;
-            text-align: center;
-        }
-
-        .salary-apply-btn-clean {
-            display: block;
-            margin: 0 auto;
-            padding: 10px 32px;
-            background-color: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
-        }
-
         .salary-apply-btn-clean:hover {
             background-color: #0a58ca;
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-            transform: translateY(-1px);
         }
 
         .salary-apply-btn-clean:active {
-            transform: translateY(0);
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -526,6 +448,9 @@
         <div class="search-form-wrapper">
             <form method="GET" action="{% url 'candidate_dashboard' %}" class="d-flex align-items-center" id="searchForm" style="width: 100%; margin: 0;">
                 <input type="hidden" name="filter_by" id="filterByInput" value="{{ filter_by|default:'keyword' }}">
+                <!-- Added hidden salary input fields -->
+                <input type="hidden" name="min_salary" id="min_salary_input_hidden" value="{{ min_salary }}">
+                <input type="hidden" name="max_salary" id="max_salary_input_hidden" value="{{ max_salary }}">
                 <input type="text" name="search" class="search-input" 
                     placeholder="{{ search_placeholder|default:'Search jobs here...' }}" 
                     value="{{ search_query }}" />
@@ -713,25 +638,27 @@
                         <div class="salary-range-container">
                             <p class="salary-instruction">Enter minimum and maximum salary</p>
                             <div class="salary-inputs-wrapper">
-                                <div class="salary-input-compact">
-                                    <input type="number" id="min_salary_input" class="salary-input-field" placeholder="Min" value="{{ min_salary|default:'' }}" />
-                                    <div class="salary-spinner">
-                                        <button type="button" class="spinner-btn up-btn" onclick="incrementSalary('min')">▲</button>
-                                        <button type="button" class="spinner-btn down-btn" onclick="decrementSalary('min')">▼</button>
-                                    </div>
+                                <div class="salary-input-group">
+                                    <input type="number" id="min_salary_input" class="salary-input-field" placeholder="Min" min="0" value="{{ min_salary|default:'' }}" />
+                                    <div class="error-message" id="min-error"></div>
                                 </div>
-                                <span class="salary-separator">-</span>
-                                <div class="salary-input-compact">
-                                    <input type="number" id="max_salary_input" class="salary-input-field" placeholder="Max" value="{{ max_salary|default:'' }}" />
-                                    <div class="salary-spinner">
-                                        <button type="button" class="spinner-btn up-btn" onclick="incrementSalary('max')">▲</button>
-                                        <button type="button" class="spinner-btn down-btn" onclick="decrementSalary('max')">▼</button>
-                                    </div>
+                                <div class="salary-dash">-</div>
+                                <div class="salary-input-group">
+                                    <input type="number" id="max_salary_input" class="salary-input-field" placeholder="Max" min="0" value="{{ max_salary|default:'' }}" />
+                                    <div class="error-message" id="max-error"></div>
                                 </div>
                             </div>
                             <button type="button" class="salary-apply-btn-clean" onclick="applySalaryFilter()">Apply Salary Filter</button>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Clear Filter option at the end of filter dropdown -->
+                <div class="filter-category">
+                    <a href="{% url 'candidate_dashboard' %}" class="filter-option" style="display: flex; align-items: center; justify-content: center; padding: 12px; text-decoration: none; color: #dc3545; font-weight: 500; border-top: 1px solid #e0e0e0;">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <span>Clear All Filters</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -751,6 +678,7 @@
                         <div class="nav flex-column nav-pills me-3 w-100">
                             <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
                             <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
+                            <a class="nav-link" href="{% url 'applied_jobs' %}"><i class="fas fa-file-alt me-2"></i>Applied Jobs</a>
                             <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
                         </div>
                     </div>
@@ -909,7 +837,10 @@
     function applySalaryFilter() {
         const minSalary = document.getElementById('min_salary_input').value;
         const maxSalary = document.getElementById('max_salary_input').value;
-        window.location.href = `{% url "candidate_dashboard" %}?min_salary=${minSalary}&max_salary=${maxSalary}`;
+        document.getElementById('filterByInput').value = 'salary_range';
+        document.getElementById('min_salary_input_hidden').value = minSalary;
+        document.getElementById('max_salary_input_hidden').value = maxSalary;
+        document.getElementById('searchForm').submit();
     }
 
     document.addEventListener('click', function(event) {
@@ -920,8 +851,74 @@
             dropdown.classList.remove('active');
         }
     });
-</script>
 
+    // Added comprehensive salary validation functions
+    function validateSalaryInputs() {
+        const minInput = document.getElementById('min_salary_input');
+        const maxInput = document.getElementById('max_salary_input');
+        const minError = document.getElementById('min-error');
+        const maxError = document.getElementById('max-error');
+        
+        let isValid = true;
+        
+        // Reset error messages
+        minError.textContent = '';
+        maxError.textContent = '';
+        minError.classList.remove('show');
+        maxError.classList.remove('show');
+        minInput.classList.remove('error');
+        maxInput.classList.remove('error');
+        
+        const minVal = parseFloat(minInput.value) || 0;
+        const maxVal = parseFloat(maxInput.value) || 0;
+        
+        // Validate minimum value (must be >= 0)
+        if (minVal < 0) {
+            minError.textContent = 'Minimum salary cannot be negative';
+            minError.classList.add('show');
+            minInput.classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate maximum value (must be >= 0)
+        if (maxVal < 0) {
+            maxError.textContent = 'Maximum salary cannot be negative';
+            maxError.classList.add('show');
+            maxInput.classList.add('error');
+            isValid = false;
+        }
+        
+        // Validate that min <= max (if both are filled)
+        if (minInput.value && maxInput.value && minVal > maxVal) {
+            minError.textContent = 'Minimum must be less than maximum';
+            minError.classList.add('show');
+            minInput.classList.add('error');
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const minInput = document.getElementById('min_salary_input');
+        const maxInput = document.getElementById('max_salary_input');
+        
+        if (minInput) {
+            minInput.addEventListener('change', validateSalaryInputs);
+            minInput.addEventListener('input', function() {
+                this.value = Math.max(0, parseFloat(this.value) || 0);
+            });
+        }
+        
+        if (maxInput) {
+            maxInput.addEventListener('change', validateSalaryInputs);
+            maxInput.addEventListener('input', function() {
+                this.value = Math.max(0, parseFloat(this.value) || 0);
+            });
+        }
+    });
+</script>
+    
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
