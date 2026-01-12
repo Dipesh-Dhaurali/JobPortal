@@ -1,910 +1,927 @@
 <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Candidate Dashboard - Job Portal</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        <style>
-            body {
-                background: #f8f9fa;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                margin: 0;
-            }
-
-            #offcanvasExample {
-                width: 250px !important;
-                max-width: 90%;
-                background-color: #0e0e0e !important;
-            }
-
-            .offcanvas-header {
-                display: none;
-            }
-
-            .offcanvas-body {
-                padding: 0 !important;
-                margin-top: 50px;
-            }
-
-            .top-bar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: linear-gradient(90deg, #e3f2fd, #ffffff);
-                padding: 15px 30px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-                position: relative;
-            }
-
-            .top-bar .menu-btn {
-                position: absolute;
-                left: 20px;
-            }
-
-            .top-bar h2 {
-                margin: 0;
-                color: #0d6efd;
-                text-align: center;
-                font-size: 24px;
-                flex-grow: 1;
-            }
-
-            .search-container {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                position: absolute;
-                right: 20px;
-            }
-
-            .search-form-wrapper {
-                display: flex;
-                align-items: center;
-                position: relative;
-                background: white;
-                border: 1px solid #e8e8e8;
-                border-radius: 8px;
-                padding: 4px 4px;
-                box-shadow: 0 2px 12px rgba(13, 110, 253, 0.25), 0 0 20px rgba(13, 110, 253, 0.15);
-                transition: all 0.3s ease;
-            }
-
-            .search-form-wrapper:focus-within {
-                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25), 0 0 25px rgba(13, 110, 253, 0.45);
-                border-color: #0d6efd;
-            }
-
-            .search-input {
-                padding: 8px 12px;
-                border: none;
-                width: 180px;
-                font-size: 13px;
-                outline: none;
-                background: transparent;
-                color: #333;
-            }
-
-            .search-input::placeholder {
-                color: #999;
-            }
-
-            .search-btn {
-                padding: 8px 16px;
-                background-color: #0d6efd;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 13px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                white-space: nowrap;
-                margin: 0;
-                box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
-            }
-
-            .search-btn:hover {
-                background-color: #0a58ca;
-                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
-                transform: translateY(-1px);
-            }
-
-            .search-btn:active {
-                transform: translateY(0);
-            }
-
-            .filter-dropdown {
-                position: relative;
-                display: inline-block;
-            }
-
-            .filter-btn {
-                padding: 8px 16px;
-                background-color: #6c757d;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 600;
-                transition: all 0.3s;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-
-            .filter-btn:hover {
-                background-color: #5a6268;
-                transform: translateY(-2px);
-            }
-
-            .filter-dropdown-content {
-                display: none;
-                position: absolute;
-                right: 0;
-                background-color: white;
-                min-width: 250px;
-                box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-                border-radius: 8px;
-                z-index: 9999;
-                margin-top: 5px;
-                padding: 10px 0;
-            }
-
-            .filter-dropdown-content.active {
-                display: block;
-            }
-
-            .filter-option {
-                padding: 12px 20px;
-                cursor: pointer;
-                transition: all 0.2s;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                color: #495057;
-                font-size: 14px;
-            }
-
-            .filter-option:hover {
-                background-color: #f8f9fa;
-                cursor: pointer;
-            }
-
-            .filter-option.active {
-                background-color: #0d6efd;
-                color: white;
-            }
-
-            .filter-option i {
-                width: 20px;
-                text-align: center;
-            }
-
-            .filter-label {
-                font-size: 11px;
-                color: #6c757d;
-                padding: 8px 20px 4px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .filter-divider {
-                height: 1px;
-                background-color: #dee2e6;
-                margin: 8px 0;
-            }
-
-            .nav-link {
-                color: #fff !important;
-                padding: 12px 20px;
-                margin: 5px 0;
-                border-radius: 5px;
-                transition: 0.3s;
-                font-size: 16px;
-            }
-
-            .nav-link:hover, .nav-link.active {
-                background-color: #0d6efd;
-            }
-
-            .container {
-                margin-top: 30px;
-            }
-
-            .job-card {
-                transition: transform 0.3s, box-shadow 0.3s;
-            }
-
-            .job-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-            }
-
-            .applied-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #28a745;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-            }
-
-            .shortlisted-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #ffc107;
-                color: #000;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-                font-weight: 600;
-            }
-
-            .selected-badge {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #17a2b8;
-                color: white;
-                padding: 5px 10px;
-                border-radius: 5px;
-                font-size: 12px;
-                font-weight: 600;
-            }
-
-            /* Add nested submenu styles */
-            .filter-category {
-                position: relative;
-            }
-
-            .filter-category-btn {
-                padding: 12px 20px;
-                cursor: pointer;
-                transition: all 0.2s;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-                color: #495057;
-                font-size: 14px;
-                background: transparent;
-                border: none;
-                width: 100%;
-                text-align: left;
-            }
-
-            .filter-category-btn:hover {
-                background-color: #e9ecef;
-            }
-
-            .filter-submenu {
-                display: none;
-                background-color: #f8f9fa;
-            }
-
-            .filter-submenu.active {
-                display: block;
-            }
-
-            .filter-submenu .filter-option {
-                padding-left: 40px;
-                font-size: 13px;
-            }
-
-            .chevron-icon {
-                transition: transform 0.2s;
-                font-size: 12px;
-            }
-
-            .filter-category-btn.expanded .chevron-icon {
-                transform: rotate(180deg);
-            }
-
-            .salary-input-group {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                margin-bottom: 8px;
-            }
-
-            .salary-input-group label {
-                font-size: 12px;
-                font-weight: 600;
-                color: #666;
-                min-width: 55px;
-            }
-
-            .salary-input-wrapper {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                flex: 1;
-            }
-
-            .salary-input-wrapper input {
-                flex: 1;
-                padding: 6px 8px;
-                font-size: 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                text-align: center;
-            }
-
-            .salary-adjust-btn {
-                padding: 4px 8px;
-                background-color: #0d6efd;
-                color: white;
-                border: none;
-                border-radius: 3px;
-                cursor: pointer;
-                font-size: 12px;
-                font-weight: 600;
-                transition: all 0.2s ease;
-                min-width: 28px;
-            }
-
-            .salary-adjust-btn:hover {
-                background-color: #0a58ca;
-                box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
-            }
-
-            .salary-adjust-btn:active {
-                transform: scale(0.95);
-            }
-
-            .salary-apply-btn {
-                width: 100%;
-                padding: 8px 12px;
-                margin-top: 8px;
-                background-color: #0d6efd;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 13px;
-                font-weight: 600;
-                transition: all 0.2s ease;
-            }
-
-            .salary-apply-btn:hover {
-                background-color: #0a58ca;
-                box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
-            }
-
-            .salary-apply-btn:active {
-                transform: scale(0.98);
-            }
-
-            .salary-range-container {
-                padding: 20px 16px;
-            }
-
-            .salary-instruction {
-                text-align: center;
-                font-size: 14px;
-                color: #333;
-                margin-bottom: 16px;
-                font-weight: 500;
-            }
-
-            .salary-inputs-wrapper {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 12px;
-                margin-bottom: 16px;
-            }
-
-            .salary-input-compact {
-                position: relative;
-                display: flex;
-                align-items: center;
-            }
-
-            .salary-input-field {
-                width: 120px;
-                padding: 8px 40px 8px 12px;
-                font-size: 14px;
-                border: 2px solid #333;
-                border-radius: 4px;
-                text-align: left;
-                font-weight: 500;
-            }
-
-            .salary-input-field:focus {
-                outline: none;
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-            }
-
-            .salary-spinner {
-                position: absolute;
-                right: 4px;
-                display: flex;
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .spinner-btn {
-                width: 24px;
-                height: 14px;
-                padding: 0;
-                background-color: #f0f0f0;
-                border: 1px solid #ccc;
-                border-radius: 0;
-                cursor: pointer;
-                font-size: 10px;
-                color: #333;
-                font-weight: 600;
-                transition: all 0.15s ease;
-            }
-
-            .spinner-btn:hover {
-                background-color: #e8e8e8;
-            }
-
-            .spinner-btn:active {
-                background-color: #ddd;
-            }
-
-            .up-btn {
-                border-bottom: none;
-                border-radius: 3px 3px 0 0;
-            }
-
-            .down-btn {
-                border-radius: 0 0 3px 3px;
-            }
-
-            .salary-separator {
-                font-size: 16px;
-                font-weight: 600;
-                color: #333;
-                min-width: 30px;
-                text-align: center;
-            }
-
-            .salary-apply-btn-clean {
-                display: block;
-                margin: 0 auto;
-                padding: 10px 32px;
-                background-color: #0d6efd;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 600;
-                transition: all 0.2s ease;
-                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
-            }
-
-            .salary-apply-btn-clean:hover {
-                background-color: #0a58ca;
-                box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-                transform: translateY(-1px);
-            }
-
-            .salary-apply-btn-clean:active {
-                transform: translateY(0);
-            }
-        </style>
-    </head>
-    <body>
-
-    <div class="top-bar">
-        <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-            <strong>☰ Menu</strong>
-        </a>
-        <h2>Welcome, {{ user.username }}!</h2>
-        
-        <!-- Simplified search with filter dropdown selector -->
-        <div class="search-container">
-            <div class="search-form-wrapper">
-                <form method="GET" action="{% url 'candidate_dashboard' %}" class="d-flex align-items-center" id="searchForm" style="width: 100%; margin: 0;">
-                    <input type="hidden" name="filter_by" id="filterByInput" value="{{ filter_by|default:'keyword' }}">
-                    <input type="text" name="search" class="search-input" 
-                        placeholder="{{ search_placeholder|default:'Search jobs here...' }}" 
-                        value="{{ search_query }}" />
-                    <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i> Search Job
-                    </button>
-                </form>
-            </div>
-            
-            <div class="filter-dropdown">
-                <button type="button" class="filter-btn" onclick="toggleFilterDropdown()">
-                    <i class="fas fa-filter"></i> Filter
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard - Job Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        #offcanvasExample {
+            width: 250px !important;
+            max-width: 90%;
+            background-color: #0e0e0e !important;
+        }
+
+        .offcanvas-header {
+            display: none;
+        }
+
+        .offcanvas-body {
+            padding: 0 !important;
+            margin-top: 50px;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #e3f2fd, #ffffff);
+            padding: 15px 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .top-bar .menu-btn {
+            position: absolute;
+            left: 20px;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            color: #0d6efd;
+            text-align: center;
+            font-size: 24px;
+            flex-grow: 1;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: absolute;
+            right: 20px;
+        }
+
+        .search-form-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 4px 4px;
+            box-shadow: 0 2px 12px rgba(13, 110, 253, 0.25), 0 0 20px rgba(13, 110, 253, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .search-form-wrapper:focus-within {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25), 0 0 25px rgba(13, 110, 253, 0.45);
+            border-color: #0d6efd;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: none;
+            width: 180px;
+            font-size: 13px;
+            outline: none;
+            background: transparent;
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+        .search-btn {
+            padding: 8px 16px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            margin: 0;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+
+        .search-btn:hover {
+            background-color: #0a58ca;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .filter-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            z-index: 9999;
+            margin-top: 5px;
+            padding: 10px 0;
+        }
+
+        .filter-dropdown-content.active {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .filter-option:hover {
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .filter-option.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .filter-option i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            color: #6c757d;
+            padding: 8px 20px 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-divider {
+            height: 1px;
+            background-color: #dee2e6;
+            margin: 8px 0;
+        }
+
+        .nav-link {
+            color: #fff !important;
+            padding: 12px 20px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #0d6efd;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .job-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .applied-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .shortlisted-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffc107;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .selected-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Added rejected badge styling */
+        .rejected-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Add nested submenu styles */
+        .filter-category {
+            position: relative;
+        }
+
+        .filter-category-btn {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: #495057;
+            font-size: 14px;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .filter-category-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .filter-submenu {
+            display: none;
+            background-color: #f8f9fa;
+        }
+
+        .filter-submenu.active {
+            display: block;
+        }
+
+        .filter-submenu .filter-option {
+            padding-left: 40px;
+            font-size: 13px;
+        }
+
+        .chevron-icon {
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+
+        .filter-category-btn.expanded .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .salary-input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .salary-input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            min-width: 55px;
+        }
+
+        .salary-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .salary-input-wrapper input {
+            flex: 1;
+            padding: 6px 8px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .salary-adjust-btn {
+            padding: 4px 8px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            min-width: 28px;
+        }
+
+        .salary-adjust-btn:hover {
+            background-color: #0a58ca;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+
+        .salary-adjust-btn:active {
+            transform: scale(0.95);
+        }
+
+        .salary-apply-btn {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 8px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .salary-apply-btn:hover {
+            background-color: #0a58ca;
+            box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+        }
+
+        .salary-apply-btn:active {
+            transform: scale(0.98);
+        }
+
+        .salary-range-container {
+            padding: 20px 16px;
+        }
+
+        .salary-instruction {
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .salary-inputs-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .salary-input-compact {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .salary-input-field {
+            width: 120px;
+            padding: 8px 40px 8px 12px;
+            font-size: 14px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .salary-input-field:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+
+        .salary-spinner {
+            position: absolute;
+            right: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .spinner-btn {
+            width: 24px;
+            height: 14px;
+            padding: 0;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 10px;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .spinner-btn:hover {
+            background-color: #e8e8e8;
+        }
+
+        .spinner-btn:active {
+            background-color: #ddd;
+        }
+
+        .up-btn {
+            border-bottom: none;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .down-btn {
+            border-radius: 0 0 3px 3px;
+        }
+
+        .salary-separator {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .salary-apply-btn-clean {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 32px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+        }
+
+        .salary-apply-btn-clean:hover {
+            background-color: #0a58ca;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .salary-apply-btn-clean:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+        <strong>☰ Menu</strong>
+    </a>
+    <h2>Welcome, {{ user.username }}!</h2>
+    
+    <!-- Simplified search with filter dropdown selector -->
+    <div class="search-container">
+        <div class="search-form-wrapper">
+            <form method="GET" action="{% url 'candidate_dashboard' %}" class="d-flex align-items-center" id="searchForm" style="width: 100%; margin: 0;">
+                <input type="hidden" name="filter_by" id="filterByInput" value="{{ filter_by|default:'keyword' }}">
+                <input type="text" name="search" class="search-input" 
+                    placeholder="{{ search_placeholder|default:'Search jobs here...' }}" 
+                    value="{{ search_query }}" />
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search Job
                 </button>
-                <div id="filterDropdown" class="filter-dropdown-content">
-                    <!-- Search By Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-search"></i>
-                                <span>Search By</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="filter-option {% if filter_by == 'keyword' or not filter_by %}active{% endif %}" 
-                                onclick="selectFilter('keyword', 'Search by Job title...')">
-                                <i class="fas fa-search"></i>
-                                <span>Job Title</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'location' %}active{% endif %}" 
-                                onclick="selectFilter('location', 'Search by location...')">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Location</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'company' %}active{% endif %}" 
-                                onclick="selectFilter('company', 'Search by company name...')">
-                                <i class="fas fa-building"></i>
-                                <span>Company Name</span>
-                            </div>
+            </form>
+        </div>
+        
+        <div class="filter-dropdown">
+            <button type="button" class="filter-btn" onclick="toggleFilterDropdown()">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            <div id="filterDropdown" class="filter-dropdown-content">
+                <!-- Search By Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-search"></i>
+                            <span>Search By</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu">
+                        <div class="filter-option {% if filter_by == 'keyword' or not filter_by %}active{% endif %}" 
+                            onclick="selectFilter('keyword', 'Search by Job title...')">
+                            <i class="fas fa-search"></i>
+                            <span>Job Title</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'location' %}active{% endif %}" 
+                            onclick="selectFilter('location', 'Search by location...')">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Location</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'company' %}active{% endif %}" 
+                            onclick="selectFilter('company', 'Search by company name...')">
+                            <i class="fas fa-building"></i>
+                            <span>Company Name</span>
                         </div>
                     </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <!-- Date Posted Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Date Posted</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="filter-option {% if filter_by == 'date_24' %}active{% endif %}" 
-                                onclick="selectFilter('date_24', 'Showing jobs from last 24 hours')">
-                                <i class="fas fa-clock"></i>
-                                <span>Last 24 Hours</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'date_7' %}active{% endif %}" 
-                                onclick="selectFilter('date_7', 'Showing jobs from last 7 days')">
-                                <i class="fas fa-calendar-week"></i>
-                                <span>Last 7 Days</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'date_30' %}active{% endif %}" 
-                                onclick="selectFilter('date_30', 'Showing jobs from last 30 days')">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Last 30 Days</span>
-                            </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <!-- Date Posted Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Date Posted</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu">
+                        <div class="filter-option {% if filter_by == 'date_24' %}active{% endif %}" 
+                            onclick="selectFilter('date_24', 'Showing jobs from last 24 hours')">
+                            <i class="fas fa-clock"></i>
+                            <span>Last 24 Hours</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'date_7' %}active{% endif %}" 
+                            onclick="selectFilter('date_7', 'Showing jobs from last 7 days')">
+                            <i class="fas fa-calendar-week"></i>
+                            <span>Last 7 Days</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'date_30' %}active{% endif %}" 
+                            onclick="selectFilter('date_30', 'Showing jobs from last 30 days')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Last 30 Days</span>
                         </div>
                     </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <!-- Sort By Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-sort"></i>
-                                <span>Sort By</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="filter-option {% if filter_by == 'salary_high' %}active{% endif %}" 
-                                onclick="selectFilter('salary_high', 'Sorted by highest salary')">
-                                <i class="fas fa-sort-amount-up"></i>
-                                <span>Salary: High to Low</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'salary_low' %}active{% endif %}" 
-                                onclick="selectFilter('salary_low', 'Sorted by lowest salary')">
-                                <i class="fas fa-sort-amount-down"></i>
-                                <span>Salary: Low to High</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'newest' %}active{% endif %}" 
-                                onclick="selectFilter('newest', 'Showing newest jobs first')">
-                                <i class="fas fa-calendar-plus"></i>
-                                <span>Newest First</span>
-                            </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <!-- Sort By Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-sort"></i>
+                            <span>Sort By</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu">
+                        <div class="filter-option {% if filter_by == 'salary_high' %}active{% endif %}" 
+                            onclick="selectFilter('salary_high', 'Sorted by highest salary')">
+                            <i class="fas fa-sort-amount-up"></i>
+                            <span>Salary: High to Low</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'salary_low' %}active{% endif %}" 
+                            onclick="selectFilter('salary_low', 'Sorted by lowest salary')">
+                            <i class="fas fa-sort-amount-down"></i>
+                            <span>Salary: Low to High</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'newest' %}active{% endif %}" 
+                            onclick="selectFilter('newest', 'Showing newest jobs first')">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Newest First</span>
                         </div>
                     </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <!-- Employment Type Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-briefcase"></i>
-                                <span>Employment Type</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="filter-option {% if filter_by == 'employment_full' %}active{% endif %}" 
-                                onclick="selectFilter('employment_full', 'Showing Full-time jobs')">
-                                <i class="fas fa-clock"></i>
-                                <span>Full-time</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'employment_part' %}active{% endif %}" 
-                                onclick="selectFilter('employment_part', 'Showing Part-time jobs')">
-                                <i class="fas fa-hourglass-half"></i>
-                                <span>Part-time</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'employment_internship' %}active{% endif %}" 
-                                onclick="selectFilter('employment_internship', 'Showing Internship jobs')">
-                                <i class="fas fa-graduation-cap"></i>
-                                <span>Internship</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'employment_contract' %}active{% endif %}" 
-                                onclick="selectFilter('employment_contract', 'Showing Contract jobs')">
-                                <i class="fas fa-file-contract"></i>
-                                <span>Contract</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'employment_freelance' %}active{% endif %}" 
-                                onclick="selectFilter('employment_freelance', 'Showing Freelance jobs')">
-                                <i class="fas fa-laptop-code"></i>
-                                <span>Freelance</span>
-                            </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <!-- Employment Type Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-briefcase"></i>
+                            <span>Employment Type</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu">
+                        <div class="filter-option {% if filter_by == 'employment_full' %}active{% endif %}" 
+                            onclick="selectFilter('employment_full', 'Showing Full-Time jobs')">
+                            <i class="fas fa-hourglass"></i>
+                            <span>Full-Time</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'employment_part' %}active{% endif %}" 
+                            onclick="selectFilter('employment_part', 'Showing Part-Time jobs')">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>Part-Time</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'employment_intern' %}active{% endif %}" 
+                            onclick="selectFilter('employment_intern', 'Showing Internship jobs')">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Internship</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'employment_contract' %}active{% endif %}" 
+                            onclick="selectFilter('employment_contract', 'Showing Contract jobs')">
+                            <i class="fas fa-file-contract"></i>
+                            <span>Contract</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'employment_freelance' %}active{% endif %}" 
+                            onclick="selectFilter('employment_freelance', 'Showing Freelance jobs')">
+                            <i class="fas fa-laptop-house"></i>
+                            <span>Freelance</span>
                         </div>
                     </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <!-- Work Mode Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-map-pin"></i>
-                                <span>Work Mode</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="filter-option {% if filter_by == 'work_onsite' %}active{% endif %}" 
-                                onclick="selectFilter('work_onsite', 'Showing On-site jobs')">
-                                <i class="fas fa-building"></i>
-                                <span>On-site</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'work_remote' %}active{% endif %}" 
-                                onclick="selectFilter('work_remote', 'Showing Remote jobs')">
-                                <i class="fas fa-home"></i>
-                                <span>Remote</span>
-                            </div>
-                            <div class="filter-option {% if filter_by == 'work_hybrid' %}active{% endif %}" 
-                                onclick="selectFilter('work_hybrid', 'Showing Hybrid jobs')">
-                                <i class="fas fa-exchange-alt"></i>
-                                <span>Hybrid</span>
-                            </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <!-- Work Mode Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-map-pin"></i>
+                            <span>Work Mode</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu">
+                        <div class="filter-option {% if filter_by == 'work_onsite' %}active{% endif %}" 
+                            onclick="selectFilter('work_onsite', 'Showing On-Site jobs')">
+                            <i class="fas fa-building"></i>
+                            <span>On-Site</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'work_remote' %}active{% endif %}" 
+                            onclick="selectFilter('work_remote', 'Showing Remote jobs')">
+                            <i class="fas fa-laptop-house"></i>
+                            <span>Remote</span>
+                        </div>
+                        <div class="filter-option {% if filter_by == 'work_hybrid' %}active{% endif %}" 
+                            onclick="selectFilter('work_hybrid', 'Showing Hybrid jobs')">
+                            <i class="fas fa-arrows-alt"></i>
+                            <span>Hybrid</span>
                         </div>
                     </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <!-- Salary Range Category -->
-                    <div class="filter-category">
-                        <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
-                            <div>
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Salary Range</span>
-                            </div>
-                            <i class="chevron-icon fas fa-chevron-down"></i>
-                        </button>
-                        <div class="filter-submenu">
-                            <div class="salary-range-container">
-                                <p class="salary-instruction">enter minimum and maximum salary</p>
-                                <div class="salary-inputs-wrapper">
-                                    <div class="salary-input-compact">
-                                        <input type="number" id="min_salary_input" class="salary-input-field" min="0" value="0" placeholder="min" onchange="validateSalaryRange()">
-                                        <div class="salary-spinner">
-                                            <button class="spinner-btn up-btn" onclick="incrementSalary('min')">▲</button>
-                                            <button class="spinner-btn down-btn" onclick="decrementSalary('min')">▼</button>
-                                        </div>
-                                    </div>
-                                    <span class="salary-separator">to</span>
-                                    <div class="salary-input-compact">
-                                        <input type="number" id="max_salary_input" class="salary-input-field" min="1" value="100000" placeholder="max" onchange="validateSalaryRange()">
-                                        <div class="salary-spinner">
-                                            <button class="spinner-btn up-btn" onclick="incrementSalary('max')">▲</button>
-                                            <button class="spinner-btn down-btn" onclick="decrementSalary('max')">▼</button>
-                                        </div>
+                </div>
+                
+                <div class="filter-divider"></div>
+                
+                <!-- Salary Range Category -->
+                <div class="filter-category">
+                    <button type="button" class="filter-category-btn" onclick="toggleSubcategory(event)">
+                        <div>
+                            <i class="fas fa-rupee-sign"></i>
+                            <span>Salary Range</span>
+                        </div>
+                        <i class="chevron-icon fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-submenu" style="background-color: #fff;">
+                        <div class="salary-range-container">
+                            <p class="salary-instruction">Enter minimum and maximum salary</p>
+                            <div class="salary-inputs-wrapper">
+                                <div class="salary-input-compact">
+                                    <input type="number" id="min_salary_input" class="salary-input-field" placeholder="Min" value="{{ min_salary|default:'' }}" />
+                                    <div class="salary-spinner">
+                                        <button type="button" class="spinner-btn up-btn" onclick="incrementSalary('min')">▲</button>
+                                        <button type="button" class="spinner-btn down-btn" onclick="decrementSalary('min')">▼</button>
                                     </div>
                                 </div>
-                                <button type="button" class="salary-apply-btn-clean" onclick="applySalaryFilter()">Apply Salary Range</button>
+                                <span class="salary-separator">-</span>
+                                <div class="salary-input-compact">
+                                    <input type="number" id="max_salary_input" class="salary-input-field" placeholder="Max" value="{{ max_salary|default:'' }}" />
+                                    <div class="salary-spinner">
+                                        <button type="button" class="spinner-btn up-btn" onclick="incrementSalary('max')">▲</button>
+                                        <button type="button" class="spinner-btn down-btn" onclick="decrementSalary('max')">▼</button>
+                                    </div>
+                                </div>
                             </div>
+                            <button type="button" class="salary-apply-btn-clean" onclick="applySalaryFilter()">Apply Salary Filter</button>
                         </div>
-                    </div>
-                    
-                    <div class="filter-divider"></div>
-                    
-                    <div class="filter-option" onclick="clearFilter()" style="padding: 12px 20px;">
-                        <i class="fas fa-times-circle"></i>
-                        <span><strong>Clear Filter</strong></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-body p-0">
-            <nav>
-                <div class="d-flex align-items-start">
-                    <div class="nav flex-column nav-pills me-3 w-100">
-                        <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
-                        <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
-                        <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="d-flex flex-column gap-2">
+            <nav class="navbar navbar-expand-lg navbar-dark w-100">
+                <div class="container-fluid">
+                    <div class="navbar-collapse" id="navbarNav">
+                        <div class="nav flex-column nav-pills me-3 w-100">
+                            <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
+                            <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
+                            <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                        </div>
                     </div>
                 </div>
             </nav>
         </div>
     </div>
+</div>
 
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+    {% if search_query or location or date_posted or min_salary or max_salary or sort_by != 'relevance' %}
+    <div class="alert alert-info" role="alert">
+        <strong>Active Filters:</strong>
+        {% if search_query %}<span class="badge bg-primary ms-2">Keyword: {{ search_query }}</span>{% endif %}
+        {% if location %}<span class="badge bg-primary ms-2">Location: {{ location }}</span>{% endif %}
+        {% if date_posted %}<span class="badge bg-primary ms-2">Date: Last {{ date_posted }} days</span>{% endif %}
+        {% if min_salary %}<span class="badge bg-primary ms-2">Min Salary: Rs {{ min_salary }}</span>{% endif %}
+        {% if max_salary %}<span class="badge bg-primary ms-2">Max Salary: Rs {{ max_salary }}</span>{% endif %}
+        {% if sort_by and sort_by != 'relevance' %}<span class="badge bg-primary ms-2">Sort: {{ sort_by }}</span>{% endif %}
+        <a href="{% url 'candidate_dashboard' %}" class="btn btn-sm btn-outline-secondary ms-2">Clear All Filters</a>
+    </div>
+    {% endif %}
+    
+    <h3 class="mb-4"><i class="fas fa-briefcase"></i> Available Jobs</h3>
+    
+    {% if jobs %}
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card job-card h-100 position-relative">
+                {% if job.id in applied_job_ids %}
+                    <!-- Check rejected status FIRST, then selected, then shortlisted, then applied -->
+                    {% if job.application_status == 'rejected' %}
+                    <span class="rejected-badge"><i class="fas fa-times"></i> Rejected</span>
+                    {% elif job.application_status == 'selected' %}
+                    <span class="selected-badge"><i class="fas fa-trophy"></i> Selected</span>
+                    {% elif job.application_status == 'shortlisted' %}
+                    <span class="shortlisted-badge"><i class="fas fa-star"></i> Shortlisted</span>
+                    {% else %}
+                    <span class="applied-badge"><i class="fas fa-check"></i> Applied</span>
+                    {% endif %}
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-building"></i> {{ job.CompanyName }}
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-map-marker-alt"></i> {{ job.address }}
+                    </p>
+                    <p class="card-text">
+                        <strong>Salary:</strong> Rs {{ job.salaryLow }} - Rs {{ job.salaryHigh }}
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-calendar"></i> Apply by: {{ job.lastDateToApply }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-users"></i> {{ job.applycount }} applicants
+                    </p>
+                    <a href="{% url 'job_detail' job.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-info-circle"></i> View Details
+                    </a>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>
-    {% endif %}
-
-    <div class="container">
-        {% if search_query or location or date_posted or min_salary or max_salary or sort_by != 'relevance' %}
-        <div class="alert alert-info" role="alert">
-            <strong>Active Filters:</strong>
-            {% if search_query %}<span class="badge bg-primary ms-2">Keyword: {{ search_query }}</span>{% endif %}
-            {% if location %}<span class="badge bg-primary ms-2">Location: {{ location }}</span>{% endif %}
-            {% if date_posted %}<span class="badge bg-primary ms-2">Date: Last {{ date_posted }} days</span>{% endif %}
-            {% if min_salary %}<span class="badge bg-primary ms-2">Min Salary: Rs {{ min_salary }}</span>{% endif %}
-            {% if max_salary %}<span class="badge bg-primary ms-2">Max Salary: Rs {{ max_salary }}</span>{% endif %}
-            {% if sort_by and sort_by != 'relevance' %}<span class="badge bg-primary ms-2">Sort: {{ sort_by }}</span>{% endif %}
-            <a href="{% url 'candidate_dashboard' %}" class="btn btn-sm btn-outline-secondary ms-2">Clear All Filters</a>
-        </div>
-        {% endif %}
-        
-        <h3 class="mb-4"><i class="fas fa-briefcase"></i> Available Jobs</h3>
-        
-        {% if jobs %}
-        <div class="row">
-            {% for job in jobs %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card job-card h-100 position-relative">
-                    {% if job.id in applied_job_ids %}
-                        {% if job.application_status == 'selected' %}
-                        <span class="selected-badge"><i class="fas fa-trophy"></i> Selected</span>
-                        {% elif job.application_status == 'shortlisted' %}
-                        <span class="shortlisted-badge"><i class="fas fa-star"></i> Shortlisted</span>
-                        {% else %}
-                        <span class="applied-badge"><i class="fas fa-check"></i> Applied</span>
-                        {% endif %}
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ job.title }}</h5>
-                        <p class="card-text text-muted">
-                            <i class="fas fa-building"></i> {{ job.CompanyName }}
-                        </p>
-                        <p class="card-text text-muted">
-                            <i class="fas fa-map-marker-alt"></i> {{ job.address }}
-                        </p>
-                        <p class="card-text">
-                            <strong>Salary:</strong> Rs {{ job.salaryLow }} - Rs {{ job.salaryHigh }}
-                        </p>
-                        <p class="card-text text-muted">
-                            <i class="fas fa-calendar"></i> Apply by: {{ job.lastDateToApply }}
-                        </p>
-                        <p class="card-text">
-                            <i class="fas fa-users"></i> {{ job.applycount }} applicants
-                        </p>
-                        <a href="{% url 'job_detail' job.id %}" class="btn btn-primary w-100">
-                            <i class="fas fa-info-circle"></i> View Details
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="alert alert-warning" role="alert">
-            No jobs available at the moment. Check back later!
-        </div>
-        {% endif %}
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        No jobs available at the moment. Check back later!
     </div>
+    {% endif %}
+</div>
 
-    <!-- Updated JavaScript for filter dropdown -->
-    <script>
-        function toggleSubcategory(event) {
-            event.preventDefault();
-            const button = event.currentTarget;
-            const submenu = button.nextElementSibling;
-            const isActive = submenu.classList.contains('active');
-            
-            // Close all other submenus
-            document.querySelectorAll('.filter-submenu.active').forEach(menu => {
-                if (menu !== submenu) {
-                    menu.classList.remove('active');
-                    menu.previousElementSibling.classList.remove('expanded');
-                }
-            });
-            
-            // Toggle current submenu
-            if (isActive) {
-                submenu.classList.remove('active');
-                button.classList.remove('expanded');
-            } else {
-                submenu.classList.add('active');
-                button.classList.add('expanded');
-            }
-        }
-
-        function toggleFilterDropdown() {
-            const dropdown = document.getElementById('filterDropdown');
-            dropdown.classList.toggle('active');
-        }
-
-        function selectFilter(filterType, placeholder) {
-            document.getElementById('filterByInput').value = filterType;
-            document.querySelector('.search-input').placeholder = placeholder;
-            
-            const searchInput = document.querySelector('.search-input');
-            if (filterType.startsWith('date_') || filterType.includes('salary') || filterType === 'newest' || filterType.startsWith('employment_') || filterType.startsWith('work_')) {
-                searchInput.value = '';
-                document.getElementById('searchForm').submit();
-            } else {
-                searchInput.focus();
-            }
-            
-            document.getElementById('filterDropdown').classList.remove('active');
-        }
-
-        function clearFilter() {
-            window.location.href = '{% url "candidate_dashboard" %}';
-        }
-
-        function decrementSalary(type) {
-            const input = document.getElementById(type + '_salary_input');
-            input.value = Math.max(0, parseInt(input.value) - 1);
-            validateSalaryRange();
-        }
-
-        function incrementSalary(type) {
-            const input = document.getElementById(type + '_salary_input');
-            input.value = parseInt(input.value) + 1;
-            validateSalaryRange();
-        }
-
-        function validateSalaryRange() {
-            const minInput = document.getElementById('min_salary_input');
-            const maxInput = document.getElementById('max_salary_input');
-            if (parseInt(minInput.value) > parseInt(maxInput.value)) {
-                maxInput.value = parseInt(minInput.value) + 1;
-            }
-        }
-
-        function applySalaryFilter() {
-            const minSalary = document.getElementById('min_salary_input').value;
-            const maxSalary = document.getElementById('max_salary_input').value;
-            window.location.href = `{% url "candidate_dashboard" %}?min_salary=${minSalary}&max_salary=${maxSalary}`;
-        }
-
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('filterDropdown');
-            const filterBtn = document.querySelector('.filter-btn');
-            
-            if (!dropdown.contains(event.target) && !filterBtn.contains(event.target)) {
-                dropdown.classList.remove('active');
+<!-- Updated JavaScript for filter dropdown -->
+<script>
+    function toggleSubcategory(event) {
+        event.preventDefault();
+        const button = event.currentTarget;
+        const submenu = button.nextElementSibling;
+        const isActive = submenu.classList.contains('active');
+        
+        // Close all other submenus
+        document.querySelectorAll('.filter-submenu.active').forEach(menu => {
+            if (menu !== submenu) {
+                menu.classList.remove('active');
+                menu.previousElementSibling.classList.remove('expanded');
             }
         });
-    </script>
+        
+        // Toggle current submenu
+        if (isActive) {
+            submenu.classList.remove('active');
+            button.classList.remove('expanded');
+        } else {
+            submenu.classList.add('active');
+            button.classList.add('expanded');
+        }
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-    </html>
+    function toggleFilterDropdown() {
+        const dropdown = document.getElementById('filterDropdown');
+        dropdown.classList.toggle('active');
+    }
+
+    function selectFilter(filterType, placeholder) {
+        document.getElementById('filterByInput').value = filterType;
+        document.querySelector('.search-input').placeholder = placeholder;
+        
+        const searchInput = document.querySelector('.search-input');
+        if (filterType.startsWith('date_') || filterType.includes('salary') || filterType === 'newest' || filterType.startsWith('employment_') || filterType.startsWith('work_')) {
+            searchInput.value = '';
+            document.getElementById('searchForm').submit();
+        } else {
+            searchInput.focus();
+        }
+        
+        document.getElementById('filterDropdown').classList.remove('active');
+    }
+
+    function clearFilter() {
+        window.location.href = '{% url "candidate_dashboard" %}';
+    }
+
+    function decrementSalary(type) {
+        const input = document.getElementById(type + '_salary_input');
+        input.value = Math.max(0, parseInt(input.value) - 1);
+        validateSalaryRange();
+    }
+
+    function incrementSalary(type) {
+        const input = document.getElementById(type + '_salary_input');
+        input.value = parseInt(input.value) + 1;
+        validateSalaryRange();
+    }
+
+    function validateSalaryRange() {
+        const minInput = document.getElementById('min_salary_input');
+        const maxInput = document.getElementById('max_salary_input');
+        if (parseInt(minInput.value) > parseInt(maxInput.value)) {
+            maxInput.value = parseInt(minInput.value) + 1;
+        }
+    }
+
+    function applySalaryFilter() {
+        const minSalary = document.getElementById('min_salary_input').value;
+        const maxSalary = document.getElementById('max_salary_input').value;
+        window.location.href = `{% url "candidate_dashboard" %}?min_salary=${minSalary}&max_salary=${maxSalary}`;
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('filterDropdown');
+        const filterBtn = document.querySelector('.filter-btn');
+        
+        if (!dropdown.contains(event.target) && !filterBtn.contains(event.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

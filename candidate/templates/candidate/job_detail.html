@@ -83,7 +83,12 @@
 
     <!-- Display different messages based on application status -->
     {% if has_applied %}
-        {% if application_status == 'selected' %}
+        <!-- Added rejection status check - must come first before other status checks -->
+        {% if is_rejected %}
+        <div class="alert alert-danger mt-4">
+            <i class="fas fa-times-circle"></i> <strong>Application Rejected</strong> - You have been rejected for this job. Please try again later in the future.
+        </div>
+        {% elif application_status == 'selected' %}
         <div class="alert alert-info mt-4">
             <i class="fas fa-trophy"></i> <strong>Congratulations!</strong> You have been selected for this job. Further details will be shared with you via email.
         </div>

@@ -177,6 +177,7 @@ def job_detail(request, pk):
     has_applied = application is not None
     application_status = application.status if application else None
     is_shortlisted = IsShortlisted.objects.filter(user=request.user, job=job).exists()
+    is_rejected = application_status == 'rejected' if application else False
     
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
@@ -200,6 +201,7 @@ def job_detail(request, pk):
         'has_applied': has_applied,
         'application_status': application_status, # Pass application status to template
         'is_shortlisted': is_shortlisted,
+        'is_rejected': is_rejected,
         'form': form,
     }
     return render(request, 'candidate/job_detail.html', context)
