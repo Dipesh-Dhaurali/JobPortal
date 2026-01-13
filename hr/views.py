@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate
 from hr.forms import JobPostForm
 from candidate.models import CandidateProfile
+from django.db.models import Q
 
 def home(request):
     """View for the main landing page"""
@@ -66,9 +67,17 @@ def blog_detail(request, slug):
 
 @login_required(login_url='login_user')
 def hrhome(request):
-    # Get all jobs posted by this HR
     jobs = JobPost.objects.filter(user=request.user).order_by('-created_at')
-    context = {'jobs': jobs}
+    
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        jobs = jobs.filter(title__icontains=search_query)
+    
+    context = {
+        'jobs': jobs,
+        'search_query': search_query,
+        'navbar_title': 'Welcome to HR Job Portal'  # Added navbar title for dashboard
+    }
     return render(request, 'hr/hrdashboard.html', context)
 
 
@@ -86,7 +95,10 @@ def post_job(request):
     else:
         form = JobPostForm()
     
-    context = {'form': form}
+    context = {
+        'form': form,
+        'navbar_title': 'Post your job here'  # Added navbar title for post job page
+    }
     return render(request, 'hr/postjob.html', context)
 
 
@@ -235,3 +247,62 @@ def view_candidate_profile(request, user_id):
         'profile': profile,
     }
     return render(request, 'hr/view_candidate_profile.html', context)
+
+
+@login_required(login_url='login_user')
+def job_history(request):
+    """View all job posts and applications with advanced filtering"""
+    # Get all jobs posted by current HR
+    all_jobs = JobPost.objects.filter(user=request.user).order_by('-created_at')
+    
+    display_mode = request.GET.get('mode', 'applications')
+    
+    # Get all applications for these jobs
+    all_applications = candidateApplication.objects.filter(
+        job__user=request.user
+    ).select_related('user', 'job').order_by('-applied_at')
+    
+    status_filter = request.GET.get('status', 'all')
+    if status_filter != 'all':
+        all_applications = all_applications.filter(status=status_filter)
+    
+    # Search by candidate name or job title
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        all_applications = all_applications.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__username__icontains=search_query) |
+            Q(job__title__icontains=search_query)
+        )
+    
+    # Calculate counts for each status
+    total_applications = candidateApplication.objects.filter(job__user=request.user).count()
+    pending_count = candidateApplication.objects.filter(
+        job__user=request.user, status='pending'
+    ).count()
+    shortlisted_count = candidateApplication.objects.filter(
+        job__user=request.user, status='shortlisted'
+    ).count()
+    selected_count = candidateApplication.objects.filter(
+        job__user=request.user, status='selected'
+    ).count()
+    rejected_count = candidateApplication.objects.filter(
+        job__user=request.user, status='rejected'
+    ).count()
+    
+    context = {
+        'all_jobs': all_jobs,
+        'all_applications': all_applications,
+        'status_filter': status_filter,
+        'search_query': search_query,
+        'total_applications': total_applications,
+        'pending_count': pending_count,
+        'shortlisted_count': shortlisted_count,
+        'selected_count': selected_count,
+        'rejected_count': rejected_count,
+        'total_jobs': all_jobs.count(),
+        'display_mode': display_mode,
+        'navbar_title': 'Welcome to HR Job Portal'  # Added navbar title for job history page
+    }
+    return render(request, 'hr/job_history.html', context)

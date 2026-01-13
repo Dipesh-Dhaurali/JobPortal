@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Job Portal - HR Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="shaA384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   </head>
   <body>
 
@@ -34,18 +34,21 @@
   position: relative;
 }
 
-/* Menu button on the left */
+/* Menu button positioned absolutely on the left */
 .top-bar .menu-btn {
   position: absolute;
   left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-/* Title styling */
+/* Title styling - perfectly centered */
 .top-bar h2 {
   margin: 0;
   color: #0d6efd;
   text-align: center;
   font-size: 24px;
+  flex-grow: 0;
 }
 
 .nav-link {
@@ -67,16 +70,18 @@
     <strong>☰ Menu</strong>
   </a>
   <h2>Welcome to HR Job Portal</h2>
+  <!-- Removed search include - search will be inline in hrdashboard.html only -->
 </div>
 
 <!-- #### Sidebar and navbar#### -->
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabelx">
   <div class="offcanvas-body p-0">
     <nav>
       <div class="d-flex align-items-start">
         <div class="nav flex-column nav-pills me-3 w-100">
           <a class="nav-link" href="{% url 'hrdash' %}">Dashboard</a>
           <a class="nav-link" href="{% url 'postjob' %}">Post New Job</a>
+          <a class="nav-link" href="{% url 'job_history' %}">View Job History</a>
           <a class="nav-link" href="{% url 'logout_user' %}">Logout</a>
         </div>
       </div>
