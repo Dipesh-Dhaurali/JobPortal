@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("hr-profile/", views.hr_profile, name='hr_profile'),
+    path("hr-profile/delete/", views.delete_hr_profile, name='delete_hr_profile'),
     path("", views.home, name='home'),
     path("blog/<slug:slug>/", views.blog_detail, name='blog_detail'),
     path("hrdash/", views.hrhome, name='hrdash'),

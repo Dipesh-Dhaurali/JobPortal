@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Job Portal - HR Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="shaA384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
   </head>
   <body>
 
@@ -64,12 +65,14 @@
 }
 </style>
 
+<!-- Removed full HTML document structure (DOCTYPE, html, head, body tags) -->
 <!-- #### Menu and sidebar#### -->
 <div class="top-bar">
   <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
     <strong>☰ Menu</strong>
   </a>
-  <h2>Welcome to HR Job Portal</h2>
+  <!-- Using navbar_title variable to display dynamic titles per page -->
+  <h2>{{ navbar_title|safe }}</h2>
   <!-- Removed search include - search will be inline in hrdashboard.html only -->
 </div>
 
@@ -79,10 +82,12 @@
     <nav>
       <div class="d-flex align-items-start">
         <div class="nav flex-column nav-pills me-3 w-100">
-          <a class="nav-link" href="{% url 'hrdash' %}">Dashboard</a>
-          <a class="nav-link" href="{% url 'postjob' %}">Post New Job</a>
-          <a class="nav-link" href="{% url 'job_history' %}">View Job History</a>
-          <a class="nav-link" href="{% url 'logout_user' %}">Logout</a>
+          <!-- Add Profile button to navigation -->
+          <a class="nav-link" href="{% url 'hr_profile' %}"><i class="fas fa-user"></i> Profile</a>
+          <a class="nav-link" href="{% url 'hrdash' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
+          <a class="nav-link" href="{% url 'postjob' %}"><i class="fas fa-plus"></i> Post New Job</a>
+          <a class="nav-link" href="{% url 'job_history' %}"><i class="fas fa-file-alt"></i> View Job History</a>
+          <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
       </div>
     </nav>

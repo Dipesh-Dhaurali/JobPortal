@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from hr.models import JobPost, candidateApplication
+from hr.models import JobPost, candidateApplication, HRProfile
 from candidate.models import IsShortlisted, CandidateProfile
 from candidate.forms import JobApplicationForm, CandidateProfileForm
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth.models import User
 
 @login_required(login_url='login_user')
 def candidate_dashboard(request):
@@ -187,6 +188,8 @@ def job_detail(request, pk):
     is_shortlisted = IsShortlisted.objects.filter(user=request.user, job=job).exists()
     is_rejected = application_status == 'rejected' if application else False
     
+    company_profile_exists = HRProfile.objects.filter(user=job.user).exists()
+    
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -211,6 +214,7 @@ def job_detail(request, pk):
         'is_shortlisted': is_shortlisted,
         'is_rejected': is_rejected,
         'form': form,
+        'company_profile_exists': company_profile_exists,  # Pass flag to template
     }
     return render(request, 'candidate/job_detail.html', context)
 
@@ -294,3 +298,19 @@ def applied_jobs(request):
         'rejected_count': rejected_count,
     }
     return render(request, 'candidate/applied_jobs.html', context)
+
+@login_required(login_url='login_user')
+def view_hr_profile(request, user_id):
+    """Display HR/Company profile"""
+    hr_user = get_object_or_404(User, id=user_id)
+    
+    try:
+        profile = HRProfile.objects.get(user=hr_user)
+    except HRProfile.DoesNotExist:
+        return render(request, '404.html', {'message': 'Company profile not found'}, status=404)
+    
+    context = {
+        'profile': profile,
+        'hr_user': hr_user,
+    }
+    return render(request, 'candidate/view_hr_profile.html', context)

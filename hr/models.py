@@ -120,3 +120,64 @@ class SelectedCandidate(models.Model):
     
     def __str__(self):
         return f"{self.candidate.user.username} selected for {self.job.title}"
+
+class HRProfile(models.Model):
+    """HR/Company profile model for storing company information"""
+    INDUSTRY_CHOICES = (
+        ('technology', 'Technology'),
+        ('finance', 'Finance'),
+        ('healthcare', 'Healthcare'),
+        ('retail', 'Retail'),
+        ('manufacturing', 'Manufacturing'),
+        ('education', 'Education'),
+        ('hospitality', 'Hospitality'),
+        ('real_estate', 'Real Estate'),
+        ('banking', 'Banking'),
+        ('insurance', 'Insurance'),
+        ('consulting', 'Consulting'),
+        ('logistics', 'Logistics'),
+        ('media', 'Media & Entertainment'),
+        ('other', 'Other'),
+    )
+    
+    EMPLOYEE_SIZE_CHOICES = (
+        ('1-10', '1 - 10 employees'),
+        ('11-50', '11 - 50 employees'),
+        ('51-200', '51 - 200 employees'),
+        ('201-500', '201 - 500 employees'),
+        ('501-1000', '501 - 1000 employees'),
+        ('1000+', '1000+ employees'),
+    )
+    
+    COMPANY_TYPE_CHOICES = (
+        ('private', 'Private'),
+        ('public', 'Public'),
+        ('ngo', 'NGO'),
+        ('startup', 'Startup'),
+        ('government', 'Government'),
+    )
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=200)
+    company_logo = models.ImageField(upload_to='hr_logos/', null=True, blank=True)
+    cover_image = models.ImageField(upload_to='hr_covers/', null=True, blank=True)
+    industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES)
+    company_type = models.CharField(max_length=20, choices=COMPANY_TYPE_CHOICES, default='private')
+    employee_size = models.CharField(max_length=20, choices=EMPLOYEE_SIZE_CHOICES)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    location = models.CharField(max_length=200)
+    about_company = models.TextField(help_text="Describe your company")
+    
+    # Social Media
+    linkedin_url = models.URLField(null=True, blank=True)
+    facebook_url = models.URLField(null=True, blank=True)
+    twitter_url = models.URLField(null=True, blank=True)
+    instagram_url = models.URLField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.company_name} - {self.user.username}"

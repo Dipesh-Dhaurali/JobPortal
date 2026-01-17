@@ -3,10 +3,51 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate
-from hr.forms import JobPostForm
+from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate, HRProfile
+from hr.forms import JobPostForm, HRProfileForm
 from candidate.models import CandidateProfile
 from django.db.models import Q
+from django.utils.safestring import mark_safe
+
+
+@login_required(login_url='login_user')
+def hr_profile(request):
+    """Display HR profile creation/editing page"""
+    try:
+        profile = HRProfile.objects.get(user=request.user)
+    except HRProfile.DoesNotExist:
+        profile = None
+    
+    if request.method == 'POST':
+        form = HRProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            messages.success(request, "Profile saved successfully!")
+            return redirect('hr_profile')
+    else:
+        form = HRProfileForm(instance=profile)
+    
+    context = {
+        'form': form,
+        'profile': profile,
+        'navbar_title': 'Build your profile',
+    }
+    return render(request, 'hr/profile.html', context)
+
+
+@login_required(login_url='login_user')
+def delete_hr_profile(request):
+    """Delete HR profile"""
+    try:
+        profile = HRProfile.objects.get(user=request.user)
+        profile.delete()
+        messages.success(request, "Profile deleted successfully!")
+    except HRProfile.DoesNotExist:
+        messages.error(request, "No profile found to delete.")
+    
+    return redirect('hr_profile')
 
 def home(request):
     """View for the main landing page"""
@@ -97,7 +138,7 @@ def post_job(request):
     
     context = {
         'form': form,
-        'navbar_title': 'Post your job here'  # Added navbar title for post job page
+        'navbar_title': 'Post New Job Here'  # Added navbar title for post job page
     }
     return render(request, 'hr/postjob.html', context)
 
@@ -303,6 +344,8 @@ def job_history(request):
         'rejected_count': rejected_count,
         'total_jobs': all_jobs.count(),
         'display_mode': display_mode,
-        'navbar_title': 'Welcome to HR Job Portal'  # Added navbar title for job history page
+        'navbar_title': mark_safe("""
+        <h2><i class="fas fa-history"></i> Job History & Analytics</h2>
+    """)
     }
     return render(request, 'hr/job_history.html', context)
