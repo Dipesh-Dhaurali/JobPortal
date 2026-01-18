@@ -97,6 +97,24 @@ def blog_detail(request, slug):
                 <h3>3. Practice Mindfulness</h3>
                 <p>Taking moments throughout the day to breathe and center yourself can help manage stress and maintain focus during high-pressure situations.</p>
             """
+        },
+        'top-tips-landing-dream-job': {
+            'title': 'Top Tips for Landing Your Dream Job',
+            'category': 'JOB SEARCH',
+            'image': 'hr/images/blog-job-search-tips.jpg',
+            'content': """
+                <p>Finding and landing your dream job requires more than just sending out resumes. In today's competitive job market, you need a strategic approach and proven techniques to stand out from other candidates.</p>
+                <h3>1. Tailor Your Resume for Each Position</h3>
+                <p>Generic resumes rarely make an impact. Study the job description carefully and highlight the skills and experiences most relevant to the role. Use keywords from the job posting to pass through automated screening systems.</p>
+                <h3>2. Build a Strong Professional Network</h3>
+                <p>Many positions are filled through referrals before they're even posted publicly. Attend industry events, connect with professionals on LinkedIn, and maintain relationships with former colleagues. A personal introduction can significantly increase your chances.</p>
+                <h3>3. Prepare Thoroughly for Interviews</h3>
+                <p>Research the company deeply—understand their mission, recent news, and culture. Prepare specific examples of your accomplishments using the STAR method (Situation, Task, Action, Result). Practice your answers but keep them conversational and authentic.</p>
+                <h3>4. Follow Up Strategically</h3>
+                <p>After your interview, send a thoughtful thank-you email within 24 hours. Reference specific conversations you had and reiterate your genuine interest in the position. This demonstrates professionalism and keeps you fresh in their mind.</p>
+                <h3>5. Don't Stop at "No"</h3>
+                <p>Rejection is part of the process. Instead of getting discouraged, ask for feedback on what you could improve. Many candidates land positions with companies that initially rejected them because they persisted professionally.</p>
+            """
         }
     }
     
@@ -188,6 +206,7 @@ def candidate_details(request, pk):
         'shortlisted_count': applications.filter(status='shortlisted').count(),
         'rejected_count': applications.filter(status='rejected').count(),
         'pending_count': applications.filter(status='pending').count(),
+        'navbar_title': 'View Candidate Application',
     }
     return render(request, 'hr/candidate.html', context)
 
