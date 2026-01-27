@@ -57,6 +57,35 @@
         .field-error {
             border-color: #dc3545 !important;
         }
+        
+        /* Styling for select dropdowns */
+        select.form-control {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            height: auto;
+            display: block;
+            width: 100%;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+        
+        select.form-control:hover {
+            border-color: #80bdff;
+        }
+        
+        select.form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
     </style>
 </head>
 
@@ -150,6 +179,30 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+            </div>
+
+            <!-- Employment Type Field -->
+            <div class="mb-3">
+                <label for="employment_type" class="form-label fw-bold">Employment Type</label>
+                <select class="form-control" id="employment_type" name="employment_type" required>
+                    <option value="">-- Select Employment Type --</option>
+                    <option value="full-time">Full-Time</option>
+                    <option value="part-time">Part-Time</option>
+                    <option value="internship">Internship</option>
+                    <option value="contract">Contract</option>
+                    <option value="freelance">Freelance</option>
+                </select>
+            </div>
+
+            <!-- Work Mode Field -->
+            <div class="mb-3">
+                <label for="work_mode" class="form-label fw-bold">Work Mode</label>
+                <select class="form-control" id="work_mode" name="work_mode" required>
+                    <option value="">-- Select Work Mode --</option>
+                    <option value="on-site">On-Site</option>
+                    <option value="remote">Remote</option>
+                    <option value="hybrid">Hybrid</option>
+                </select>
             </div>
 
             <!-- Last Date to Apply Field -->

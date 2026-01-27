@@ -7,7 +7,7 @@ from datetime import date, timedelta
 class JobPostForm(forms.ModelForm):
     class Meta:
         model = JobPost
-        fields = ['title', 'address', 'CompanyName', 'salaryLow', 'salaryHigh', 'lastDateToApply']
+        fields = ['title', 'address', 'CompanyName', 'salaryLow', 'salaryHigh', 'employment_type', 'work_mode', 'lastDateToApply']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -33,10 +33,16 @@ class JobPostForm(forms.ModelForm):
                 'min': '0',
                 'step': '1'
             }),
+            'employment_type': forms.HiddenInput(),
+            'work_mode': forms.HiddenInput(),
             'lastDateToApply': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
             }),
+        }
+        labels = {
+            'employment_type': 'Employment Type',
+            'work_mode': 'Work Mode',
         }
     
     def clean(self):
@@ -44,6 +50,16 @@ class JobPostForm(forms.ModelForm):
         salary_low = cleaned_data.get('salaryLow')
         salary_high = cleaned_data.get('salaryHigh')
         last_date = cleaned_data.get('lastDateToApply')
+        employment_type = cleaned_data.get('employment_type')
+        work_mode = cleaned_data.get('work_mode')
+        
+        # Validate employment_type is selected
+        if not employment_type:
+            self.add_error('employment_type', "Please select an Employment Type.")
+        
+        # Validate work_mode is selected
+        if not work_mode:
+            self.add_error('work_mode', "Please select a Work Mode.")
         
         if salary_low is not None and salary_low < 0:
             self.add_error('salaryLow', "Salary cannot be negative. Minimum value is 0.")
