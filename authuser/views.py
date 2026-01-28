@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from hr.models import hr
 
 
@@ -18,13 +19,17 @@ def register_candidate(request):
             msg = "User already Exists..."
             return render(request, 'authuser/candidateregister.html', {'msg': msg})
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
-        login(request, user)
-        return redirect('candidate_dashboard')
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+            messages.success(request, 'Registration successful! Please log in with your credentials.')
+            return redirect('login_user')
+        except Exception as e:
+            msg = "Registration failed. Please try again later."
+            return render(request, 'authuser/candidateregister.html', {'msg': msg})
     
     return render(request, 'authuser/candidateregister.html')
 
@@ -43,14 +48,18 @@ def register_hr(request):
             msg = "User already Exists..."
             return render(request, 'authuser/hrregister.html', {'msg': msg})
 
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
-        hr.objects.create(user=user)
-        login(request, user)
-        return redirect('hrdash')
+        try:
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+            hr.objects.create(user=user)
+            messages.success(request, 'Registration successful! Please log in with your credentials.')
+            return redirect('login_user')
+        except Exception as e:
+            msg = "Registration failed. Please try again later."
+            return render(request, 'authuser/hrregister.html', {'msg': msg})
     
     return render(request, 'authuser/hrregister.html')
 
