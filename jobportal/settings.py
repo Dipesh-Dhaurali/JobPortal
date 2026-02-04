@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "authuser",
     "candidate",
     "hr",
+    "admin_portal",
 ]
 
 MIDDLEWARE = [

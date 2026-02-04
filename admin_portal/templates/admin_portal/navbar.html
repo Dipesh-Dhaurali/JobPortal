@@ -1,0 +1,66 @@
+<!-- Admin Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top border-bottom border-secondary">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{% url 'admin_dashboard' %}">
+            <i class="bi bi-shield-check"></i> JobPortal Admin
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}" 
+                       href="{% url 'admin_dashboard' %}">
+                        <i class="bi bi-speedometer2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}" 
+                       href="{% url 'manage_users' %}">
+                        <i class="bi bi-people"></i> Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'moderate_jobs' %}active{% endif %}" 
+                       href="{% url 'moderate_jobs' %}">
+                        <i class="bi bi-briefcase"></i> Job Posts
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout_user' %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar-dark {
+        background-color: #1a1a1a !important;
+    }
+    
+    .navbar-dark .navbar-brand {
+        color: #3b82f6 !important;
+        font-size: 1.3rem;
+    }
+    
+    .navbar-dark .nav-link {
+        color: #e0e0e0 !important;
+        transition: color 0.3s ease;
+    }
+    
+    .navbar-dark .nav-link:hover,
+    .navbar-dark .nav-link.active {
+        color: #3b82f6 !important;
+    }
+    
+    .border-secondary {
+        border-color: #444 !important;
+    }
+</style>

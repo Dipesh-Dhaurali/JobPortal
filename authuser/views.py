@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from hr.models import hr
+from admin_portal.models import AdminUser
 
 
 def register_candidate(request):
@@ -78,6 +79,14 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
+            # Check if admin
+            try:
+                AdminUser.objects.get(user=user)
+                return redirect('admin_dashboard')
+            except AdminUser.DoesNotExist:
+                pass
+            
+            # Check if HR
             if hr.objects.filter(user=user).exists():
                 return redirect('hrdash')
             else:
