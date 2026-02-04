@@ -1,3 +1,39 @@
 from django.contrib import admin
+from authuser.models import UserProfile
 
-# Register your models here.
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'user_type', 'is_verified', 'created_at')
+    list_filter = ('user_type', 'is_verified', 'created_at')
+    search_fields = ('user__username', 'user__email')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('User Info', {
+            'fields': ('user', 'user_type', 'phone_number', 'is_verified')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if not change:
+            self.message_user(request, f"User profile created for {obj.user.username}")
+    
+    actions = ['verify_users', 'unverify_users']
+    
+    def verify_users(self, request, queryset):
+        """Mark selected users as verified"""
+        updated_count = queryset.update(is_verified=True)
+        self.message_user(request, f"Successfully verified {updated_count} user(s).")
+    verify_users.short_description = "Mark selected users as verified"
+    
+    def unverify_users(self, request, queryset):
+        """Mark selected users as unverified"""
+        updated_count = queryset.update(is_verified=False)
+        self.message_user(request, f"Successfully unverified {updated_count} user(s).")
+    unverify_users.short_description = "Mark selected users as unverified"

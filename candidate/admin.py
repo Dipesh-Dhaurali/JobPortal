@@ -1,6 +1,38 @@
 from django.contrib import admin
 from candidate import models
 
+@admin.register(models.CandidateProfile)
+class CandidateProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'job_preference_title', 'preferred_job_level', 'education_level', 'created_at')
+    list_filter = ('preferred_job_level', 'preferred_job_type', 'education_level', 'created_at')
+    search_fields = ('user__username', 'user__email', 'job_preference_title')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Personal Information', {
+            'fields': ('user', 'profile_photo', 'job_preference_title')
+        }),
+        ('Job Preferences', {
+            'fields': ('preferred_job_level', 'preferred_job_type', 'work_experience')
+        }),
+        ('Education', {
+            'fields': ('education_level', 'course_or_program', 'school_college_name', 'graduation_year', 'gpa_percentage_type', 'gpa_percentage_value')
+        }),
+        ('Skills & Languages', {
+            'fields': ('skills', 'languages')
+        }),
+        ('Social Accounts', {
+            'fields': ('social_account_name_1', 'social_account_url_1', 'social_account_name_2', 'social_account_url_2'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
 @admin.register(models.MyApplyJobList)
 class MyApplyJobListAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "job", "dateYouApply")
