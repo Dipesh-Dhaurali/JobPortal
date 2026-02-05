@@ -9,6 +9,10 @@ class MyApplyJobList(models.Model):
     job=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
     dateYouApply=models.DateField(auto_now_add=True)
     
+    class Meta:
+        verbose_name = "Job Application Tracker"
+        verbose_name_plural = "Job Application Trackers"
+    
     def __str__(self):
         return f"{self.user.username} - {self.job.job.title}"
 
@@ -20,6 +24,8 @@ class IsShortlisted(models.Model):
     
     class Meta:
         unique_together = ('user', 'job')
+        verbose_name = "Shortlist Notification"
+        verbose_name_plural = "Shortlist Notifications"
     
     def __str__(self):
         return f"{self.user.username} - {self.job.title}"

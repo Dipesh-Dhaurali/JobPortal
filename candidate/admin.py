@@ -77,4 +77,34 @@ class JobApplicationTrackerAdmin(admin.ModelAdmin):
     delete_entire_candidate_database.short_description = "DELETE ENTIRE CANDIDATE DATABASE (ALL CANDIDATE DATA)"
 
 
-# IsShortlisted REMOVED - Use ShortlistedCandidate in HR/Recruiter app instead for consistency
+@admin.register(models.IsShortlisted)
+class ShortlistNotificationAdmin(admin.ModelAdmin):
+    """Candidate-side shortlist notifications (complementary to HR's ShortlistedCandidate)"""
+    list_display = ('id', 'user', 'job', 'shortlisted_date', 'notification_read')
+    list_filter = ('shortlisted_date', 'notification_read')
+    search_fields = ('user__username', 'job__title')
+    readonly_fields = ('shortlisted_date',)
+    ordering = ('-shortlisted_date',)
+    
+    fieldsets = (
+        ('Shortlist Info', {
+            'fields': ('user', 'job', 'shortlisted_date')
+        }),
+        ('Notification Status', {
+            'fields': ('notification_read',)
+        }),
+    )
+    
+    actions = ['mark_as_read', 'mark_as_unread']
+    
+    def mark_as_read(self, request, queryset):
+        """Mark notifications as read"""
+        updated = queryset.update(notification_read=True)
+        self.message_user(request, f"Marked {updated} notification(s) as read.")
+    mark_as_read.short_description = "Mark as Read"
+    
+    def mark_as_unread(self, request, queryset):
+        """Mark notifications as unread"""
+        updated = queryset.update(notification_read=False)
+        self.message_user(request, f"Marked {updated} notification(s) as unread.")
+    mark_as_unread.short_description = "Mark as Unread"

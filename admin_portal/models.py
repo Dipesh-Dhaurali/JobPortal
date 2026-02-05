@@ -10,6 +10,10 @@ class AdminUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name = "Admin User"
+        verbose_name_plural = "Admin Users"
+    
     def __str__(self):
         return f"Admin - {self.user.username}"
 
@@ -36,6 +40,10 @@ class UserStatus(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name = "User Account Status"
+        verbose_name_plural = "User Account Statuses"
+    
     def __str__(self):
         return f"{self.user.username} - {self.status}"
 
@@ -55,6 +63,10 @@ class JobPostModeration(models.Model):
     reason = models.TextField(null=True, blank=True)
     moderated_by = models.ForeignKey(AdminUser, on_delete=models.SET_NULL, null=True, blank=True)
     moderated_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Job Post Moderation"
+        verbose_name_plural = "Job Post Moderations"
     
     def __str__(self):
         return f"{self.job_post.title} - {self.status}"
@@ -77,6 +89,11 @@ class AdminActivityLog(models.Model):
     description = models.TextField()
     target_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='admin_actions')
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Admin Activity Log"
+        verbose_name_plural = "Admin Activity Logs"
+        ordering = ('-created_at',)
     
     def __str__(self):
         return f"{self.admin.user.username} - {self.action_type}"
