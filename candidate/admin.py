@@ -1,6 +1,5 @@
 from django.contrib import admin
 from candidate import models
-from hr.models import candidateApplication
 
 @admin.register(models.CandidateAccount)
 class CandidateAccountAdmin(admin.ModelAdmin):
@@ -77,60 +76,5 @@ class CandidateProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(candidateApplication)
-class JobApplicationTrackerAdmin(admin.ModelAdmin):
-    """Tracks all job applications submitted by candidates with status tracking"""
-    list_display = ("id", "user", "job", "status", "applied_at")
-    list_filter = ('status', 'applied_at')
-    search_fields = ('user__username', 'job__title')
-    readonly_fields = ('applied_at',)
-    ordering = ('-applied_at',)
-    
-    fieldsets = (
-        ('Application Info', {
-            'fields': ('user', 'job', 'status')
-        }),
-        ('Education & Experience', {
-            'fields': ('education_level', 'passingYear', 'yearOfExp')
-        }),
-        ('Documents', {
-            'fields': ('resume', 'support_documents')
-        }),
-        ('Application Date', {
-            'fields': ('applied_at',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def has_add_permission(self, request):
-        """Prevent manual addition - only auto-created when candidate applies"""
-        return False
-    
-    actions = ['mark_pending', 'mark_shortlisted', 'mark_rejected', 'mark_selected']
-    
-    def mark_pending(self, request, queryset):
-        """Mark applications as pending"""
-        updated = queryset.update(status='pending')
-        self.message_user(request, f"Marked {updated} application(s) as pending.")
-    mark_pending.short_description = "Mark as Pending"
-    
-    def mark_shortlisted(self, request, queryset):
-        """Mark applications as shortlisted"""
-        updated = queryset.update(status='shortlisted')
-        self.message_user(request, f"Marked {updated} application(s) as shortlisted.")
-    mark_shortlisted.short_description = "Mark as Shortlisted"
-    
-    def mark_rejected(self, request, queryset):
-        """Mark applications as rejected"""
-        updated = queryset.update(status='rejected')
-        self.message_user(request, f"Marked {updated} application(s) as rejected.")
-    mark_rejected.short_description = "Mark as Rejected"
-    
-    def mark_selected(self, request, queryset):
-        """Mark applications as selected"""
-        updated = queryset.update(status='selected')
-        self.message_user(request, f"Marked {updated} application(s) as selected.")
-    mark_selected.short_description = "Mark as Selected"
-
-
-# Shortlist Notifications removed - use HR app's ShortlistedCandidate model instead
+# Job Application Tracker is registered in hr/admin.py as candidateApplicationAdmin
+# Shortlist Notifications are managed through HR app's ShortlistedCandidate model
