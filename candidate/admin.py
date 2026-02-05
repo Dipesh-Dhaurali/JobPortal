@@ -1,5 +1,6 @@
 from django.contrib import admin
 from candidate import models
+from hr.models import candidateApplication
 
 @admin.register(models.CandidateAccount)
 class CandidateAccountAdmin(admin.ModelAdmin):
@@ -76,21 +77,28 @@ class CandidateProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(models.MyApplyJobList)
+@admin.register(candidateApplication)
 class JobApplicationTrackerAdmin(admin.ModelAdmin):
-    """Tracks all job applications submitted by candidates"""
-    list_display = ("id", "user", "job", "dateYouApply")
-    list_filter = ('dateYouApply',)
-    search_fields = ('user__username', 'job__job__title')
-    readonly_fields = ('dateYouApply',)
-    ordering = ('-dateYouApply',)
+    """Tracks all job applications submitted by candidates with status tracking"""
+    list_display = ("id", "user", "job", "status", "applied_at")
+    list_filter = ('status', 'applied_at')
+    search_fields = ('user__username', 'job__title')
+    readonly_fields = ('applied_at',)
+    ordering = ('-applied_at',)
     
     fieldsets = (
         ('Application Info', {
-            'fields': ('user', 'job')
+            'fields': ('user', 'job', 'status')
+        }),
+        ('Education & Experience', {
+            'fields': ('education_level', 'passingYear', 'yearOfExp')
+        }),
+        ('Documents', {
+            'fields': ('resume', 'support_documents')
         }),
         ('Application Date', {
-            'fields': ('dateYouApply',)
+            'fields': ('applied_at',),
+            'classes': ('collapse',)
         }),
     )
     
@@ -98,26 +106,31 @@ class JobApplicationTrackerAdmin(admin.ModelAdmin):
         """Prevent manual addition - only auto-created when candidate applies"""
         return False
     
-    actions = ['delete_entire_candidate_database']
+    actions = ['mark_pending', 'mark_shortlisted', 'mark_rejected', 'mark_selected']
     
-    def delete_entire_candidate_database(self, request, queryset):
-        """Delete all Candidate-related data from the entire database"""
-        profile_count = models.CandidateProfile.objects.all().count()
-        apply_count = models.MyApplyJobList.objects.all().count()
-        account_count = models.CandidateAccount.objects.all().count()
-        
-        # Delete all Candidate-side data
-        models.CandidateAccount.objects.all().delete()
-        models.MyApplyJobList.objects.all().delete()
-        models.CandidateProfile.objects.all().delete()
-        
-        self.message_user(
-            request, 
-            f'Successfully deleted ENTIRE CANDIDATE DATABASE: {profile_count} Profiles, '
-            f'{apply_count} Apply Lists, {account_count} Candidate Accounts.'
-        )
+    def mark_pending(self, request, queryset):
+        """Mark applications as pending"""
+        updated = queryset.update(status='pending')
+        self.message_user(request, f"Marked {updated} application(s) as pending.")
+    mark_pending.short_description = "Mark as Pending"
     
-    delete_entire_candidate_database.short_description = "DELETE ENTIRE CANDIDATE DATABASE (ALL CANDIDATE DATA)"
+    def mark_shortlisted(self, request, queryset):
+        """Mark applications as shortlisted"""
+        updated = queryset.update(status='shortlisted')
+        self.message_user(request, f"Marked {updated} application(s) as shortlisted.")
+    mark_shortlisted.short_description = "Mark as Shortlisted"
+    
+    def mark_rejected(self, request, queryset):
+        """Mark applications as rejected"""
+        updated = queryset.update(status='rejected')
+        self.message_user(request, f"Marked {updated} application(s) as rejected.")
+    mark_rejected.short_description = "Mark as Rejected"
+    
+    def mark_selected(self, request, queryset):
+        """Mark applications as selected"""
+        updated = queryset.update(status='selected')
+        self.message_user(request, f"Marked {updated} application(s) as selected.")
+    mark_selected.short_description = "Mark as Selected"
 
 
 # Shortlist Notifications removed - use HR app's ShortlistedCandidate model instead
