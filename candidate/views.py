@@ -155,9 +155,12 @@ def candidate_dashboard(request):
     shortlisted_jobs = ShortlistedCandidate.objects.filter(candidate__user=request.user)
     shortlisted_count = shortlisted_jobs.count()
     
-    # Show notification for newly shortlisted candidates
-    for shortlist in shortlisted_jobs:
+    # Show notification only for newly shortlisted candidates (not yet notified)
+    newly_shortlisted = shortlisted_jobs.filter(notification_sent=False)
+    for shortlist in newly_shortlisted:
         messages.info(request, f"Great news! You have been shortlisted for {shortlist.job.title}!")
+        shortlist.notification_sent = True
+        shortlist.save()
     
     context = {
         'jobs': jobs,
