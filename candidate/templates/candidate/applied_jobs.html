@@ -338,6 +338,11 @@
                     <a href="{% url 'job_detail' item.job.id %}" class="btn btn-primary btn-small">
                         <i class="fas fa-eye me-1"></i>View Details
                     </a>
+                    {% if item.application.resume %}
+                    <a href="{{ item.application.resume.url }}" class="btn btn-success btn-small" download>
+                        <i class="fas fa-download me-1"></i>Download CV
+                    </a>
+                    {% endif %}
                     {% if item.status == 'rejected' %}
                     <a href="{% url 'candidate_dashboard' %}" class="btn btn-outline-secondary btn-small">
                         <i class="fas fa-search me-1"></i>Find Similar Jobs
