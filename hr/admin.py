@@ -78,3 +78,21 @@ class ShortlistedCandidateAdmin(admin.ModelAdmin):
     search_fields = ('job__title', 'candidate__user__username')
     readonly_fields = ('shortlisted_at',)
     ordering = ('-shortlisted_at',)
+
+
+@admin.register(models.SelectedCandidate)
+class SelectedCandidateAdmin(admin.ModelAdmin):
+    list_display = ('id', 'job', 'candidate', 'selected_at')
+    list_filter = ('selected_at',)
+    search_fields = ('job__title', 'candidate__user__username')
+    readonly_fields = ('selected_at',)
+    ordering = ('-selected_at',)
+
+
+@admin.register(models.HRProfile)
+class HRProfileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'company_name', 'industry', 'employee_size', 'created_at')
+    list_filter = ('industry', 'company_type', 'employee_size', 'created_at')
+    search_fields = ('user__username', 'company_name', 'location')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)

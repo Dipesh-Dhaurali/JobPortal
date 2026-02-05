@@ -1,6 +1,15 @@
 from django.contrib import admin
 from candidate import models
 
+@admin.register(models.CandidateProfile)
+class CandidateProfileAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "job_preference_title", "preferred_job_level", "created_at")
+    list_filter = ('preferred_job_level', 'education_level', 'created_at')
+    search_fields = ('user__username', 'user__email', 'job_preference_title')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+
+
 @admin.register(models.MyApplyJobList)
 class MyApplyJobListAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "job", "dateYouApply")
