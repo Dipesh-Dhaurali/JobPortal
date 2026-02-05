@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from hr.models import hr, JobPost
-from candidate.models import CandidateProfile
 
 class AdminUser(models.Model):
     """Admin user model to manage platform administrators"""
