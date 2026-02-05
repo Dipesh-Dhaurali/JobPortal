@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from hr.models import candidateApplication, JobPost
 
-# Create your candidate models here.
 
 class MyApplyJobList(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
