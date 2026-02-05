@@ -1,6 +1,49 @@
 from django.contrib import admin
 from candidate import models
 
+@admin.register(models.CandidateAccount)
+class CandidateAccountAdmin(admin.ModelAdmin):
+    """Manage all registered candidate accounts with suspend/delete functionality"""
+    list_display = ('id', 'user', 'account_status', 'created_at', 'suspended_at')
+    list_filter = ('account_status', 'created_at', 'suspended_at')
+    search_fields = ('user__username', 'user__email')
+    readonly_fields = ('created_at', 'updated_at', 'suspended_at')
+    
+    fieldsets = (
+        ('Account Info', {
+            'fields': ('user', 'account_status')
+        }),
+        ('Suspension Details', {
+            'fields': ('reason_for_suspension', 'suspended_by', 'suspended_at'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    actions = ['mark_active', 'mark_suspended', 'mark_pending']
+    
+    def mark_active(self, request, queryset):
+        """Mark selected accounts as active"""
+        updated = queryset.update(account_status='active', suspended_at=None)
+        self.message_user(request, f"Activated {updated} candidate account(s).")
+    mark_active.short_description = "Mark as Active"
+    
+    def mark_suspended(self, request, queryset):
+        """Mark selected accounts as suspended"""
+        updated = queryset.update(account_status='suspended')
+        self.message_user(request, f"Suspended {updated} candidate account(s).")
+    mark_suspended.short_description = "Mark as Suspended"
+    
+    def mark_pending(self, request, queryset):
+        """Mark selected accounts as pending verification"""
+        updated = queryset.update(account_status='pending')
+        self.message_user(request, f"Marked {updated} candidate account(s) as pending verification.")
+    mark_pending.short_description = "Mark as Pending Verification"
+
+
 @admin.register(models.CandidateProfile)
 class CandidateProfileAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'job_preference_title', 'preferred_job_level', 'education_level', 'created_at')
@@ -61,50 +104,20 @@ class JobApplicationTrackerAdmin(admin.ModelAdmin):
         """Delete all Candidate-related data from the entire database"""
         profile_count = models.CandidateProfile.objects.all().count()
         apply_count = models.MyApplyJobList.objects.all().count()
-        shortlist_count = models.IsShortlisted.objects.all().count()
+        account_count = models.CandidateAccount.objects.all().count()
         
         # Delete all Candidate-side data
-        models.IsShortlisted.objects.all().delete()
+        models.CandidateAccount.objects.all().delete()
         models.MyApplyJobList.objects.all().delete()
         models.CandidateProfile.objects.all().delete()
         
         self.message_user(
             request, 
             f'Successfully deleted ENTIRE CANDIDATE DATABASE: {profile_count} Profiles, '
-            f'{apply_count} Apply Lists, {shortlist_count} Shortlisted entries.'
+            f'{apply_count} Apply Lists, {account_count} Candidate Accounts.'
         )
     
     delete_entire_candidate_database.short_description = "DELETE ENTIRE CANDIDATE DATABASE (ALL CANDIDATE DATA)"
 
 
-@admin.register(models.IsShortlisted)
-class ShortlistNotificationAdmin(admin.ModelAdmin):
-    """Candidate-side shortlist notifications (complementary to HR's ShortlistedCandidate)"""
-    list_display = ('id', 'user', 'job', 'shortlisted_date', 'notification_read')
-    list_filter = ('shortlisted_date', 'notification_read')
-    search_fields = ('user__username', 'job__title')
-    readonly_fields = ('shortlisted_date',)
-    ordering = ('-shortlisted_date',)
-    
-    fieldsets = (
-        ('Shortlist Info', {
-            'fields': ('user', 'job', 'shortlisted_date')
-        }),
-        ('Notification Status', {
-            'fields': ('notification_read',)
-        }),
-    )
-    
-    actions = ['mark_as_read', 'mark_as_unread']
-    
-    def mark_as_read(self, request, queryset):
-        """Mark notifications as read"""
-        updated = queryset.update(notification_read=True)
-        self.message_user(request, f"Marked {updated} notification(s) as read.")
-    mark_as_read.short_description = "Mark as Read"
-    
-    def mark_as_unread(self, request, queryset):
-        """Mark notifications as unread"""
-        updated = queryset.update(notification_read=False)
-        self.message_user(request, f"Marked {updated} notification(s) as unread.")
-    mark_as_unread.short_description = "Mark as Unread"
+# Shortlist Notifications removed - use HR app's ShortlistedCandidate model instead

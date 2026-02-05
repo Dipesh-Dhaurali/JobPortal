@@ -17,8 +17,8 @@ class UserProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = "User Profile"
-        verbose_name_plural = "User Profiles"
+        verbose_name = "User Type & Verification"
+        verbose_name_plural = "User Types & Verification"
     
     def __str__(self):
         return f"{self.user.username} - {self.user_type}"
