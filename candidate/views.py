@@ -152,7 +152,7 @@ def candidate_dashboard(request):
         else:
             job.application_status = None
     
-    shortlisted_jobs = ShortlistedCandidate.objects.filter(candidate=request.user)
+    shortlisted_jobs = ShortlistedCandidate.objects.filter(candidate__user=request.user)
     shortlisted_count = shortlisted_jobs.count()
     
     # Show notification for newly shortlisted candidates
