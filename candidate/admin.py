@@ -34,12 +34,26 @@ class CandidateProfileAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.MyApplyJobList)
-class MyApplyJobListAdmin(admin.ModelAdmin):
+class JobApplicationTrackerAdmin(admin.ModelAdmin):
+    """Tracks all job applications submitted by candidates"""
     list_display = ("id", "user", "job", "dateYouApply")
     list_filter = ('dateYouApply',)
-    search_fields = ('user__username',)
+    search_fields = ('user__username', 'job__job__title')
     readonly_fields = ('dateYouApply',)
     ordering = ('-dateYouApply',)
+    
+    fieldsets = (
+        ('Application Info', {
+            'fields': ('user', 'job')
+        }),
+        ('Application Date', {
+            'fields': ('dateYouApply',)
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Prevent manual addition - only auto-created when candidate applies"""
+        return False
     
     actions = ['delete_entire_candidate_database']
     
@@ -63,10 +77,4 @@ class MyApplyJobListAdmin(admin.ModelAdmin):
     delete_entire_candidate_database.short_description = "DELETE ENTIRE CANDIDATE DATABASE (ALL CANDIDATE DATA)"
 
 
-@admin.register(models.IsShortlisted)
-class IsShortlistedAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "job", "shortlisted_date", "notification_read")
-    list_filter = ('shortlisted_date', 'notification_read')
-    search_fields = ('user__username', 'job__title')
-    readonly_fields = ('shortlisted_date',)
-    ordering = ('-shortlisted_date',)
+# IsShortlisted REMOVED - Use ShortlistedCandidate in HR/Recruiter app instead for consistency

@@ -2,7 +2,13 @@ from django.contrib import admin
 from authuser.models import UserProfile
 
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+class UserTypeAndVerificationAdmin(admin.ModelAdmin):
+    """
+    Manages user type classification and verification status.
+    NOTE: This is DIFFERENT from Django's Groups/Users system.
+    - Groups/Users: Django's built-in role/permission system
+    - UserProfile: Our custom user classification (Candidate/HR/Admin) + verification status
+    """
     list_display = ('id', 'user', 'user_type', 'is_verified', 'created_at')
     list_filter = ('user_type', 'is_verified', 'created_at')
     search_fields = ('user__username', 'user__email')
@@ -10,8 +16,9 @@ class UserProfileAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     
     fieldsets = (
-        ('User Info', {
-            'fields': ('user', 'user_type', 'phone_number', 'is_verified')
+        ('User Type & Verification', {
+            'fields': ('user', 'user_type', 'phone_number', 'is_verified'),
+            'description': 'Classifies user as Candidate, HR/Recruiter, or Admin. Different from Django Groups/Users.'
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at'),
