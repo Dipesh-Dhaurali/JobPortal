@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from hr.models import hr
+from candidate.models import CandidateAccount
 
 
 def register_candidate(request):
@@ -25,6 +26,8 @@ def register_candidate(request):
                 email=email,
                 password=password
             )
+            # Create CandidateAccount for the new user
+            CandidateAccount.objects.create(user=user, account_status='active')
             messages.success(request, 'Registration successful! Please log in with your credentials.')
             return redirect('login_user')
         except Exception as e:
@@ -78,6 +81,7 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
+            # Check if HR/Recruiter
             if hr.objects.filter(user=user).exists():
                 return redirect('hrdash')
             else:

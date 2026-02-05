@@ -2,27 +2,44 @@ from django.db import models
 from django.contrib.auth.models import User
 from hr.models import candidateApplication, JobPost
 
-# Create your candidate models here.
+
+class CandidateAccount(models.Model):
+    """Track all registered candidate accounts with status and management"""
+    ACCOUNT_STATUS_CHOICES = (
+        ('active', 'Active'),
+        ('suspended', 'Suspended'),
+        ('pending', 'Pending Verification'),
+        ('inactive', 'Inactive'),
+    )
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='candidate_account')
+    account_status = models.CharField(max_length=20, choices=ACCOUNT_STATUS_CHOICES, default='active')
+    reason_for_suspension = models.TextField(null=True, blank=True)
+    suspended_at = models.DateTimeField(null=True, blank=True)
+    suspended_by = models.CharField(max_length=200, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Candidate Account"
+        verbose_name_plural = "Candidate Accounts"
+        ordering = ('-created_at',)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.account_status}"
+
 
 class MyApplyJobList(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     job=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
     dateYouApply=models.DateField(auto_now_add=True)
     
+    class Meta:
+        verbose_name = "Job Application Tracker"
+        verbose_name_plural = "Job Application Trackers"
+    
     def __str__(self):
         return f"{self.user.username} - {self.job.job.title}"
-
-class IsShortlisted(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    shortlisted_date=models.DateField(auto_now_add=True)
-    notification_read=models.BooleanField(default=False)
-    
-    class Meta:
-        unique_together = ('user', 'job')
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.job.title}"
 
 class CandidateProfile(models.Model):
     JOB_LEVEL_CHOICES = (

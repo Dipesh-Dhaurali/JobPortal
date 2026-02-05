@@ -1,13 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+from datetime import date
 
 # Create your models here.
 
 class hr(models.Model):
+    """Recruiter/HR profile - Represents a company or HR person managing job postings"""
     user=models.OneToOneField(User,on_delete=models.CASCADE)
+    
+    class Meta:
+        verbose_name = "Recruiter Account"
+        verbose_name_plural = "Recruiter Accounts"
+    
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} (Recruiter)"
 
 EMPLOYMENT_TYPE_CHOICES = (
     ('full-time', 'Full-time'),
@@ -35,6 +43,27 @@ class JobPost(models.Model):
     created_at=models.DateTimeField(auto_now_add=True, null=True)
     employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='full-time', null=True, blank=True)
     work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, default='on-site', null=True, blank=True)
+
+    def clean(self):
+        """Validate salary range and application deadline"""
+        errors = {}
+        
+        # Validate salary range: max must be greater than min
+        if self.salaryLow > 0 and self.salaryHigh > 0:
+            if self.salaryHigh <= self.salaryLow:
+                errors['salaryHigh'] = "Maximum salary must be greater than minimum salary."
+        
+        # Validate application deadline: must be today or later
+        if self.lastDateToApply < date.today():
+            errors['lastDateToApply'] = "Application deadline cannot be in the past. Please select today or a future date."
+        
+        if errors:
+            raise ValidationError(errors)
+    
+    def save(self, *args, **kwargs):
+        """Call clean before saving"""
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.title)

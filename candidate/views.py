@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from hr.models import JobPost, candidateApplication, HRProfile
-from candidate.models import IsShortlisted, CandidateProfile
+from hr.models import JobPost, candidateApplication, HRProfile, ShortlistedCandidate
+from candidate.models import CandidateProfile
 from candidate.forms import JobApplicationForm, CandidateProfileForm
 from django.utils import timezone
 from datetime import timedelta
@@ -152,13 +152,14 @@ def candidate_dashboard(request):
         else:
             job.application_status = None
     
-    shortlisted_jobs = IsShortlisted.objects.filter(user=request.user)
+    shortlisted_jobs = ShortlistedCandidate.objects.filter(candidate__user=request.user)
     shortlisted_count = shortlisted_jobs.count()
     
-    unread_shortlist = shortlisted_jobs.filter(notification_read=False)
-    for shortlist in unread_shortlist:
-        messages.success(request, f"Congratulations! You have been shortlisted for {shortlist.job.title}!")
-        shortlist.notification_read = True
+    # Show notification only for newly shortlisted candidates (not yet notified)
+    newly_shortlisted = shortlisted_jobs.filter(notification_sent=False)
+    for shortlist in newly_shortlisted:
+        messages.info(request, f"Great news! You have been shortlisted for {shortlist.job.title}!")
+        shortlist.notification_sent = True
         shortlist.save()
     
     context = {
@@ -185,7 +186,7 @@ def job_detail(request, pk):
     application = candidateApplication.objects.filter(user=request.user, job=job).first()
     has_applied = application is not None
     application_status = application.status if application else None
-    is_shortlisted = IsShortlisted.objects.filter(user=request.user, job=job).exists()
+    is_shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user, job=job).exists()
     is_rejected = application_status == 'rejected' if application else False
     
     company_profile_exists = HRProfile.objects.filter(user=job.user).exists()
@@ -221,7 +222,7 @@ def job_detail(request, pk):
 @login_required(login_url='login_user')
 def shortlisted_jobs(request):
     """Display jobs where candidate has been shortlisted"""
-    shortlisted = IsShortlisted.objects.filter(user=request.user).order_by('-shortlisted_date')
+    shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user).order_by('-shortlisted_at')
     
     context = {
         'shortlisted_jobs': shortlisted,

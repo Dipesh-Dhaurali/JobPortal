@@ -53,6 +53,14 @@ def home(request):
     """View for the main landing page"""
     return render(request, 'hr/index.html')
 
+def about_us(request):
+    """View for the About Us page"""
+    return render(request, 'hr/aboutus.html')
+
+def contact_us(request):
+    """View for the Contact Us page"""
+    return render(request, 'hr/contactus.html')
+
 def blog_detail(request, slug):
     """View for displaying individual blog/article content"""
     blogs = {

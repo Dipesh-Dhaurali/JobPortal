@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - JobPortal</title>
+  <style>
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+    }
+    
+    body {
+      margin: 0;
+      background: #fff;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .navbar-top {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar-top > div {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: #0f172a !important;
+      text-decoration: none;
+    }
+    .navbar-brand span {
+      color: #3b82f6;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 20px;
+    }
+    .navbar-links a {
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .navbar-links a:hover {
+      color: #3b82f6;
+    }
+    .navbar-links a.active {
+      color: #3b82f6;
+      font-weight: 600;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(to right, #0f172a, #1e3a8a);
+      color: #fff;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    .hero h1 { 
+      margin: 0; 
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+    .hero p { 
+      margin-top: 20px; 
+      font-size: 18px; 
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 2rem;
+      color: #0f172a;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    /* Mission Section */
+    .mission-section {
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 40px;
+      border-radius: 8px;
+      margin-bottom: 40px;
+    }
+
+    .mission-section p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #334155;
+      margin: 0;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .feature-card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: #eff6ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #3b82f6;
+    }
+
+    .feature-card h4 {
+      margin: 0 0 10px 0;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    /* Team Section */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-top: 50px;
+    }
+
+    .team-member {
+      text-align: center;
+    }
+
+    .team-member-avatar {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #3b82f6, #1e40af);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 48px;
+    }
+
+    .team-member h4 {
+      margin: 0;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .team-member p {
+      color: #64748b;
+      margin: 5px 0 0 0;
+    }
+
+    /* Stats Section */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+      margin: 60px 0;
+    }
+
+    .stat-box h3 {
+      font-size: 2.5rem;
+      color: #3b82f6;
+      margin: 0;
+    }
+
+    .stat-box p {
+      color: #64748b;
+      margin: 10px 0 0 0;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .timeline-item {
+      margin-bottom: 40px;
+      padding-left: 50px;
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background: #3b82f6;
+      border-radius: 50%;
+      border: 4px solid #fff;
+    }
+
+    .timeline-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 20px;
+      width: 4px;
+      height: calc(100% + 20px);
+      background: #e2e8f0;
+    }
+
+    .timeline-item h4 {
+      margin: 0;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .timeline-item p {
+      margin: 5px 0 0 0;
+      color: #64748b;
+    }
+
+    footer {
+      background: #0f172a;
+      color: #cbd5e1;
+      padding: 60px 20px 40px;
+      margin-top: 80px;
+    }
+
+    footer a {
+      color: #3b82f6;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #60a5fa;
+      text-decoration: underline;
+    }
+
+    footer .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    footer h4 {
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    footer p {
+      margin: 10px 0;
+    }
+
+    footer .footer-bottom {
+      border-top: 1px solid #334155;
+      padding-top: 20px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      h2 { font-size: 1.8rem; }
+      .hero h1 { font-size: 32px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar-top">
+    <div>
+      <a href="/" class="navbar-brand">JOB<span>PORTAL</span></a>
+      <div class="navbar-links">
+        <a href="/">Home</a>
+        <a href="/aboutus/" class="active">About Us</a>
+        <a href="/contactus/">Contact Us</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>About JobPortal</h1>
+    <p>Revolutionizing the way people find jobs and companies discover talent</p>
+  </div>
+
+  <!-- Main Content -->
+  <section>
+    <div class="container">
+      <h2>Our Story</h2>
+      <div class="mission-section">
+        <p>
+          JobPortal was founded with a simple mission: to bridge the gap between job seekers and employers by creating a modern, 
+          technology-driven platform. We believe that finding the right job should be easy, transparent, and accessible to everyone. 
+          Our platform leverages cutting-edge technology to connect skilled professionals with opportunities that match their aspirations 
+          and career goals.
+        </p>
+      </div>
+      <p>
+        What started as a vision to simplify job searching has grown into a comprehensive ecosystem that supports both candidates and employers. 
+        We're committed to creating a fair, inclusive, and efficient hiring experience for all stakeholders.
+      </p>
+    </div>
+  </section>
+
+  <!-- Mission & Vision -->
+  <section style="background: #f8fafc;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+        <div>
+          <h3 style="color: #3b82f6; margin-bottom: 15px;">🎯 Our Mission</h3>
+          <p>
+            To empower job seekers by providing them with equal opportunities and enabling employers to find the perfect talent 
+            through an intelligent, user-friendly platform.
+          </p>
+        </div>
+        <div>
+          <h3 style="color: #3b82f6; margin-bottom: 15px;">🌟 Our Vision</h3>
+          <p>
+            To become the leading job portal platform that transforms careers and builds thriving organizations through technology 
+            innovation and human-centric design.
+          </p>
+        </div>
+        <div>
+          <h3 style="color: #3b82f6; margin-bottom: 15px;">💡 Our Values</h3>
+          <p>
+            Integrity, Inclusivity, Innovation, and Impact. We believe in transparency, equal opportunities, and continuous improvement 
+            in everything we do.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features -->
+  <section>
+    <div class="container">
+      <h2>What Makes Us Different</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h4>Advanced Search</h4>
+          <p>Smart filtering by employment type, work mode, salary range, and more to find your perfect match instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h4>Data-Driven Insights</h4>
+          <p>Real-time analytics and statistics to help employers make informed hiring decisions and candidates understand market trends.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤝</div>
+          <h4>Seamless Communication</h4>
+          <p>Built-in application tracking and notification system to keep candidates and employers connected throughout the hiring process.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <h4>Global Reach</h4>
+          <p>Access to job opportunities from companies across Nepal and beyond, expanding your career possibilities.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h4>Secure Platform</h4>
+          <p>Enterprise-grade security and privacy protection to ensure your personal and professional information is always safe.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h4>Lightning Fast</h4>
+          <p>Optimized performance and responsive design for a seamless experience on any device, anywhere, anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Team -->
+  <section style="background: #f8fafc;">
+    <div class="container">
+      <h2 style="text-align: center;">Meet Our Core Team</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-member-avatar">👨‍💼</div>
+          <h4>Dipesh Dhaurali</h4>
+          <p>Backend Developer</p>
+        </div>
+        <div class="team-member">
+          <div class="team-member-avatar">👩‍💻</div>
+          <h4>Kritika Dangi</h4>
+          <p>Frontend Developer</p>
+        </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section style="background: linear-gradient(to right, #0f172a, #1e3a8a); color: #fff; text-align: center;">
+    <div class="container">
+      <h2 style="color: #fff; margin-bottom: 1.5rem;">Ready to Transform Your Career?</h2>
+      <p style="font-size: 1.1rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Join thousands of professionals and employers who are already using JobPortal to achieve their career goals.
+      </p>
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="/" style="background: #fff; color: #0f172a; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Get Started</a>
+        <a href="/contactus/" style="border: 2px solid #fff; color: #fff; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.3s;">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div>
+        <h4>JOBPORTAL</h4>
+        <p>Helping people build their careers using technology made for humans.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <p><a href="/">Home</a></p>
+        <p><a href="/aboutus/">About Us</a></p>
+        <p><a href="/contactus/">Contact Us</a></p>
+      </div>
+      <div>
+        <h4>Follow Us</h4>
+        <p><a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank">Facebook</a></p>
+        <p><a href="https://www.instagram.com/dipeshdhaurali/" target="_blank">Instagram</a></p>
+        <p><a href="https://github.com/Dipesh-Dhaurali/JobPortal" target="_blank">GitHub</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 JobPortal. Built with Django, Bootstrap, and ❤️.</p>
+    </div>
+  </footer>
+</body>
+</html>
