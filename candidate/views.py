@@ -183,7 +183,7 @@ def job_detail(request, pk):
     application = candidateApplication.objects.filter(user=request.user, job=job).first()
     has_applied = application is not None
     application_status = application.status if application else None
-    is_shortlisted = ShortlistedCandidate.objects.filter(candidate=request.user, job=job).exists()
+    is_shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user, job=job).exists()
     is_rejected = application_status == 'rejected' if application else False
     
     company_profile_exists = HRProfile.objects.filter(user=job.user).exists()
@@ -219,7 +219,7 @@ def job_detail(request, pk):
 @login_required(login_url='login_user')
 def shortlisted_jobs(request):
     """Display jobs where candidate has been shortlisted"""
-    shortlisted = ShortlistedCandidate.objects.filter(candidate=request.user).order_by('-shortlisted_at')
+    shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user).order_by('-shortlisted_at')
     
     context = {
         'shortlisted_jobs': shortlisted,
