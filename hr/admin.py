@@ -24,19 +24,17 @@ class RecruiterAccountAdmin(admin.ModelAdmin):
         """Delete all recruiter/HR-related data from the entire database"""
         recruiter_count = models.hr.objects.all().count()
         job_count = models.JobPost.objects.all().count()
-        app_count = models.candidateApplication.objects.all().count()
         shortlist_count = models.ShortlistedCandidate.objects.all().count()
         
         # Delete all recruiter-side data
         models.ShortlistedCandidate.objects.all().delete()
-        models.candidateApplication.objects.all().delete()
         models.JobPost.objects.all().delete()
         models.hr.objects.all().delete()
         
         self.message_user(
             request, 
             f'Successfully deleted ENTIRE RECRUITER DATABASE: {recruiter_count} Recruiters, {job_count} Job Posts, '
-            f'{app_count} Applications, {shortlist_count} Shortlisted entries.'
+            f'{shortlist_count} Shortlisted entries. (Applications managed separately in Candidate section)'
         )
     
     delete_entire_recruiter_database.short_description = "DELETE ENTIRE RECRUITER DATABASE (ALL RECRUITER DATA)"
