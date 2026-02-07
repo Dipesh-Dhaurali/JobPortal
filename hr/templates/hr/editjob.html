@@ -119,11 +119,11 @@
 
             <!-- Required Experience Custom Field (conditional) -->
             <div class="mb-3" id="experience_custom_container" style="display: none;">
-              <label for="required_experience_custom" class="form-label fw-bold">Specify experience (in years)</label>
+              <label for="id_required_experience_custom" class="form-label fw-bold">Specify experience (in years)</label>
+              <input type="text" class="form-control" id="id_required_experience_custom" name="required_experience_custom" placeholder="e.g. 1.5, 7, 10+" value="{{ form.required_experience_custom.value|default:'' }}">
               {% if form.required_experience_custom.errors %}
                 <div class="error-message">{{ form.required_experience_custom.errors }}</div>
               {% endif %}
-              {{ form.required_experience_custom }}
               <small class="form-text text-muted">e.g. 1.5, 7, 10+</small>
             </div>
 
@@ -176,9 +176,9 @@
     <!-- JavaScript for conditional experience custom field -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const experienceSelect = document.getElementById('required_experience');
+            const experienceSelect = document.getElementById('id_required_experience');
             const experienceCustomContainer = document.getElementById('experience_custom_container');
-            const experienceCustomInput = document.getElementById('required_experience_custom');
+            const experienceCustomInput = document.getElementById('id_required_experience_custom');
             
             // Function to show/hide custom experience field
             function toggleCustomExperience() {

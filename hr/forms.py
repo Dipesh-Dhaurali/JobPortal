@@ -42,8 +42,7 @@ class JobPostForm(forms.ModelForm):
             'required_experience_custom': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'e.g. 1.5, 7, 10+',
-                'id': 'required_experience_custom',
-                'style': 'display: none;'
+                'id': 'required_experience_custom'
             }),
             'required_education': forms.Select(attrs={
                 'class': 'form-control',
