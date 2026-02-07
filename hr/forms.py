@@ -1,5 +1,5 @@
 from django import forms
-from hr.models import JobPost, candidateApplication, EDUCATION_CHOICES, HRProfile
+from hr.models import JobPost, candidateApplication, EDUCATION_CHOICES, HRProfile, EXPERIENCE_LEVEL_CHOICES, REQUIRED_EDUCATION_CHOICES
 from django.core.exceptions import ValidationError
 from datetime import date, timedelta
 
@@ -7,7 +7,7 @@ from datetime import date, timedelta
 class JobPostForm(forms.ModelForm):
     class Meta:
         model = JobPost
-        fields = ['title', 'address', 'CompanyName', 'salaryLow', 'salaryHigh', 'employment_type', 'work_mode', 'lastDateToApply']
+        fields = ['title', 'address', 'CompanyName', 'salaryLow', 'salaryHigh', 'employment_type', 'work_mode', 'required_experience', 'required_experience_custom', 'required_education', 'required_skills', 'lastDateToApply']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -35,6 +35,24 @@ class JobPostForm(forms.ModelForm):
             }),
             'employment_type': forms.HiddenInput(),
             'work_mode': forms.HiddenInput(),
+            'required_experience': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'required_experience'
+            }),
+            'required_experience_custom': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. 1.5, 7, 10+',
+                'id': 'required_experience_custom',
+                'style': 'display: none;'
+            }),
+            'required_education': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'required_skills': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Python, SQL, Communication, etc.',
+                'rows': 3
+            }),
             'lastDateToApply': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
@@ -43,6 +61,10 @@ class JobPostForm(forms.ModelForm):
         labels = {
             'employment_type': 'Employment Type',
             'work_mode': 'Work Mode',
+            'required_experience': 'Required Years of Experience',
+            'required_experience_custom': 'Specify experience (in years)',
+            'required_education': 'Required Education Level',
+            'required_skills': 'Required Skills (optional)',
         }
     
     def clean(self):
@@ -52,6 +74,8 @@ class JobPostForm(forms.ModelForm):
         last_date = cleaned_data.get('lastDateToApply')
         employment_type = cleaned_data.get('employment_type')
         work_mode = cleaned_data.get('work_mode')
+        required_experience = cleaned_data.get('required_experience')
+        required_experience_custom = cleaned_data.get('required_experience_custom')
         
         # Validate employment_type is selected
         if not employment_type:
@@ -70,6 +94,11 @@ class JobPostForm(forms.ModelForm):
         if salary_low is not None and salary_high is not None:
             if salary_low > 0 and salary_high > 0 and salary_low >= salary_high:
                 raise ValidationError("Maximum salary must be greater than minimum salary")
+        
+        # Validate custom experience is provided when "Others" is selected
+        if required_experience == 'others':
+            if not required_experience_custom or required_experience_custom.strip() == '':
+                self.add_error('required_experience_custom', "Please specify the experience requirement when 'Others' is selected.")
         
         if last_date:
             today = date.today()

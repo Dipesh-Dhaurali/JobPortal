@@ -31,6 +31,28 @@ WORK_MODE_CHOICES = (
     ('hybrid', 'Hybrid'),
 )
 
+EXPERIENCE_LEVEL_CHOICES = (
+    ('no-experience', 'No experience required'),
+    ('6-months', '6 months'),
+    ('1-year', '1 year'),
+    ('2-years', '2 years'),
+    ('3-years', '3 years'),
+    ('4-years', '4 years'),
+    ('5-plus-years', '5+ years'),
+    ('others', 'Others'),
+)
+
+REQUIRED_EDUCATION_CHOICES = (
+    ('no-education', 'No education required'),
+    ('see', 'SEE'),
+    ('slc', 'SLC'),
+    ('plus2', '+2'),
+    ('diploma', 'Diploma'),
+    ('bachelor', 'Bachelor'),
+    ('master', 'Master'),
+    ('phd', 'PhD'),
+)
+
 class JobPost(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     title=models.CharField(max_length=200)
@@ -43,6 +65,31 @@ class JobPost(models.Model):
     created_at=models.DateTimeField(auto_now_add=True, null=True)
     employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='full-time', null=True, blank=True)
     work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, default='on-site', null=True, blank=True)
+    
+    # New fields for job requirements
+    required_experience = models.CharField(
+        max_length=50, 
+        choices=EXPERIENCE_LEVEL_CHOICES, 
+        default='no-experience',
+        help_text='Select required years of experience'
+    )
+    required_experience_custom = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text='Custom experience requirement (e.g., 1.5 years)'
+    )
+    required_education = models.CharField(
+        max_length=50,
+        choices=REQUIRED_EDUCATION_CHOICES,
+        default='no-education',
+        help_text='Select required education level'
+    )
+    required_skills = models.TextField(
+        null=True,
+        blank=True,
+        help_text='Comma-separated skills (e.g., Python, SQL, Communication)'
+    )
 
     def clean(self):
         """Validate salary range and application deadline"""
@@ -64,6 +111,33 @@ class JobPost(models.Model):
         """Call clean before saving"""
         self.clean()
         super().save(*args, **kwargs)
+
+    def get_required_experience_display(self):
+        """Get the display value for required experience"""
+        if self.required_experience == 'others':
+            return self.required_experience_custom
+        experience_dict = dict(EXPERIENCE_LEVEL_CHOICES)
+        return experience_dict.get(self.required_experience, self.required_experience)
+    
+    def get_required_education_display(self):
+        """Get the display value for required education"""
+        education_dict = dict(REQUIRED_EDUCATION_CHOICES)
+        return education_dict.get(self.required_education, self.required_education)
+    
+    def get_required_skills_list(self):
+        """Get required skills as a list"""
+        if self.required_skills:
+            # Split by comma, strip whitespace, and remove empty items
+            return [skill.strip() for skill in self.required_skills.split(',') if skill.strip()]
+        return []
+    
+    def get_required_experience_display_dict(self):
+        """Helper method for template"""
+        return EXPERIENCE_LEVEL_CHOICES
+    
+    def get_required_education_display_dict(self):
+        """Helper method for template"""
+        return REQUIRED_EDUCATION_CHOICES
 
     def __str__(self):
         return str(self.title)
