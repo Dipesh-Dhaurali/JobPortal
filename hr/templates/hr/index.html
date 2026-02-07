@@ -92,21 +92,43 @@
         }
 
         .btn-admin-panel {
-            border: 2px solid var(--primary-color);
-            padding: 12px 32px;
-            border-radius: 8px;
+            border: 2px solid #1f2937;
+            padding: 10px 24px;
+            border-radius: 6px;
             font-weight: 600;
-            color: var(--primary-color);
-            background-color: transparent;
-            transition: all 0.2s;
+            font-size: 0.875rem;
+            color: #1f2937;
+            background-color: white;
+            transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-admin-panel:hover {
-            background-color: var(--primary-color);
+            background-color: #1f2937;
             color: white;
+            box-shadow: 0 10px 25px rgba(31, 41, 55, 0.15);
             transform: translateY(-2px);
+        }
+
+        .admin-access-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: #f3f4f6;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .admin-access-badge svg {
+            width: 14px;
+            height: 14px;
         }
 
         .stats-card {
@@ -292,11 +314,19 @@
                     <span class="badge-new">✨ Over 500+ New Vacancies Today</span>
                     <h1 class="hero-title">Find your next <br><span style="color: var(--accent-color)">dream job</span> here.</h1>
                     <p class="hero-subtitle">Connecting skilled people with great companies. Start your career with one click. No confusion, just real opportunities.</p>
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
                         <!-- Hero buttons now trigger the same role selection modal for consistency -->
                         <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#registerModal">Get Started</button>
                         <a href="#about" class="btn btn-outline-custom">Learn More</a>
-                        <a href="/admin/" class="btn btn-admin-panel">Admin Panel</a>
+                        <a href="/admin/" class="btn btn-admin-panel">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                            Admin Panel
+                        </a>
                     </div>
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0 text-center">
