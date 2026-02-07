@@ -228,8 +228,8 @@ class HRProfile(models.Model):
     """HR/Company profile model for storing company information"""
     
     class Meta:
-        verbose_name = "Recruiter Account"
-        verbose_name_plural = "Recruiter Accounts"
+        verbose_name = "Recruiter Profile"
+        verbose_name_plural = "Recruiter Profiles"
     
     INDUSTRY_CHOICES = (
         ('technology', 'Technology'),
