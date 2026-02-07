@@ -226,6 +226,11 @@ class SelectedCandidate(models.Model):
 
 class HRProfile(models.Model):
     """HR/Company profile model for storing company information"""
+    
+    class Meta:
+        verbose_name = "Recruiter Account"
+        verbose_name_plural = "Recruiter Accounts"
+    
     INDUSTRY_CHOICES = (
         ('technology', 'Technology'),
         ('finance', 'Finance'),
