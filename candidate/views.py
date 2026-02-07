@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from hr.models import JobPost, candidateApplication, HRProfile, ShortlistedCandidate
-from candidate.models import CandidateProfile
+from hr.models import JobPost, ShortlistedCandidate, RecruiterProfile
+from candidate.models import CandidateProfile, candidateApplication
 from candidate.forms import JobApplicationForm, CandidateProfileForm
 from django.utils import timezone
 from datetime import timedelta
@@ -189,7 +189,7 @@ def job_detail(request, pk):
     is_shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user, job=job).exists()
     is_rejected = application_status == 'rejected' if application else False
     
-    company_profile_exists = HRProfile.objects.filter(user=job.user).exists()
+    company_profile_exists = RecruiterProfile.objects.filter(user=job.user).exists()
     
     if request.method == 'POST':
         form = JobApplicationForm(request.POST, request.FILES)
@@ -306,8 +306,8 @@ def view_hr_profile(request, user_id):
     hr_user = get_object_or_404(User, id=user_id)
     
     try:
-        profile = HRProfile.objects.get(user=hr_user)
-    except HRProfile.DoesNotExist:
+        profile = RecruiterProfile.objects.get(user=hr_user)
+    except RecruiterProfile.DoesNotExist:
         return render(request, '404.html', {'message': 'Company profile not found'}, status=404)
     
     context = {

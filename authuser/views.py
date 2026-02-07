@@ -80,6 +80,11 @@ def login_user(request):
         )
 
         if user is not None:
+            # Block superusers and staff from logging in on normal pages
+            if user.is_superuser or user.is_staff:
+                msg = "Superusers and staff members must log in through the admin panel."
+                return render(request, 'authuser/loginUser.html', {'msg': msg})
+            
             login(request, user)
             # Check if HR/Recruiter
             if hr.objects.filter(user=user).exists():

@@ -8,6 +8,11 @@ from hr import models
 class RecruiterAccountAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'get_user_email')
     search_fields = ('user__username', 'user__email')
+    ordering = ('-id',)
+    
+    def get_queryset(self, request):
+        """Ensure all recruiter accounts are returned, including old records"""
+        return super().get_queryset(request).select_related('user').order_by('-id')
     
     def get_user_email(self, obj):
         return obj.user.email
@@ -45,6 +50,10 @@ class JobPostAdmin(admin.ModelAdmin):
     search_fields = ('title', 'CompanyName', 'address')
     readonly_fields = ('applycount', 'created_at')
     ordering = ('-created_at',)
+    
+    def get_queryset(self, request):
+        """Ensure all job posts are returned, including old records"""
+        return super().get_queryset(request).select_related('user').order_by('-created_at')
     
     fieldsets = (
         ('Job Information', {
@@ -90,23 +99,8 @@ class JobPostAdmin(admin.ModelAdmin):
             raise
 
 
-@admin.register(models.candidateApplication)
-class candidateApplicationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'job', 'status', 'passingYear', 'yearOfExp', 'applied_at')
-    list_filter = ('status', 'applied_at')
-    search_fields = ('user__username', 'job__title')
-    readonly_fields = ('applied_at',)
-    ordering = ('-applied_at',)
-    
-    actions = ['delete_all_applications']
-    
-    def delete_all_applications(self, request, queryset):
-        """Delete all candidate applications in the database"""
-        total_count = models.candidateApplication.objects.all().count()
-        models.candidateApplication.objects.all().delete()
-        self.message_user(request, f'Successfully deleted all {total_count} candidate applications.')
-    
-    delete_all_applications.short_description = "Delete ALL Candidate Applications (entire database)"
+# candidateApplication is now registered in candidate/admin.py
+# This ensures all candidate-related data is managed in the Candidate section of Admin
 
 
 @admin.register(models.ShortlistedCandidate)
@@ -116,6 +110,10 @@ class ShortlistedCandidateAdmin(admin.ModelAdmin):
     search_fields = ('job__title', 'candidate__user__username')
     readonly_fields = ('shortlisted_at',)
     ordering = ('-shortlisted_at',)
+    
+    def get_queryset(self, request):
+        """Ensure all shortlisted candidates are returned, including old records"""
+        return super().get_queryset(request).select_related('job', 'candidate').order_by('-shortlisted_at')
 
 
 @admin.register(models.SelectedCandidate)
@@ -125,15 +123,24 @@ class SelectedCandidateAdmin(admin.ModelAdmin):
     search_fields = ('job__title', 'candidate__user__username')
     readonly_fields = ('selected_at',)
     ordering = ('-selected_at',)
+    
+    def get_queryset(self, request):
+        """Ensure all selected candidates are returned, including old records"""
+        return super().get_queryset(request).select_related('job', 'candidate').order_by('-selected_at')
 
 
-@admin.register(models.HRProfile)
-class HRProfileAdmin(admin.ModelAdmin):
+@admin.register(models.RecruiterProfile)
+class RecruiterProfileAdmin(admin.ModelAdmin):
+    """Manage recruiter profiles - displays company and contact information"""
     list_display = ('id', 'user', 'company_name', 'industry', 'employee_size', 'created_at')
     list_filter = ('industry', 'company_type', 'employee_size', 'created_at')
     search_fields = ('user__username', 'company_name', 'email')
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('-created_at',)
+    
+    def get_queryset(self, request):
+        """Ensure all recruiter profiles are returned, including old records"""
+        return super().get_queryset(request).select_related('user').order_by('-created_at')
     
     fieldsets = (
         ('Company Info', {

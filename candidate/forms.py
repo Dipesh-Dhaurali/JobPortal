@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from hr.models import candidateApplication, EDUCATION_CHOICES
-from candidate.models import CandidateProfile
+from candidate.models import candidateApplication, CandidateProfile
 
 
 class CandidateRegistrationForm(forms.ModelForm):

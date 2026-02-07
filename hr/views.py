@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate, HRProfile
+from hr.models import JobPost, ShortlistedCandidate, SelectedCandidate, RecruiterProfile
 from hr.forms import JobPostForm, HRProfileForm
-from candidate.models import CandidateProfile
+from candidate.models import CandidateProfile, candidateApplication
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
@@ -14,8 +14,8 @@ from django.utils.safestring import mark_safe
 def hr_profile(request):
     """Display HR profile creation/editing page"""
     try:
-        profile = HRProfile.objects.get(user=request.user)
-    except HRProfile.DoesNotExist:
+        profile = RecruiterProfile.objects.get(user=request.user)
+    except RecruiterProfile.DoesNotExist:
         profile = None
     
     if request.method == 'POST':
@@ -41,10 +41,10 @@ def hr_profile(request):
 def delete_hr_profile(request):
     """Delete HR profile"""
     try:
-        profile = HRProfile.objects.get(user=request.user)
+        profile = RecruiterProfile.objects.get(user=request.user)
         profile.delete()
         messages.success(request, "Profile deleted successfully!")
-    except HRProfile.DoesNotExist:
+    except RecruiterProfile.DoesNotExist:
         messages.error(request, "No profile found to delete.")
     
     return redirect('hr_profile')

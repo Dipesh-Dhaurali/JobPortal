@@ -1,5 +1,6 @@
 from django.contrib import admin
 from candidate import models
+from candidate.models import candidateApplication
 
 @admin.register(models.CandidateAccount)
 class CandidateAccountAdmin(admin.ModelAdmin):
@@ -8,6 +9,10 @@ class CandidateAccountAdmin(admin.ModelAdmin):
     list_filter = ('account_status', 'created_at', 'suspended_at')
     search_fields = ('user__username', 'user__email')
     readonly_fields = ('created_at', 'updated_at', 'suspended_at')
+    
+    def get_queryset(self, request):
+        """Ensure all candidate accounts are returned, including old records"""
+        return super().get_queryset(request).select_related('user').order_by('-created_at')
     
     fieldsets = (
         ('Account Info', {
@@ -52,6 +57,10 @@ class CandidateProfileAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('-created_at',)
     
+    def get_queryset(self, request):
+        """Ensure all candidate profiles are returned, including old records"""
+        return super().get_queryset(request).select_related('user').order_by('-created_at')
+    
     fieldsets = (
         ('Personal Information', {
             'fields': ('user', 'profile_photo', 'job_preference_title')
@@ -76,46 +85,65 @@ class CandidateProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(models.MyApplyJobList)
-class JobApplicationTrackerAdmin(admin.ModelAdmin):
-    """Tracks all job applications submitted by candidates"""
-    list_display = ("id", "user", "job", "dateYouApply")
-    list_filter = ('dateYouApply',)
-    search_fields = ('user__username', 'job__job__title')
-    readonly_fields = ('dateYouApply',)
-    ordering = ('-dateYouApply',)
+@admin.register(candidateApplication)
+class candidateApplicationAdmin(admin.ModelAdmin):
+    """Tracks all candidate job applications with status management"""
+    list_display = ('id', 'user', 'job', 'status', 'passingYear', 'yearOfExp', 'applied_at')
+    list_filter = ('status', 'applied_at')
+    search_fields = ('user__username', 'job__title')
+    readonly_fields = ('applied_at',)
+    ordering = ('-applied_at',)
+    
+    def get_queryset(self, request):
+        """Ensure all candidate applications are returned, including old records"""
+        return super().get_queryset(request).select_related('user', 'job').order_by('-applied_at')
     
     fieldsets = (
         ('Application Info', {
-            'fields': ('user', 'job')
+            'fields': ('user', 'job', 'status')
+        }),
+        ('Education & Experience', {
+            'fields': ('education_level', 'passingYear', 'yearOfExp')
+        }),
+        ('Documents', {
+            'fields': ('resume', 'support_documents')
         }),
         ('Application Date', {
-            'fields': ('dateYouApply',)
+            'fields': ('applied_at',),
+            'classes': ('collapse',)
         }),
     )
     
-    def has_add_permission(self, request):
-        """Prevent manual addition - only auto-created when candidate applies"""
-        return False
+    actions = ['mark_pending', 'mark_shortlisted', 'mark_rejected', 'mark_selected', 'delete_all_applications']
     
-    actions = ['delete_entire_candidate_database']
+    def mark_pending(self, request, queryset):
+        """Mark applications as pending"""
+        updated = queryset.update(status='pending')
+        self.message_user(request, f"Marked {updated} application(s) as pending.")
+    mark_pending.short_description = "Mark as Pending"
     
-    def delete_entire_candidate_database(self, request, queryset):
-        """Delete all Candidate-related data from the entire database"""
-        profile_count = models.CandidateProfile.objects.all().count()
-        apply_count = models.MyApplyJobList.objects.all().count()
-        account_count = models.CandidateAccount.objects.all().count()
-        
-        # Delete all Candidate-side data
-        models.CandidateAccount.objects.all().delete()
-        models.MyApplyJobList.objects.all().delete()
-        models.CandidateProfile.objects.all().delete()
-        
-        self.message_user(
-            request, 
-            f'Successfully deleted ENTIRE CANDIDATE DATABASE: {profile_count} Profiles, '
-            f'{apply_count} Apply Lists, {account_count} Candidate Accounts.'
-        )
+    def mark_shortlisted(self, request, queryset):
+        """Mark applications as shortlisted"""
+        updated = queryset.update(status='shortlisted')
+        self.message_user(request, f"Marked {updated} application(s) as shortlisted.")
+    mark_shortlisted.short_description = "Mark as Shortlisted"
     
-    delete_entire_candidate_database.short_description = "DELETE ENTIRE CANDIDATE DATABASE (ALL CANDIDATE DATA)"
+    def mark_rejected(self, request, queryset):
+        """Mark applications as rejected"""
+        updated = queryset.update(status='rejected')
+        self.message_user(request, f"Marked {updated} application(s) as rejected.")
+    mark_rejected.short_description = "Mark as Rejected"
     
+    def mark_selected(self, request, queryset):
+        """Mark applications as selected"""
+        updated = queryset.update(status='selected')
+        self.message_user(request, f"Marked {updated} application(s) as selected.")
+    mark_selected.short_description = "Mark as Selected"
+    
+    def delete_all_applications(self, request, queryset):
+        """Delete all candidate applications in the database"""
+        total_count = candidateApplication.objects.all().count()
+        candidateApplication.objects.all().delete()
+        self.message_user(request, f'Successfully deleted all {total_count} candidate applications.')
+    
+    delete_all_applications.short_description = "Delete ALL Candidate Applications (entire database)"

@@ -205,6 +205,62 @@
                 </select>
             </div>
 
+            <!-- Required Experience Field -->
+            <div class="mb-3">
+                <label for="required_experience" class="form-label fw-bold">Required Years of Experience</label>
+                {{ form.required_experience }}
+                {% if form.required_experience.errors %}
+                    <div class="error-message">
+                        {% for error in form.required_experience.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">Select the required years of experience for this position</small>
+            </div>
+
+            <!-- Required Experience Custom Field (conditional) -->
+            <div class="mb-3" id="experience_custom_container" style="display: none;">
+                <label for="id_required_experience_custom" class="form-label fw-bold">Specify experience (in years)</label>
+                <input type="text" class="form-control" id="id_required_experience_custom" name="required_experience_custom" placeholder="e.g. 1.5 years , 10+ years">
+                {% if form.required_experience_custom.errors %}
+                    <div class="error-message">
+                        {% for error in form.required_experience_custom.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">e.g. 1.5, 7, 10+</small>
+            </div>
+
+            <!-- Required Education Field -->
+            <div class="mb-3">
+                <label for="required_education" class="form-label fw-bold">Required Education Level</label>
+                {{ form.required_education }}
+                {% if form.required_education.errors %}
+                    <div class="error-message">
+                        {% for error in form.required_education.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">Select the minimum education level required for this position</small>
+            </div>
+
+            <!-- Required Skills Field -->
+            <div class="mb-3">
+                <label for="required_skills" class="form-label fw-bold">Required Skills (optional)</label>
+                {{ form.required_skills }}
+                {% if form.required_skills.errors %}
+                    <div class="error-message">
+                        {% for error in form.required_skills.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">Comma separated, e.g. Python, SQL, Teamwork</small>
+            </div>
+
             <!-- Last Date to Apply Field -->
             <div class="mb-3">
                 <label for="{{ form.lastDateToApply.id_for_label }}" class="form-label fw-bold">Last Date to Apply</label>
@@ -225,6 +281,46 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- JavaScript for conditional experience custom field -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try multiple selectors to find the experience dropdown
+            let experienceSelect = document.querySelector('[name="required_experience"]');
+            const experienceCustomContainer = document.getElementById('experience_custom_container');
+            const experienceCustomInput = document.getElementById('id_required_experience_custom');
+            
+            // Fallback to ID selector if name selector fails
+            if (!experienceSelect) {
+                experienceSelect = document.getElementById('id_required_experience');
+            }
+            
+            if (!experienceSelect || !experienceCustomContainer || !experienceCustomInput) {
+                console.log("[v0] Missing required elements for experience toggle");
+                return;
+            }
+            
+            // Function to show/hide custom experience field
+            function toggleCustomExperience() {
+                console.log("[v0] Current value: " + experienceSelect.value);
+                if (experienceSelect.value === 'others') {
+                    console.log("[v0] Showing custom experience field");
+                    experienceCustomContainer.style.display = 'block';
+                    experienceCustomInput.focus();
+                } else {
+                    console.log("[v0] Hiding custom experience field");
+                    experienceCustomContainer.style.display = 'none';
+                    experienceCustomInput.value = ''; // Clear when hidden
+                }
+            }
+            
+            // Check on page load if "Others" is selected (for edit mode)
+            toggleCustomExperience();
+            
+            // Add event listener for changes
+            experienceSelect.addEventListener('change', toggleCustomExperience);
+        });
+    </script>
 </body>
-
 </html>
+

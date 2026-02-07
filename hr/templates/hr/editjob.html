@@ -32,60 +32,128 @@
           <form method="post" action="{% url 'edit_job' job.id %}">
             {% csrf_token %}
             
-            <!-- Use form.title instead of job.title to properly bind form data -->
+            <!-- Job Title Field -->
             <div class="mb-3">
-              <label for="title" class="form-label">Job Title</label>
-              <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="title" name="title" value="{{ form.title.value }}" placeholder="e.g., Software Engineer" required>
+              <label for="title" class="form-label fw-bold">Job Title</label>
               {% if form.title.errors %}
-                <div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>
+                <div class="error-message">{{ form.title.errors }}</div>
               {% endif %}
+              {{ form.title }}
             </div>
 
+            <!-- Address Field -->
             <div class="mb-3">
-              <label for="CompanyName" class="form-label">Company Name</label>
-              <input type="text" class="form-control {% if form.CompanyName.errors %}is-invalid{% endif %}" id="CompanyName" name="CompanyName" value="{{ form.CompanyName.value }}" placeholder="e.g., Tech Solutions Pvt. Ltd." required>
-              {% if form.CompanyName.errors %}
-                <div class="invalid-feedback d-block">{{ form.CompanyName.errors.0 }}</div>
-              {% endif %}
-            </div>
-
-            <div class="mb-3">
-              <label for="address" class="form-label">Location</label>
-              <input type="text" class="form-control {% if form.address.errors %}is-invalid{% endif %}" id="address" name="address" value="{{ form.address.value }}" placeholder="e.g., Kathmandu, Nepal" required>
+              <label for="address" class="form-label fw-bold">Address</label>
               {% if form.address.errors %}
-                <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+                <div class="error-message">{{ form.address.errors }}</div>
               {% endif %}
+              {{ form.address }}
             </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="salaryLow" class="form-label">Minimum Salary (Rs.)</label>
-                <div class="input-group">
-                  <span class="input-group-text">Rs.</span>
-                  <input type="number" class="form-control {% if form.salaryLow.errors %}is-invalid{% endif %}" id="salaryLow" name="salaryLow" value="{{ form.salaryLow.value }}" placeholder="30000" required>
-                </div>
-                {% if form.salaryLow.errors %}
-                  <div class="invalid-feedback d-block">{{ form.salaryLow.errors.0 }}</div>
-                {% endif %}
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="salaryHigh" class="form-label">Maximum Salary (Rs.)</label>
-                <div class="input-group">
-                  <span class="input-group-text">Rs.</span>
-                  <input type="number" class="form-control {% if form.salaryHigh.errors %}is-invalid{% endif %}" id="salaryHigh" name="salaryHigh" value="{{ form.salaryHigh.value }}" placeholder="50000" required>
-                </div>
-                {% if form.salaryHigh.errors %}
-                  <div class="invalid-feedback d-block">{{ form.salaryHigh.errors.0 }}</div>
-                {% endif %}
-              </div>
-            </div>
-
+            <!-- Company Name Field -->
             <div class="mb-3">
-              <label for="lastDateToApply" class="form-label">Last Date to Apply</label>
-              <input type="date" class="form-control {% if form.lastDateToApply.errors %}is-invalid{% endif %}" id="lastDateToApply" name="lastDateToApply" value="{{ form.lastDateToApply.value|date:'Y-m-d' }}" required>
-              {% if form.lastDateToApply.errors %}
-                <div class="invalid-feedback d-block">{{ form.lastDateToApply.errors.0 }}</div>
+              <label for="CompanyName" class="form-label fw-bold">Company Name</label>
+              {% if form.CompanyName.errors %}
+                <div class="error-message">{{ form.CompanyName.errors }}</div>
               {% endif %}
+              {{ form.CompanyName }}
+            </div>
+
+            <!-- Salary Range Fields -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Salary Range</label>
+              <div class="row">
+                <div class="col-md-6">
+                  {% if form.salaryLow.errors %}
+                    <div class="error-message">{{ form.salaryLow.errors }}</div>
+                  {% endif %}
+                  {{ form.salaryLow }}
+                </div>
+                <div class="col-md-6">
+                  {% if form.salaryHigh.errors %}
+                    <div class="error-message">{{ form.salaryHigh.errors }}</div>
+                  {% endif %}
+                  {{ form.salaryHigh }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Employment Type Field -->
+            <div class="mb-3">
+              <label for="employment_type" class="form-label fw-bold">Employment Type</label>
+              {% if form.employment_type.errors %}
+                <div class="error-message">{{ form.employment_type.errors }}</div>
+              {% endif %}
+              <select class="form-control" id="employment_type" name="employment_type" required>
+                <option value="">-- Select Employment Type --</option>
+                <option value="full-time" {% if form.employment_type.value == 'full-time' %}selected{% endif %}>Full-Time</option>
+                <option value="part-time" {% if form.employment_type.value == 'part-time' %}selected{% endif %}>Part-Time</option>
+                <option value="contract" {% if form.employment_type.value == 'contract' %}selected{% endif %}>Contract</option>
+                <option value="internship" {% if form.employment_type.value == 'internship' %}selected{% endif %}>Internship</option>
+              </select>
+            </div>
+
+            <!-- Work Mode Field -->
+            <div class="mb-3">
+              <label for="work_mode" class="form-label fw-bold">Work Mode</label>
+              {% if form.work_mode.errors %}
+                <div class="error-message">{{ form.work_mode.errors }}</div>
+              {% endif %}
+              <select class="form-control" id="work_mode" name="work_mode" required>
+                <option value="">-- Select Work Mode --</option>
+                <option value="on-site" {% if form.work_mode.value == 'on-site' %}selected{% endif %}>On-Site</option>
+                <option value="remote" {% if form.work_mode.value == 'remote' %}selected{% endif %}>Remote</option>
+                <option value="hybrid" {% if form.work_mode.value == 'hybrid' %}selected{% endif %}>Hybrid</option>
+              </select>
+            </div>
+
+            <!-- Required Experience Field -->
+            <div class="mb-3">
+              <label for="required_experience" class="form-label fw-bold">Required Years of Experience</label>
+              {% if form.required_experience.errors %}
+                <div class="error-message">{{ form.required_experience.errors }}</div>
+              {% endif %}
+              {{ form.required_experience }}
+              <small class="form-text text-muted">Select the required years of experience for this position</small>
+            </div>
+
+            <!-- Required Experience Custom Field (conditional) -->
+            <div class="mb-3" id="experience_custom_container" style="display: none;">
+              <label for="id_required_experience_custom" class="form-label fw-bold">Specify experience (in years)</label>
+              <input type="text" class="form-control" id="id_required_experience_custom" name="required_experience_custom" placeholder="e.g. 1.5, 7, 10+" value="{{ form.required_experience_custom.value|default:'' }}">
+              {% if form.required_experience_custom.errors %}
+                <div class="error-message">{{ form.required_experience_custom.errors }}</div>
+              {% endif %}
+              <small class="form-text text-muted">e.g. 1.5, 7, 10+</small>
+            </div>
+
+            <!-- Required Education Field -->
+            <div class="mb-3">
+              <label for="required_education" class="form-label fw-bold">Required Education Level</label>
+              {% if form.required_education.errors %}
+                <div class="error-message">{{ form.required_education.errors }}</div>
+              {% endif %}
+              {{ form.required_education }}
+              <small class="form-text text-muted">Select the minimum education level required for this position</small>
+            </div>
+
+            <!-- Required Skills Field -->
+            <div class="mb-3">
+              <label for="required_skills" class="form-label fw-bold">Required Skills (optional)</label>
+              {% if form.required_skills.errors %}
+                <div class="error-message">{{ form.required_skills.errors }}</div>
+              {% endif %}
+              {{ form.required_skills }}
+              <small class="form-text text-muted">Comma separated, e.g. Python, SQL, Teamwork</small>
+            </div>
+
+            <!-- Last Date to Apply Field -->
+            <div class="mb-3">
+              <label for="lastDateToApply" class="form-label fw-bold">Last Date to Apply</label>
+              {% if form.lastDateToApply.errors %}
+                <div class="error-message">{{ form.lastDateToApply.errors }}</div>
+              {% endif %}
+              {{ form.lastDateToApply }}
             </div>
 
             <div class="d-grid gap-2">
@@ -104,5 +172,45 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    
+    <!-- JavaScript for conditional experience custom field -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try multiple selectors to find the experience dropdown
+            let experienceSelect = document.querySelector('[name="required_experience"]');
+            const experienceCustomContainer = document.getElementById('experience_custom_container');
+            const experienceCustomInput = document.getElementById('id_required_experience_custom');
+            
+            // Fallback to ID selector if name selector fails
+            if (!experienceSelect) {
+                experienceSelect = document.getElementById('id_required_experience');
+            }
+            
+            if (!experienceSelect || !experienceCustomContainer || !experienceCustomInput) {
+                console.log("[v0] Missing required elements for experience toggle");
+                return;
+            }
+            
+            // Function to show/hide custom experience field
+            function toggleCustomExperience() {
+                console.log("[v0] Current value: " + experienceSelect.value);
+                if (experienceSelect.value === 'others') {
+                    console.log("[v0] Showing custom experience field");
+                    experienceCustomContainer.style.display = 'block';
+                    experienceCustomInput.focus();
+                } else {
+                    console.log("[v0] Hiding custom experience field");
+                    experienceCustomContainer.style.display = 'none';
+                    experienceCustomInput.value = ''; // Clear when hidden
+                }
+            }
+            
+            // Check on page load if "Others" is selected (for edit mode)
+            toggleCustomExperience();
+            
+            // Add event listener for changes
+            experienceSelect.addEventListener('change', toggleCustomExperience);
+        });
+    </script>
   </body>
 </html>
