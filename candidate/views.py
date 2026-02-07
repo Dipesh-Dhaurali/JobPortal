@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from hr.models import JobPost, candidateApplication, HRProfile, ShortlistedCandidate
-from candidate.models import CandidateProfile
+from hr.models import JobPost, HRProfile, ShortlistedCandidate
+from candidate.models import CandidateProfile, candidateApplication
 from candidate.forms import JobApplicationForm, CandidateProfileForm
 from django.utils import timezone
 from datetime import timedelta
