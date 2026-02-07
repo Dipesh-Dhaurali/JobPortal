@@ -1,6 +1,5 @@
 from django.contrib import admin
 from candidate import models
-from hr.models import candidateApplication
 
 @admin.register(models.CandidateAccount)
 class CandidateAccountAdmin(admin.ModelAdmin):
@@ -85,7 +84,7 @@ class CandidateProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(candidateApplication)
+@admin.register(models.candidateApplication)
 class candidateApplicationAdmin(admin.ModelAdmin):
     """Tracks all candidate job applications with status management"""
     list_display = ('id', 'user', 'job', 'status', 'passingYear', 'yearOfExp', 'applied_at')
@@ -142,8 +141,8 @@ class candidateApplicationAdmin(admin.ModelAdmin):
     
     def delete_all_applications(self, request, queryset):
         """Delete all candidate applications in the database"""
-        total_count = candidateApplication.objects.all().count()
-        candidateApplication.objects.all().delete()
+        total_count = models.candidateApplication.objects.all().count()
+        models.candidateApplication.objects.all().delete()
         self.message_user(request, f'Successfully deleted all {total_count} candidate applications.')
     
     delete_all_applications.short_description = "Delete ALL Candidate Applications (entire database)"

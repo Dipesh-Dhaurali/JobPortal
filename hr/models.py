@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from datetime import date
 
 # Create your models here.
+# candidateApplication is defined in candidate.models to organize it logically with other candidate models
 
 class hr(models.Model):
     """Recruiter/HR profile - Represents a company or HR person managing job postings"""
@@ -143,73 +144,9 @@ class JobPost(models.Model):
         return str(self.title)
     
 
-STATUS_CHOICE=(
-    ('pending','pending'),
-    ('shortlisted','shortlisted'),
-    ('rejected','rejected'),
-    ('selected','selected'), # Added selected status for final candidate selection
-)
-
-EDUCATION_CHOICES = (
-    ('SEE', 'SEE (Secondary Education Examination)'),  # Updated full form from School Leaving Exam to Secondary Education Examination
-    ('SLC', 'SLC (School Leaving Certificate)'),
-    ('PLUS2', '+2 (Higher Secondary)'),
-    ('DIPLOMA', 'Diploma'),
-    ('BACHELOR', 'Bachelor'),
-    ('MASTERS', 'Masters'),
-)
-
-PASSING_YEAR_CHOICES = (
-    ('currently_running', 'Currently Running'),
-) + tuple((str(year), str(year)) for year in range(2030, 1989, -1))
-
-class candidateApplication(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    job = models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    education_level = models.CharField(
-        max_length=20, 
-        choices=EDUCATION_CHOICES, 
-        default='BACHELOR'
-    )
-    passingYear = models.CharField(
-        max_length=20,
-        choices=PASSING_YEAR_CHOICES,
-        default='currently_running'
-    )
-    yearOfExp=models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)]
-    )
-    resume=models.FileField(upload_to="resume")
-    support_documents=models.FileField(
-        upload_to="support_docs",
-        null=True,
-        blank=True,
-        help_text="Optional: Academic documents (PDF only, max 5MB)"
-    )
-    status=models.CharField(choices=STATUS_CHOICE, default="pending", max_length=20)
-    applied_at=models.DateTimeField(auto_now_add=True, null=True)
-    
-    class Meta:
-        unique_together = ('user', 'job')
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.job.title}"
-    
-    def get_education_display(self):
-        education_map = {
-            'SEE': 'SEE (Secondary Education Examination)',  # Updated to match the corrected full form
-            'SLC': 'SLC (School Leaving Certificate)',
-            'PLUS2': '+2 (Higher Secondary)',
-            'DIPLOMA': 'Diploma',
-            'BACHELOR': 'Bachelor',
-            'MASTERS': 'Masters',
-        }
-        return education_map.get(self.education_level, self.education_level)
-
 class ShortlistedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
+    candidate=models.OneToOneField('candidate.candidateApplication',on_delete=models.CASCADE)
     shortlisted_at=models.DateTimeField(auto_now_add=True, null=True)
     notification_sent=models.BooleanField(default=False)
     
@@ -218,7 +155,7 @@ class ShortlistedCandidate(models.Model):
 
 class SelectedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
+    candidate=models.OneToOneField('candidate.candidateApplication',on_delete=models.CASCADE)
     selected_at=models.DateTimeField(auto_now_add=True, null=True)
     
     def __str__(self):
