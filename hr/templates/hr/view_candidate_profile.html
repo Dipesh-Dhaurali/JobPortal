@@ -154,7 +154,7 @@
             <span class="info-value">{{ profile.languages|default:"Not specified" }}</span>
         </div>
 
-        {% if profile.social_account_name_1 or profile.social_account_name_2 %}
+        {% if profile.social_account_url_1 or profile.social_account_url_2 %}
         <h3 class="section-title"><i class="fas fa-link"></i> Social Accounts</h3>
         <div class="social-links">
             {% if profile.social_account_name_1 and profile.social_account_url_1 %}
