@@ -209,7 +209,7 @@ class candidateApplication(models.Model):
 
 class ShortlistedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
+    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
     shortlisted_at=models.DateTimeField(auto_now_add=True, null=True)
     notification_sent=models.BooleanField(default=False)
     
@@ -218,7 +218,7 @@ class ShortlistedCandidate(models.Model):
 
 class SelectedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
+    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
     selected_at=models.DateTimeField(auto_now_add=True, null=True)
     
     def __str__(self):
