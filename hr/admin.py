@@ -129,7 +129,7 @@ class SelectedCandidateAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related('job', 'candidate').order_by('-selected_at')
 
 
-@admin.register(models.HRProfile)
+@admin.register(models.RecruiterProfile)
 class RecruiterProfileAdmin(admin.ModelAdmin):
     """Manage recruiter profiles - displays company and contact information"""
     list_display = ('id', 'user', 'company_name', 'industry', 'employee_size', 'created_at')

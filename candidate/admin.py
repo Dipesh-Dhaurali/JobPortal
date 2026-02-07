@@ -1,6 +1,6 @@
 from django.contrib import admin
 from candidate import models
-from hr.models import candidateApplication
+from candidate.models import candidateApplication
 
 @admin.register(models.CandidateAccount)
 class CandidateAccountAdmin(admin.ModelAdmin):
