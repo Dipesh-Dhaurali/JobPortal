@@ -285,16 +285,30 @@
     <!-- JavaScript for conditional experience custom field -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const experienceSelect = document.getElementById('id_required_experience');
+            // Try multiple selectors to find the experience dropdown
+            let experienceSelect = document.querySelector('[name="required_experience"]');
             const experienceCustomContainer = document.getElementById('experience_custom_container');
             const experienceCustomInput = document.getElementById('id_required_experience_custom');
             
+            // Fallback to ID selector if name selector fails
+            if (!experienceSelect) {
+                experienceSelect = document.getElementById('id_required_experience');
+            }
+            
+            if (!experienceSelect || !experienceCustomContainer || !experienceCustomInput) {
+                console.log("[v0] Missing required elements for experience toggle");
+                return;
+            }
+            
             // Function to show/hide custom experience field
             function toggleCustomExperience() {
+                console.log("[v0] Current value: " + experienceSelect.value);
                 if (experienceSelect.value === 'others') {
+                    console.log("[v0] Showing custom experience field");
                     experienceCustomContainer.style.display = 'block';
                     experienceCustomInput.focus();
                 } else {
+                    console.log("[v0] Hiding custom experience field");
                     experienceCustomContainer.style.display = 'none';
                     experienceCustomInput.value = ''; // Clear when hidden
                 }
