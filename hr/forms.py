@@ -1,5 +1,5 @@
 from django import forms
-from hr.models import JobPost, candidateApplication, EXPERIENCE_LEVEL_CHOICES, REQUIRED_EDUCATION_CHOICES, RecruiterProfile
+from hr.models import JobPost, EXPERIENCE_LEVEL_CHOICES, REQUIRED_EDUCATION_CHOICES, RecruiterProfile
 from django.core.exceptions import ValidationError
 from datetime import date, timedelta
 

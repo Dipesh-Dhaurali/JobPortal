@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from hr.models import JobPost, candidateApplication, ShortlistedCandidate, SelectedCandidate, RecruiterProfile
+from hr.models import JobPost, ShortlistedCandidate, SelectedCandidate, RecruiterProfile
 from hr.forms import JobPostForm, HRProfileForm
-from candidate.models import CandidateProfile
+from candidate.models import CandidateProfile, candidateApplication
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
