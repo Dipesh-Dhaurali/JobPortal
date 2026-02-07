@@ -164,8 +164,8 @@ PASSING_YEAR_CHOICES = (
 ) + tuple((str(year), str(year)) for year in range(2030, 1989, -1))
 
 class candidateApplication(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE, related_name='hr_candidate_applications')
-    job = models.ForeignKey(JobPost,on_delete=models.CASCADE, related_name='hr_candidate_applications')
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    job = models.ForeignKey(JobPost,on_delete=models.CASCADE)
     education_level = models.CharField(
         max_length=20, 
         choices=EDUCATION_CHOICES, 
@@ -209,7 +209,7 @@ class candidateApplication(models.Model):
 
 class ShortlistedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
+    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
     shortlisted_at=models.DateTimeField(auto_now_add=True, null=True)
     notification_sent=models.BooleanField(default=False)
     
@@ -218,7 +218,7 @@ class ShortlistedCandidate(models.Model):
 
 class SelectedCandidate(models.Model):
     job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
+    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE)
     selected_at=models.DateTimeField(auto_now_add=True, null=True)
     
     def __str__(self):
