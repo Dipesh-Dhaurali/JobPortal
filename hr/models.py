@@ -164,8 +164,8 @@ PASSING_YEAR_CHOICES = (
 ) + tuple((str(year), str(year)) for year in range(2030, 1989, -1))
 
 class candidateApplication(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    job = models.ForeignKey(JobPost,on_delete=models.CASCADE)
+    user=models.ForeignKey(User,on_delete=models.CASCADE, related_name='candidate_applications')
+    job = models.ForeignKey(JobPost,on_delete=models.CASCADE, related_name='candidate_applications')
     education_level = models.CharField(
         max_length=20, 
         choices=EDUCATION_CHOICES, 
