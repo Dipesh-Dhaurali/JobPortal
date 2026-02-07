@@ -1,5 +1,5 @@
 from django import forms
-from hr.models import JobPost, candidateApplication, EDUCATION_CHOICES, HRProfile, EXPERIENCE_LEVEL_CHOICES, REQUIRED_EDUCATION_CHOICES
+from hr.models import JobPost, candidateApplication, EXPERIENCE_LEVEL_CHOICES, REQUIRED_EDUCATION_CHOICES, RecruiterProfile
 from django.core.exceptions import ValidationError
 from datetime import date, timedelta
 
@@ -180,7 +180,7 @@ class CandidateApplicationForm(forms.ModelForm):
 
 class HRProfileForm(forms.ModelForm):
     class Meta:
-        model = HRProfile
+        model = RecruiterProfile
         fields = [
             'company_name', 'company_logo', 'cover_image', 'industry', 'company_type',
             'employee_size', 'email', 'phone_number', 'website', 'location',

@@ -4,19 +4,25 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from datetime import date
 
-# Create your models here.
 
+# -------------------------------
+# Recruiter / HR Account
+# -------------------------------
 class hr(models.Model):
-    """Recruiter/HR profile - Represents a company or HR person managing job postings"""
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    
+    """Recruiter/HR account linked with Django User"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
     class Meta:
         verbose_name = "Recruiter Account"
         verbose_name_plural = "Recruiter Accounts"
-    
+
     def __str__(self):
         return f"{self.user.username} (Recruiter)"
 
+
+# -------------------------------
+# Choice Constants
+# -------------------------------
 EMPLOYMENT_TYPE_CHOICES = (
     ('full-time', 'Full-time'),
     ('part-time', 'Part-time'),
@@ -53,23 +59,33 @@ REQUIRED_EDUCATION_CHOICES = (
     ('phd', 'PhD'),
 )
 
+
+# -------------------------------
+# Job Post Model
+# -------------------------------
 class JobPost(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    title=models.CharField(max_length=200)
-    address=models.CharField(max_length=200)
-    CompanyName=models.CharField(max_length=200)
-    salaryLow=models.FloatField(default=0, validators=[MinValueValidator(0)])
-    salaryHigh=models.FloatField(default=0, validators=[MinValueValidator(0)])
-    applycount=models.IntegerField(default=0)
-    lastDateToApply=models.DateField()
-    created_at=models.DateTimeField(auto_now_add=True, null=True)
-    employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='full-time', null=True, blank=True)
-    work_mode = models.CharField(max_length=20, choices=WORK_MODE_CHOICES, default='on-site', null=True, blank=True)
-    
-    # New fields for job requirements
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    CompanyName = models.CharField(max_length=200)
+    salaryLow = models.FloatField(default=0, validators=[MinValueValidator(0)])
+    salaryHigh = models.FloatField(default=0, validators=[MinValueValidator(0)])
+    applycount = models.IntegerField(default=0)
+    lastDateToApply = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    employment_type = models.CharField(
+        max_length=20, choices=EMPLOYMENT_TYPE_CHOICES,
+        default='full-time', null=True, blank=True
+    )
+    work_mode = models.CharField(
+        max_length=20, choices=WORK_MODE_CHOICES,
+        default='on-site', null=True, blank=True
+    )
+
     required_experience = models.CharField(
-        max_length=50, 
-        choices=EXPERIENCE_LEVEL_CHOICES, 
+        max_length=50,
+        choices=EXPERIENCE_LEVEL_CHOICES,
         default='no-experience',
         help_text='Select required years of experience'
     )
@@ -92,145 +108,76 @@ class JobPost(models.Model):
     )
 
     def clean(self):
-        """Validate salary range and application deadline"""
         errors = {}
-        
-        # Validate salary range: max must be greater than min
+
         if self.salaryLow > 0 and self.salaryHigh > 0:
             if self.salaryHigh <= self.salaryLow:
                 errors['salaryHigh'] = "Maximum salary must be greater than minimum salary."
-        
-        # Validate application deadline: must be today or later
+
         if self.lastDateToApply < date.today():
-            errors['lastDateToApply'] = "Application deadline cannot be in the past. Please select today or a future date."
-        
+            errors['lastDateToApply'] = "Application deadline cannot be in the past."
+
         if errors:
             raise ValidationError(errors)
-    
+
     def save(self, *args, **kwargs):
-        """Call clean before saving"""
         self.clean()
         super().save(*args, **kwargs)
 
     def get_required_experience_display(self):
-        """Get the display value for required experience"""
         if self.required_experience == 'others':
             return self.required_experience_custom
-        experience_dict = dict(EXPERIENCE_LEVEL_CHOICES)
-        return experience_dict.get(self.required_experience, self.required_experience)
-    
+        return dict(EXPERIENCE_LEVEL_CHOICES).get(self.required_experience)
+
     def get_required_education_display(self):
-        """Get the display value for required education"""
-        education_dict = dict(REQUIRED_EDUCATION_CHOICES)
-        return education_dict.get(self.required_education, self.required_education)
-    
+        return dict(REQUIRED_EDUCATION_CHOICES).get(self.required_education)
+
     def get_required_skills_list(self):
-        """Get required skills as a list"""
         if self.required_skills:
-            # Split by comma, strip whitespace, and remove empty items
-            return [skill.strip() for skill in self.required_skills.split(',') if skill.strip()]
+            return [s.strip() for s in self.required_skills.split(',') if s.strip()]
         return []
-    
-    def get_required_experience_display_dict(self):
-        """Helper method for template"""
-        return EXPERIENCE_LEVEL_CHOICES
-    
-    def get_required_education_display_dict(self):
-        """Helper method for template"""
-        return REQUIRED_EDUCATION_CHOICES
 
     def __str__(self):
-        return str(self.title)
-    
+        return self.title
 
-STATUS_CHOICE=(
-    ('pending','pending'),
-    ('shortlisted','shortlisted'),
-    ('rejected','rejected'),
-    ('selected','selected'), # Added selected status for final candidate selection
-)
 
-EDUCATION_CHOICES = (
-    ('SEE', 'SEE (Secondary Education Examination)'),  # Updated full form from School Leaving Exam to Secondary Education Examination
-    ('SLC', 'SLC (School Leaving Certificate)'),
-    ('PLUS2', '+2 (Higher Secondary)'),
-    ('DIPLOMA', 'Diploma'),
-    ('BACHELOR', 'Bachelor'),
-    ('MASTERS', 'Masters'),
-)
-
-PASSING_YEAR_CHOICES = (
-    ('currently_running', 'Currently Running'),
-) + tuple((str(year), str(year)) for year in range(2030, 1989, -1))
-
-class candidateApplication(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE, related_name='candidate_applications')
-    job = models.ForeignKey(JobPost,on_delete=models.CASCADE, related_name='candidate_applications')
-    education_level = models.CharField(
-        max_length=20, 
-        choices=EDUCATION_CHOICES, 
-        default='BACHELOR'
-    )
-    passingYear = models.CharField(
-        max_length=20,
-        choices=PASSING_YEAR_CHOICES,
-        default='currently_running'
-    )
-    yearOfExp=models.IntegerField(
-        default=0,
-        validators=[MinValueValidator(0)]
-    )
-    resume=models.FileField(upload_to="resume")
-    support_documents=models.FileField(
-        upload_to="support_docs",
-        null=True,
-        blank=True,
-        help_text="Optional: Academic documents (PDF only, max 5MB)"
-    )
-    status=models.CharField(choices=STATUS_CHOICE, default="pending", max_length=20)
-    applied_at=models.DateTimeField(auto_now_add=True, null=True)
-    
-    class Meta:
-        unique_together = ('user', 'job')
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.job.title}"
-    
-    def get_education_display(self):
-        education_map = {
-            'SEE': 'SEE (Secondary Education Examination)',  # Updated to match the corrected full form
-            'SLC': 'SLC (School Leaving Certificate)',
-            'PLUS2': '+2 (Higher Secondary)',
-            'DIPLOMA': 'Diploma',
-            'BACHELOR': 'Bachelor',
-            'MASTERS': 'Masters',
-        }
-        return education_map.get(self.education_level, self.education_level)
-
+# -------------------------------
+# Shortlisted Candidate
+# -------------------------------
 class ShortlistedCandidate(models.Model):
-    job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
-    shortlisted_at=models.DateTimeField(auto_now_add=True, null=True)
-    notification_sent=models.BooleanField(default=False)
-    
+    job = models.ForeignKey(JobPost, on_delete=models.CASCADE)
+    candidate = models.OneToOneField(
+        'candidate.candidateApplication',
+        on_delete=models.CASCADE
+    )
+    shortlisted_at = models.DateTimeField(auto_now_add=True, null=True)
+    notification_sent = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.candidate.user.username} shortlisted for {self.job.title}"
 
+
+# -------------------------------
+# Selected Candidate
+# -------------------------------
 class SelectedCandidate(models.Model):
-    job=models.ForeignKey(JobPost,on_delete=models.CASCADE)
-    candidate=models.OneToOneField(candidateApplication,on_delete=models.CASCADE, null=True, blank=True)
-    selected_at=models.DateTimeField(auto_now_add=True, null=True)
-    
+    job = models.ForeignKey(JobPost, on_delete=models.CASCADE)
+    candidate = models.OneToOneField(
+        'candidate.candidateApplication',
+        on_delete=models.CASCADE
+    )
+    selected_at = models.DateTimeField(auto_now_add=True, null=True)
+
     def __str__(self):
         return f"{self.candidate.user.username} selected for {self.job.title}"
 
-class HRProfile(models.Model):
-    """HR/Company profile model for storing company information"""
-    
-    class Meta:
-        verbose_name = "Recruiter Profile"
-        verbose_name_plural = "Recruiter Profiles"
-    
+
+# -------------------------------
+# Recruiter Profile (RENAMED SAFELY)
+# -------------------------------
+class RecruiterProfile(models.Model):
+    """Recruiter / Company profile (Renamed from HRProfile safely)"""
+
     INDUSTRY_CHOICES = (
         ('technology', 'Technology'),
         ('finance', 'Finance'),
@@ -247,7 +194,7 @@ class HRProfile(models.Model):
         ('media', 'Media & Entertainment'),
         ('other', 'Other'),
     )
-    
+
     EMPLOYEE_SIZE_CHOICES = (
         ('1-10', '1 - 10 employees'),
         ('11-50', '11 - 50 employees'),
@@ -256,7 +203,7 @@ class HRProfile(models.Model):
         ('501-1000', '501 - 1000 employees'),
         ('1000+', '1000+ employees'),
     )
-    
+
     COMPANY_TYPE_CHOICES = (
         ('private', 'Private'),
         ('public', 'Public'),
@@ -264,7 +211,7 @@ class HRProfile(models.Model):
         ('startup', 'Startup'),
         ('government', 'Government'),
     )
-    
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company_name = models.CharField(max_length=200)
     company_logo = models.ImageField(upload_to='hr_logos/', null=True, blank=True)
@@ -277,15 +224,19 @@ class HRProfile(models.Model):
     website = models.URLField(null=True, blank=True)
     location = models.CharField(max_length=200)
     about_company = models.TextField(help_text="Describe your company")
-    
-    # Social Media
+
     linkedin_url = models.URLField(null=True, blank=True)
     facebook_url = models.URLField(null=True, blank=True)
     twitter_url = models.URLField(null=True, blank=True)
     instagram_url = models.URLField(null=True, blank=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
+    class Meta:
+        db_table = 'hr_hrprofile'
+        verbose_name = "Recruiter Profile"
+        verbose_name_plural = "Recruiter Profiles"
+
     def __str__(self):
         return f"{self.company_name} - {self.user.username}"
