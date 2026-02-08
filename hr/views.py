@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from hr.models import JobPost, ShortlistedCandidate, SelectedCandidate, RecruiterProfile
 from hr.forms import JobPostForm, HRProfileForm
 from candidate.models import CandidateProfile, candidateApplication
+from authuser.models import ContactMessage
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
@@ -57,9 +58,6 @@ def about_us(request):
     """View for the About Us page"""
     return render(request, 'hr/aboutus.html')
 
-def contact_us(request):
-    """View for the Contact Us page"""
-    return render(request, 'hr/contactus.html')
 
 def blog_detail(request, slug):
     """View for displaying individual blog/article content"""
@@ -376,3 +374,51 @@ def job_history(request):
     """)
     }
     return render(request, 'hr/job_history.html', context)
+
+
+def contact_us(request):
+    """Handle contact form submission and store messages in database"""
+    msg = None
+    msg_type = None
+    if request.method == 'POST':
+        name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message_text = request.POST.get('message', '').strip()
+        
+        # Validation
+        if not name or not email or not message_text:
+            msg = "All fields are required."
+            msg_type = "error"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+        
+        if len(name) < 2:
+            msg = "Name must be at least 2 characters long."
+            msg_type = "error"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+        
+        if '@' not in email:
+            msg = "Please enter a valid email address."
+            msg_type = "error"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+        
+        if len(message_text) < 10:
+            msg = "Message must be at least 10 characters long."
+            msg_type = "error"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+        
+        try:
+            # Save message to database
+            ContactMessage.objects.create(
+                name=name,
+                email=email,
+                message=message_text
+            )
+            msg = "Your message has been sent successfully! We'll get back to you soon."
+            msg_type = "success"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+        except Exception as e:
+            msg = "An error occurred while sending your message. Please try again later."
+            msg_type = "error"
+            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})
+    
+    return render(request, 'hr/contactus.html')

@@ -4,7 +4,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from hr.models import hr
 from candidate.models import CandidateAccount
-from authuser.models import ContactMessage
 
 
 def register_candidate(request):
@@ -101,44 +100,3 @@ def login_user(request):
 def logoutuser(request):
     logout(request)
     return redirect('login_user')
-
-
-def contact_us(request):
-    """Handle contact form submission and store messages in database"""
-    msg = None
-    if request.method == 'POST':
-        name = request.POST.get('full_name', '').strip()
-        email = request.POST.get('email', '').strip()
-        message_text = request.POST.get('message', '').strip()
-        
-        # Validation
-        if not name or not email or not message_text:
-            msg = "All fields are required."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'error'})
-        
-        if len(name) < 2:
-            msg = "Name must be at least 2 characters long."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'error'})
-        
-        if '@' not in email:
-            msg = "Please enter a valid email address."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'error'})
-        
-        if len(message_text) < 10:
-            msg = "Message must be at least 10 characters long."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'error'})
-        
-        try:
-            # Save message to database
-            ContactMessage.objects.create(
-                name=name,
-                email=email,
-                message=message_text
-            )
-            msg = "Your message has been sent successfully! We'll get back to you soon."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'success'})
-        except Exception as e:
-            msg = "An error occurred while sending your message. Please try again later."
-            return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': 'error'})
-    
-    return render(request, 'hr/contactus.html')
