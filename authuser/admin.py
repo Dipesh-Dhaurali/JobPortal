@@ -1,5 +1,5 @@
 from django.contrib import admin
-from authuser.models import UserProfile
+from authuser.models import UserProfile, ContactMessage
 
 @admin.register(UserProfile)
 class UserTypeAndVerificationAdmin(admin.ModelAdmin):
@@ -44,3 +44,35 @@ class UserTypeAndVerificationAdmin(admin.ModelAdmin):
         updated_count = queryset.update(is_verified=False)
         self.message_user(request, f"Successfully unverified {updated_count} user(s).")
     unverify_users.short_description = "Mark selected users as unverified"
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    """Display contact form messages - Read-only access only"""
+    list_display = ('id', 'name', 'email', 'created_at', 'is_read')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('name', 'email', 'message')
+    readonly_fields = ('name', 'email', 'message', 'created_at', 'is_read')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Message Details', {
+            'fields': ('name', 'email', 'message'),
+        }),
+        ('Meta Information', {
+            'fields': ('created_at', 'is_read'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Prevent admin from adding messages"""
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        """Prevent admin from deleting messages"""
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        """Prevent admin from modifying messages"""
+        return False
