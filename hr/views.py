@@ -6,6 +6,7 @@ from django.views.decorators.http import require_http_methods
 from hr.models import JobPost, ShortlistedCandidate, SelectedCandidate, RecruiterProfile
 from hr.forms import JobPostForm, HRProfileForm
 from candidate.models import CandidateProfile, candidateApplication
+from authuser.models import ContactMessage
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
@@ -57,9 +58,6 @@ def about_us(request):
     """View for the About Us page"""
     return render(request, 'hr/aboutus.html')
 
-def contact_us(request):
-    """View for the Contact Us page"""
-    return render(request, 'hr/contactus.html')
 
 def blog_detail(request, slug):
     """View for displaying individual blog/article content"""
@@ -376,3 +374,36 @@ def job_history(request):
     """)
     }
     return render(request, 'hr/job_history.html', context)
+
+
+def contact_us(request):
+    """Handle contact form submission and store messages in database"""
+    msg = None
+    msg_type = None
+    
+    if request.method == 'POST':
+        print("[DEBUG] Contact form POST received")
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message_text = request.POST.get('message', '').strip()
+        print(f"[DEBUG] Form data - Name: {name}, Email: {email}, Message: {message_text[:50]}")
+        
+        if not name or not email or not message_text:
+            msg = "All fields are required."
+            msg_type = "error"
+        else:
+            try:
+                ContactMessage.objects.create(
+                    name=name,
+                    email=email,
+                    message=message_text
+                )
+                print("[DEBUG] Message saved successfully to database")
+                msg = "Thank you for contacting us. We will get back to you soon."
+                msg_type = "success"
+            except Exception as e:
+                print(f"[DEBUG] Error saving message: {e}")
+                msg = f"Error saving message: {e}"
+                msg_type = "error"
+    
+    return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})

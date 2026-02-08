@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact Us</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
-    
-    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
     body {
       margin: 0;
       background: #f4f6f8;
@@ -21,9 +25,18 @@
       padding: 60px 20px;
       text-align: center;
     }
-    .hero h1 { margin: 0; font-size: 36px; }
-    .hero p { margin-top: 10px; font-size: 16px; opacity: 0.9; }
-    
+
+    .hero h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    .hero p {
+      margin-top: 10px;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
     /* Navigation */
     .navbar-top {
       background: rgba(255, 255, 255, 0.95);
@@ -33,12 +46,14 @@
       top: 0;
       z-index: 100;
     }
+
     .navbar-brand {
       font-weight: 800;
       font-size: 1.5rem;
       color: #0f172a !important;
       text-decoration: none;
     }
+
     .navbar-brand span {
       color: #3b82f6;
     }
@@ -49,7 +64,7 @@
       background: #fff;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     }
 
     .contact-wrapper {
@@ -64,14 +79,22 @@
       border-radius: 8px;
       border-left: 4px solid #3b82f6;
     }
-    .contact-info h3 { margin-top: 0; color: #0f172a; }
-    .contact-info p { margin: 10px 0; }
+
+    .contact-info h3 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    .contact-info p {
+      margin: 10px 0;
+    }
 
     .social-icons {
       margin-top: 20px;
       display: flex;
       gap: 15px;
     }
+
     .social-icons a {
       width: 40px;
       height: 40px;
@@ -85,14 +108,19 @@
       font-size: 18px;
       transition: background 0.3s;
     }
-    .social-icons a:hover { background: #1e40af; }
+
+    .social-icons a:hover {
+      background: #1e40af;
+    }
 
     form label {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
     }
-    form input, form textarea {
+
+    form input,
+    form textarea {
       width: 100%;
       padding: 10px;
       margin-bottom: 15px;
@@ -100,7 +128,12 @@
       border-radius: 6px;
       font-size: 14px;
     }
-    form textarea { resize: vertical; min-height: 120px; }
+
+    form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
     form button {
       background: #3b82f6;
       color: #fff;
@@ -111,10 +144,43 @@
       font-size: 15px;
       transition: all 0.3s;
     }
-    form button:hover { 
+
+    form button:hover {
       background: #1e40af;
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Alert Messages */
+    .alert-message {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      font-weight: 500;
+      animation: slideDown 0.3s ease-in-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-success {
+      background-color: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid #10b981;
+    }
+
+    .alert-error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
     }
 
     /* EXTRA SECTIONS */
@@ -126,14 +192,18 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
+
     .extra-box {
       background: #fff;
       padding: 25px;
       border-radius: 10px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
       text-align: center;
     }
-    .extra-box h4 { margin-bottom: 10px; }
+
+    .extra-box h4 {
+      margin-bottom: 10px;
+    }
 
     footer {
       background: #0f172a;
@@ -142,23 +212,31 @@
       padding: 40px 20px;
       margin-top: 60px;
     }
+
     footer a {
       color: #3b82f6;
       text-decoration: none;
     }
+
     footer a:hover {
       text-decoration: underline;
     }
 
     @media (max-width: 900px) {
-      .contact-wrapper, .extra-section { grid-template-columns: 1fr; }
+
+      .contact-wrapper,
+      .extra-section {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Navigation -->
   <nav class="navbar-top">
-    <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+    <div
+      style="max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
       <a href="/" class="navbar-brand">JOB<span>PORTAL</span></a>
       <div style="display: flex; gap: 20px;">
         <a href="/" style="color: #0f172a; text-decoration: none; font-weight: 500;">Home</a>
@@ -175,7 +253,17 @@
 
   <div class="container">
     <h1>Contact Us</h1>
-    <p class="subtitle">We’d love to hear from you. Please fill out the form below.</p>
+    <p class="subtitle">We'd love to hear from you. Please fill out the form below.</p>
+
+    {% if msg %}
+      <div class="alert-message {% if msg_type == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        {% if msg_type == 'success' %}
+          <strong>✓ Success!</strong> {{ msg }}
+        {% else %}
+          <strong>⚠ Error:</strong> {{ msg }}
+        {% endif %}
+      </div>
+    {% endif %}
 
     <div class="contact-wrapper">
       <div class="contact-info">
@@ -186,20 +274,24 @@
         <p>We usually respond within 24 hours.</p>
 
         <div class="social-icons">
-            <a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-            <a href="https://www.instagram.com/dipeshdhaurali/" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
-</div>
-</div>
+          <a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank" title="Facebook"><i
+              class="bi bi-facebook"></i></a>
+          <a href="https://www.instagram.com/dipeshdhaurali/" target="_blank" title="Instagram"><i
+              class="bi bi-instagram"></i></a>
+        </div>
+      </div>
 
-      <form>
-        <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" placeholder="Your name" required />
+      <form method="POST" action="{% url 'contact_us' %}">
+        {% csrf_token %}
 
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Your email" required />
+        <label>Full Name</label>
+        <input type="text" name="name" placeholder="Your name" required>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message" placeholder="Write your message here..." required></textarea>
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="Your email" required>
+
+        <label>Message</label>
+        <textarea name="message" placeholder="Write your message..." required></textarea>
 
         <button type="submit">Send Message</button>
       </form>
@@ -223,7 +315,8 @@
 
   <footer>
     <div style="max-width: 1100px; margin: 0 auto;">
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 40px; text-align: left;">
+      <div
+        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-bottom: 40px; text-align: left;">
         <div>
           <h4 style="color: #fff; margin-bottom: 15px;">JOBPORTAL</h4>
           <p>Helping people build their careers using technology made for humans.</p>
@@ -236,9 +329,9 @@
         </div>
         <div>
           <h4 style="color: #fff; margin-bottom: 15px;">Follow Us</h4>
-        <p><a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank">Facebook</a></p>
-        <p><a href="https://www.instagram.com/dipeshdhaurali/" target="_blank">Instagram</a></p>
-        <p><a href="https://github.com/Dipesh-Dhaurali/JobPortal" target="_blank">GitHub</a></p>
+          <p><a href="https://www.facebook.com/dipesh.dhaurali.1/" target="_blank">Facebook</a></p>
+          <p><a href="https://www.instagram.com/dipeshdhaurali/" target="_blank">Instagram</a></p>
+          <p><a href="https://github.com/Dipesh-Dhaurali/JobPortal" target="_blank">GitHub</a></p>
         </div>
       </div>
       <div style="border-top: 1px solid #334155; padding-top: 20px; text-align: center;">
@@ -247,4 +340,5 @@
     </div>
   </footer>
 </body>
+
 </html>
