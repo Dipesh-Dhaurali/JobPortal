@@ -49,7 +49,7 @@ class UserTypeAndVerificationAdmin(admin.ModelAdmin):
 @admin.register(ContactMessage)
 class ContactMessageAdmin(admin.ModelAdmin):
     """Display contact form messages - Read-only access only"""
-    list_display = ('id', 'name', 'email', 'created_at', 'is_read')
+    list_display = ('id', 'name', 'email', 'created_at', 'message')
     list_filter = ('is_read', 'created_at')
     search_fields = ('name', 'email', 'message')
     readonly_fields = ('name', 'email', 'message', 'created_at', 'is_read')
