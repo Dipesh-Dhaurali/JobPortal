@@ -69,7 +69,7 @@ def candidate_dashboard(request):
     elif filter_by == 'employment_part':
         jobs = jobs.filter(employment_type='part-time')
         search_placeholder = 'Showing Part-time jobs'
-    elif filter_by == 'employment_internship':
+    elif filter_by == 'employment_intern':
         jobs = jobs.filter(employment_type='internship')
         search_placeholder = 'Showing Internship jobs'
     elif filter_by == 'employment_contract':
