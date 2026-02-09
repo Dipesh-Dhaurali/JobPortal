@@ -102,21 +102,13 @@
         <!-- Required Experience -->
         <div class="info-row" style="background: white; margin-bottom: 10px;">
             <strong>Required Experience:</strong> 
-            {% if job.required_experience == 'others' %}
-                {{ job.required_experience_custom }}
-            {% else %}
-                {% for value, display in job.get_required_experience_display_dict %}
-                    {% if job.required_experience == value %}{{ display }}{% endif %}
-                {% endfor %}
-            {% endif %}
+            <span style="color: #495057;">{{ job.get_required_experience_display }}</span>
         </div>
         
         <!-- Required Education -->
         <div class="info-row" style="background: white; margin-bottom: 10px;">
             <strong>Required Education:</strong>
-            {% for value, display in job.get_required_education_display_dict %}
-                {% if job.required_education == value %}{{ display }}{% endif %}
-            {% endfor %}
+            <span style="color: #495057;">{{ job.get_required_education_display }}</span>
         </div>
         
         <!-- Required Skills -->
