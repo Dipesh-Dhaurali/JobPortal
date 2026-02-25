@@ -17,8 +17,6 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z"
@@ -26,6 +24,13 @@ SECRET_KEY = "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Email configuration for Gmail SMTP
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'hrjobportal.system@gmail.com'
+EMAIL_HOST_PASSWORD = 'mcib njsx exre iqbx'  
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 ALLOWED_HOSTS = ['*']
 
 

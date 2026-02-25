@@ -61,7 +61,6 @@
   <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
     <strong>☰ Menu</strong>
   </a>
-  <!-- Updated navbar title to "Build your profile with your real information" -->
   <h2>Build your profile with your real information</h2>
 </div>
 
@@ -70,8 +69,8 @@
     <nav>
       <div class="d-flex align-items-start">
         <div class="nav flex-column nav-pills me-3 w-100">
-          <!-- Updated to use Font Awesome icons instead of emojis to match dashboard styling -->
           <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user"></i> Profile</a>
+          <a class="nav-link" href="{% url 'recommended_jobs' %}"><i class="fas fa-robot"></i> Recommended Jobs</a>
           <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase"></i> Browse Job</a>
           <a class="nav-link" href="{% url 'applied_jobs' %}"><i class="fas fa-file-alt"></i> Applied Jobs</a>
           <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>

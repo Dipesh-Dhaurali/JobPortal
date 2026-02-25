@@ -4,13 +4,17 @@ from django.contrib import messages
 from hr.models import JobPost, ShortlistedCandidate, RecruiterProfile
 from candidate.models import CandidateProfile, candidateApplication
 from candidate.forms import JobApplicationForm, CandidateProfileForm
+from .recommended import recommend_jobs_for_user
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import User
 
+
+
 @login_required(login_url='login_user')
+
+# Display candidate dashboard with sidebar navigation and advanced filtering
 def candidate_dashboard(request):
-    """Display candidate dashboard with sidebar navigation and advanced filtering"""
     try:
         profile = CandidateProfile.objects.get(user=request.user)
     except CandidateProfile.DoesNotExist:
@@ -26,13 +30,13 @@ def candidate_dashboard(request):
     employment_type = request.GET.get('employment_type', '')
     work_mode = request.GET.get('work_mode', '')
     
-    # Get all available jobs
+    # Get all available jobs just kike select * from jobpost
     jobs = JobPost.objects.all()
-    
-    # Dynamic search placeholder based on filter type
     search_placeholder = 'Search jobs here...'
     
-    # Apply filters based on dropdown selection
+
+    # Apply filters based on dropdown selection  (note .filter is just like where clause in sql)
+    #search qyery is user typed word in html box
     if filter_by == 'keyword' and search_query:
         jobs = jobs.filter(title__icontains=search_query)
         search_placeholder = 'Search jobs here...'
@@ -69,7 +73,7 @@ def candidate_dashboard(request):
     elif filter_by == 'employment_part':
         jobs = jobs.filter(employment_type='part-time')
         search_placeholder = 'Showing Part-time jobs'
-    elif filter_by == 'employment_internship':
+    elif filter_by == 'employment_intern':
         jobs = jobs.filter(employment_type='internship')
         search_placeholder = 'Showing Internship jobs'
     elif filter_by == 'employment_contract':
@@ -109,7 +113,7 @@ def candidate_dashboard(request):
         except (ValueError, TypeError):
             pass
     
-    # Salary Range filters
+    # Salary Range filters validation
     if min_salary and not filter_by.startswith('salary'):
         try:
             min_sal = float(min_salary)
@@ -136,26 +140,33 @@ def candidate_dashboard(request):
             jobs = jobs.order_by('-salaryHigh')
         elif sort_by == 'salary_low':
             jobs = jobs.order_by('salaryLow')
-        else:  # relevance (default)
+        else:  # Default sorting by relevance (could be based on search query or other factors)
             jobs = jobs.order_by('-created_at')
     
     applied_jobs = candidateApplication.objects.filter(user=request.user)
     applied_job_ids = [app.job.id for app in applied_jobs]
     
-    # Create a dictionary mapping job_id to application status
+    # Create a mapping of job ID to application status for quick lookup
     job_status_map = {app.job.id: app.status for app in applied_jobs}
     
-    # Annotate each job with its application status
+    # Attach application status to each job in the list
     for job in jobs:
         if job.id in job_status_map:
             job.application_status = job_status_map[job.id]
         else:
             job.application_status = None
+
+    # Attach display status for jobs (Expired if expired, else application status)
+    for job in jobs:
+        if job.is_expired:
+            job.display_status = "Expired"
+        else:   
+            job.display_status = job.application_status
     
     shortlisted_jobs = ShortlistedCandidate.objects.filter(candidate__user=request.user)
     shortlisted_count = shortlisted_jobs.count()
     
-    # Show notification only for newly shortlisted candidates (not yet notified)
+    # Show notification only for newly shortlisted candidates 
     newly_shortlisted = shortlisted_jobs.filter(notification_sent=False)
     for shortlist in newly_shortlisted:
         messages.info(request, f"Great news! You have been shortlisted for {shortlist.job.title}!")
@@ -180,9 +191,13 @@ def candidate_dashboard(request):
     }
     return render(request, 'candidate/dashboard_with_nav.html', context)
 
+
+
+
+#Application fillup and sumbitted
 @login_required(login_url='login_user')
 def job_detail(request, pk):
-    job = JobPost.objects.get(id=pk)
+    job = JobPost.objects.get(id=pk)  # .firtst eturns the first object in the QuerySet or None if no record exists.
     application = candidateApplication.objects.filter(user=request.user, job=job).first()
     has_applied = application is not None
     application_status = application.status if application else None
@@ -191,37 +206,44 @@ def job_detail(request, pk):
     
     company_profile_exists = RecruiterProfile.objects.filter(user=job.user).exists()
     
+    #Application submitted
     if request.method == 'POST':
-        form = JobApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.user = request.user
-            application.job = job
-            application.save()
-            
-            job.applycount += 1
-            job.save()
-            
-            messages.success(request, "Application submitted successfully!")
-            return redirect('candidate_dashboard')
-        # Form errors will now be displayed directly in the template
+        if job.is_expired:
+            messages.error(request, "This job posting has expired. You cannot apply for expired jobs.")
+        else:
+            form = JobApplicationForm(request.POST, request.FILES)
+            if form.is_valid():
+                application = form.save(commit=False)
+                application.user = request.user
+                application.job = job
+                application.save()
+
+                job.applycount += 1
+                job.save()
+
+                messages.success(request, "Application submitted successfully!")
+                return redirect('candidate_dashboard')
+
     else:
         form = JobApplicationForm()
     
     context = {
         'job': job,
         'has_applied': has_applied,
-        'application_status': application_status, # Pass application status to template
+        'application_status': application_status,
         'is_shortlisted': is_shortlisted,
         'is_rejected': is_rejected,
         'form': form,
-        'company_profile_exists': company_profile_exists,  # Pass flag to template
+        'company_profile_exists': company_profile_exists,
     }
     return render(request, 'candidate/job_detail.html', context)
 
+
+
+
+# Display jobs where candidate has been shortlisted
 @login_required(login_url='login_user')
 def shortlisted_jobs(request):
-    """Display jobs where candidate has been shortlisted"""
     shortlisted = ShortlistedCandidate.objects.filter(candidate__user=request.user).order_by('-shortlisted_at')
     
     context = {
@@ -230,22 +252,28 @@ def shortlisted_jobs(request):
     }
     return render(request, 'candidate/shortlisted.html', context)
 
+
+
+
+#Candidate Profile
 @login_required(login_url='login_user')
 def candidate_profile(request):
-    """Display candidate profile creation/editing page"""
+    #Display candidate profile creation/editing page
     try:
         profile = CandidateProfile.objects.get(user=request.user)
     except CandidateProfile.DoesNotExist:
         profile = None
     
     if request.method == 'POST':
-        form = CandidateProfileForm(request.POST, request.FILES, instance=profile)
+        form = CandidateProfileForm(request.POST, request.FILES, instance=profile) #instance : update this existing profile instance
         if form.is_valid():
-            profile = form.save(commit=False)
+            profile = form.save(commit=False) #no permanant change so edit possible
             profile.user = request.user
             profile.save()
             messages.success(request, "Profile saved successfully!")
             return redirect('candidate_profile')
+        else:
+            messages.error(request, "Please correct the errors below and resubmit the form.")
     else:
         form = CandidateProfileForm(instance=profile)
     
@@ -255,9 +283,12 @@ def candidate_profile(request):
     }
     return render(request, 'candidate/profile.html', context)
 
+
+
+# Delete Candidate Profile
 @login_required(login_url='login_user')
 def delete_profile(request):
-    """Delete candidate profile"""
+
     try:
         profile = CandidateProfile.objects.get(user=request.user)
         profile.delete()
@@ -267,14 +298,15 @@ def delete_profile(request):
     
     return redirect('candidate_profile')
 
+
+# Display all applied jobs in application status
 @login_required(login_url='login_user')
 def applied_jobs(request):
-    """Display all jobs the candidate has applied to with their application status"""
-    # Get all applications for the current user with related job details
     applications = candidateApplication.objects.filter(
         user=request.user
     ).select_related('job').order_by('-applied_at')
-    
+
+
     # Create a list with job and application status
     applied_jobs_list = []
     for app in applications:
@@ -284,12 +316,17 @@ def applied_jobs(request):
             'status': app.status,
             'applied_at': app.applied_at,
         })
-    
+
+    # Add red notifications for expired applied jobs
+    for item in applied_jobs_list:
+        if item['job'].is_expired:
+            messages.error(request, f"The job '{item['job'].title}' has expired.")
+
     pending_count = applications.filter(status='pending').count()
     shortlisted_count = applications.filter(status='shortlisted').count()
     selected_count = applications.filter(status='selected').count()
     rejected_count = applications.filter(status='rejected').count()
-    
+
     context = {
         'applied_jobs': applied_jobs_list,
         'total_count': applications.count(),
@@ -300,10 +337,13 @@ def applied_jobs(request):
     }
     return render(request, 'candidate/applied_jobs.html', context)
 
+
+
+#  Display HR/Company profile
 @login_required(login_url='login_user')
 def view_hr_profile(request, user_id):
-    """Display HR/Company profile"""
-    hr_user = get_object_or_404(User, id=user_id)
+
+    hr_user = get_object_or_404(User, id=user_id) # Retrieve the HR user with the given user_id , If no such user exists, return a 404 error page automatically.
     
     try:
         profile = RecruiterProfile.objects.get(user=hr_user)
@@ -315,3 +355,38 @@ def view_hr_profile(request, user_id):
         'hr_user': hr_user,
     }
     return render(request, 'candidate/view_hr_profile.html', context)
+
+
+
+# Show job recommendations for candidate using the Bag of Words (BoW) match with profile.
+@login_required(login_url='login_user')
+def recommended_jobs(request):
+    try:
+        profile = CandidateProfile.objects.get(user=request.user)
+    except CandidateProfile.DoesNotExist: # Show message inside the Recommended Jobs page instead of redirecting
+        context = {
+            'profile': None,
+            'recommendations': [],
+            'missing_profile': True,
+        }
+        return render(request, 'candidate/recommended_jobs.html', context)
+
+    scored_jobs = recommend_jobs_for_user(request.user, top_n=20) #limit upto 20
+
+    # Extra safety: enforce the 0.25 threshold here as well
+    recommendations = [
+        {
+            'job': job,
+            'score': score,
+        }
+        for job, score in scored_jobs
+        if score >= 0.25
+    ]
+
+    context = {
+        'profile': profile,
+        'recommendations': recommendations,
+        'missing_profile': False,
+    }
+    return render(request, 'candidate/recommended_jobs.html', context)
+

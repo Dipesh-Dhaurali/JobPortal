@@ -9,18 +9,20 @@ from candidate.models import CandidateProfile, candidateApplication
 from authuser.models import ContactMessage
 from django.db.models import Q
 from django.utils.safestring import mark_safe
+from hr.smsSystem import send_hr_action_email, send_contact_form_email
 
 
+
+#  Display HR profile creation/editing page
 @login_required(login_url='login_user')
 def hr_profile(request):
-    """Display HR profile creation/editing page"""
     try:
         profile = RecruiterProfile.objects.get(user=request.user)
     except RecruiterProfile.DoesNotExist:
         profile = None
     
     if request.method == 'POST':
-        form = HRProfileForm(request.POST, request.FILES, instance=profile)
+        form = HRProfileForm(request.POST, request.FILES, instance=profile) #instance : update this existing profile instance
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
@@ -38,9 +40,10 @@ def hr_profile(request):
     return render(request, 'hr/profile.html', context)
 
 
+
+# Delete HR Profile
 @login_required(login_url='login_user')
 def delete_hr_profile(request):
-    """Delete HR profile"""
     try:
         profile = RecruiterProfile.objects.get(user=request.user)
         profile.delete()
@@ -50,17 +53,20 @@ def delete_hr_profile(request):
     
     return redirect('hr_profile')
 
+
+# View for the main landing page
 def home(request):
-    """View for the main landing page"""
     return render(request, 'hr/index.html')
 
+
+# View for the About Us page
 def about_us(request):
-    """View for the About Us page"""
     return render(request, 'hr/aboutus.html')
 
 
+# View for displaying individual blog/article content
 def blog_detail(request, slug):
-    """View for displaying individual blog/article content"""
+    
     blogs = {
         'mastering-remote-interview': {
             'title': 'Mastering the Remote Interview',
@@ -76,6 +82,8 @@ def blog_detail(request, slug):
                 <p>Look into the camera lens, not at the screen, to simulate eye contact. This small adjustment makes you appear much more engaged and confident.</p>
             """
         },
+
+
         'what-hr-looks-for-2026': {
             'title': 'What HR Looks for in 2026',
             'category': 'HIRING TRENDS',
@@ -90,6 +98,8 @@ def blog_detail(request, slug):
                 <p>Show that you are a self-starter who proactively seeks out new knowledge and stays ahead of industry trends.</p>
             """
         },
+
+
         'balancing-hustle-and-health': {
             'title': 'Balancing Hustle and Health',
             'category': 'LIFESTYLE',
@@ -104,6 +114,8 @@ def blog_detail(request, slug):
                 <p>Taking moments throughout the day to breathe and center yourself can help manage stress and maintain focus during high-pressure situations.</p>
             """
         },
+
+
         'top-tips-landing-dream-job': {
             'title': 'Top Tips for Landing Your Dream Job',
             'category': 'JOB SEARCH',
@@ -124,12 +136,16 @@ def blog_detail(request, slug):
         }
     }
     
-    blog = blogs.get(slug)
+
+    blog = blogs.get(slug) # Fetches exactly one object whose slug matches the value of slug.
     if not blog:
         return redirect('home')
         
     return render(request, 'hr/blog_detail.html', {'blog': blog})
 
+
+
+#HR homepage / hrdashboard
 @login_required(login_url='login_user')
 def hrhome(request):
     jobs = JobPost.objects.filter(user=request.user).order_by('-created_at')
@@ -141,11 +157,13 @@ def hrhome(request):
     context = {
         'jobs': jobs,
         'search_query': search_query,
-        'navbar_title': 'Welcome to HR Job Portal'  # Added navbar title for dashboard
+        'navbar_title': 'Welcome to HR Job Portal'  
     }
     return render(request, 'hr/hrdashboard.html', context)
 
 
+
+# Job post page
 @login_required(login_url='login_user')
 def post_job(request):
     if request.method == 'POST':
@@ -156,17 +174,18 @@ def post_job(request):
             job.save()
             messages.success(request, "Job posted successfully!")
             return redirect('hrdash')
-        # Form errors will now be displayed directly in the template
     else:
         form = JobPostForm()
     
     context = {
         'form': form,
-        'navbar_title': 'Post New Job Here'  # Added navbar title for post job page
+        'navbar_title': 'Post New Job Here'  
     }
     return render(request, 'hr/postjob.html', context)
 
 
+
+# Edit job in dashboard
 @login_required(login_url='login_user')
 def edit_job(request, pk):
     job = get_object_or_404(JobPost, id=pk, user=request.user)
@@ -187,6 +206,9 @@ def edit_job(request, pk):
     return render(request, 'hr/editjob.html', context)
 
 
+
+
+# Delete a post job
 @login_required(login_url='login_user')
 def delete_job(request, pk):
     job = get_object_or_404(JobPost, id=pk, user=request.user)
@@ -200,6 +222,9 @@ def delete_job(request, pk):
     return render(request, 'hr/deletejob.html', context)
 
 
+
+
+# candidate details (button inside)
 @login_required(login_url='login_user')
 def candidate_details(request, pk):
     job = get_object_or_404(JobPost, id=pk, user=request.user)
@@ -217,74 +242,75 @@ def candidate_details(request, pk):
     return render(request, 'hr/candidate.html', context)
 
 
+
+
+# Shortlist a candidate for a job
 @login_required(login_url='login_user')
 @require_http_methods(["POST"])
 def select_candidate(request, pk):
-    """Shortlist a candidate for a job"""
     application = get_object_or_404(candidateApplication, id=pk)
-    if application.job.user != request.user:
+    if application.job.user != request.user:  # Checks whether the current user is the owner of the job if not no action
         messages.error(request, "Unauthorized access!")
         return redirect('hrdash')
-    
+
     application.status = 'shortlisted'
     application.save()
-    
-    if not ShortlistedCandidate.objects.filter(candidate=application).exists():
+
+    if not ShortlistedCandidate.objects.filter(candidate=application).exists(): #Prevents duplicate shortlisting.
         ShortlistedCandidate.objects.create(
             job=application.job,
             candidate=application,
             notification_sent=True
         )
-    
+
+    # Send email notification
+    send_hr_action_email(application, 'shortlisted')
+
+    # dashboard notification
     candidate_user = application.user
     messages.success(request, f"Candidate {candidate_user.username} shortlisted successfully!")
     messages.info(request, f"Notification sent to {candidate_user.username}")
-    
+
     return redirect('candidate_details', pk=application.job.id)
 
 
-@login_required(login_url='login_user')
-@require_http_methods(["POST"])
-def reject_candidate(request, pk):
-    """Reject a candidate for a job"""
-    application = get_object_or_404(candidateApplication, id=pk)
-    if application.job.user != request.user:
-        messages.error(request, "Unauthorized access!")
-        return redirect('hrdash')
-    
-    application.status = 'rejected'
-    application.save()
-    
-    messages.success(request, f"Candidate {application.user.username} rejected successfully!")
-    return redirect('candidate_details', pk=application.job.id)
 
 
+
+# select final candidate  Select (accept) a shortlisted candidate for the job
 @login_required(login_url='login_user')
 @require_http_methods(["POST"])
 def select_final_candidate(request, pk):
-    """Select (accept) a shortlisted candidate for the job"""
+    
     application = get_object_or_404(candidateApplication, id=pk)
     if application.job.user != request.user:
         messages.error(request, "Unauthorized access!")
         return redirect('hrdash')
-    
+
     application.status = 'selected'
     application.save()
-    
+
     if not SelectedCandidate.objects.filter(candidate=application).exists():
         SelectedCandidate.objects.create(
             job=application.job,
             candidate=application
         )
-    
+
+    # Send email notification
+    send_hr_action_email(application, 'selected')
+
     messages.success(request, f"Candidate {application.user.username} selected successfully!")
     return redirect('candidate_details', pk=application.job.id)
 
 
+
+
+
+#  Reject a candidate for a job
 @login_required(login_url='login_user')
 @require_http_methods(["POST"])
-def reject_from_shortlist(request, pk):
-    """Reject a shortlisted candidate"""
+def reject_candidate(request, pk):
+   
     application = get_object_or_404(candidateApplication, id=pk)
     if application.job.user != request.user:
         messages.error(request, "Unauthorized access!")
@@ -293,13 +319,41 @@ def reject_from_shortlist(request, pk):
     application.status = 'rejected'
     application.save()
     
+    # Send email notification
+    send_hr_action_email(application, 'rejected')
+
     messages.success(request, f"Candidate {application.user.username} rejected successfully!")
     return redirect('candidate_details', pk=application.job.id)
 
 
+
+
+# Reject a shortlisted candidate
+@login_required(login_url='login_user')
+@require_http_methods(["POST"])
+def reject_from_shortlist(request, pk):
+
+    application = get_object_or_404(candidateApplication, id=pk)
+    if application.job.user != request.user:
+        messages.error(request, "Unauthorized access!")
+        return redirect('hrdash')
+
+    application.status = 'rejected'
+    application.save()
+
+    
+    # Send email notification
+    send_hr_action_email(application, 'rejected_after_shortlist')
+
+    messages.success(request, f"Candidate {application.user.username} rejected from shortlist successfully!")
+    return redirect('candidate_details', pk=application.job.id)
+
+
+
+
+# View a candidate's profile
 @login_required(login_url='login_user')
 def view_candidate_profile(request, user_id):
-    """View a candidate's complete profile"""
     candidate_user = get_object_or_404(User, id=user_id)
     
     try:
@@ -315,15 +369,15 @@ def view_candidate_profile(request, user_id):
     return render(request, 'hr/view_candidate_profile.html', context)
 
 
+
+
+# View all job history i.e posts and applications with advanced filtering
 @login_required(login_url='login_user')
 def job_history(request):
-    """View all job posts and applications with advanced filtering"""
-    # Get all jobs posted by current HR
     all_jobs = JobPost.objects.filter(user=request.user).order_by('-created_at')
     
     display_mode = request.GET.get('mode', 'applications')
     
-    # Get all applications for these jobs
     all_applications = candidateApplication.objects.filter(
         job__user=request.user
     ).select_related('user', 'job').order_by('-applied_at')
@@ -332,7 +386,6 @@ def job_history(request):
     if status_filter != 'all':
         all_applications = all_applications.filter(status=status_filter)
     
-    # Search by candidate name or job title
     search_query = request.GET.get('search', '').strip()
     if search_query:
         all_applications = all_applications.filter(
@@ -342,7 +395,6 @@ def job_history(request):
             Q(job__title__icontains=search_query)
         )
     
-    # Calculate counts for each status
     total_applications = candidateApplication.objects.filter(job__user=request.user).count()
     pending_count = candidateApplication.objects.filter(
         job__user=request.user, status='pending'
@@ -376,18 +428,20 @@ def job_history(request):
     return render(request, 'hr/job_history.html', context)
 
 
+
+
+# Handle contact form submission and store messages in database
 def contact_us(request):
-    """Handle contact form submission and store messages in database"""
     msg = None
     msg_type = None
-    
+
     if request.method == 'POST':
         print("[DEBUG] Contact form POST received")
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         message_text = request.POST.get('message', '').strip()
         print(f"[DEBUG] Form data - Name: {name}, Email: {email}, Message: {message_text[:50]}")
-        
+
         if not name or not email or not message_text:
             msg = "All fields are required."
             msg_type = "error"
@@ -399,11 +453,15 @@ def contact_us(request):
                     message=message_text
                 )
                 print("[DEBUG] Message saved successfully to database")
+
+                # Send email notification
+                send_contact_form_email(name, email, message_text)
+
                 msg = "Thank you for contacting us. We will get back to you soon."
                 msg_type = "success"
             except Exception as e:
                 print(f"[DEBUG] Error saving message: {e}")
                 msg = f"Error saving message: {e}"
                 msg_type = "error"
-    
+
     return render(request, 'hr/contactus.html', {'msg': msg, 'msg_type': msg_type})

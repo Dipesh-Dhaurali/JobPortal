@@ -91,7 +91,7 @@ class JobApplicationForm(forms.ModelForm):
         }
         labels = {
             'education_level': 'Highest Education Level',
-            'passingYear': 'Graduation Year',  # Renamed from "Passing Year" to "Graduation Year"
+            'passingYear': 'Graduation Year', 
             'yearOfExp': 'Years of Experience',
             'resume': 'CV/Resume (PDF, max 5MB)',
             'support_documents': 'Supporting Documents (Optional - PDF, max 5MB)',
@@ -149,6 +149,9 @@ class CandidateProfileForm(forms.ModelForm):
             'preferred_job_level',
             'preferred_job_type',
             'work_experience',
+            'job_interest',
+            'work_experience_description',
+            'preferred_industry',
             'education_level',
             'course_or_program',
             'gpa_percentage_type',
@@ -157,6 +160,7 @@ class CandidateProfileForm(forms.ModelForm):
             'graduation_year',
             'skills',
             'languages',
+            'career_summary',
             'social_account_name_1',
             'social_account_url_1',
             'social_account_name_2',
@@ -182,6 +186,19 @@ class CandidateProfileForm(forms.ModelForm):
                 'min': '0',
                 'step': '1',
                 'placeholder': 'Years of experience',
+            }),
+            'job_interest': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'e.g., Software Developer, Data Analyst (comma-separated)',
+            }),
+            'work_experience_description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Briefly describe your work experience, roles, and responsibilities',
+            }),
+            'preferred_industry': forms.Select(attrs={
+                'class': 'form-control',
             }),
             'education_level': forms.Select(attrs={
                 'class': 'form-control',
@@ -214,6 +231,11 @@ class CandidateProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'e.g., Nepali, English',
             }),
+            'career_summary': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Write a short career summary / mini bio',
+            }),
             'social_account_name_1': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'e.g., Facebook',
@@ -237,6 +259,9 @@ class CandidateProfileForm(forms.ModelForm):
             'preferred_job_level': 'Preferred Job Level',
             'preferred_job_type': 'Preferred Job Type',
             'work_experience': 'Work Experience (Years)',
+            'job_interest': 'Job Interest',
+            'work_experience_description': 'Work Experience Description',
+            'preferred_industry': 'Preferred Industry',
             'education_level': 'Education Level',
             'course_or_program': 'Course or Program',
             'gpa_percentage_type': 'GPA or Percentage',
@@ -245,6 +270,7 @@ class CandidateProfileForm(forms.ModelForm):
             'graduation_year': 'Graduation Year',
             'skills': 'Skills',
             'languages': 'Languages',
+            'career_summary': 'Career Summary (Mini Bio)',
             'social_account_name_1': 'Social Account Name 1',
             'social_account_url_1': 'Social Account URL 1',
             'social_account_name_2': 'Social Account Name 2',
@@ -303,3 +329,26 @@ class CandidateProfileForm(forms.ModelForm):
             if not photo.name.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
                 raise ValidationError("Only image files (JPG, PNG, GIF) are accepted.")
         return photo
+
+    def clean_job_interest(self):
+        job_interest = self.cleaned_data.get('job_interest', '')
+        if job_interest:
+            # Ensure there is at least one non-empty interest when split by comma
+            interests = [item.strip() for item in job_interest.split(',') if item.strip()]
+            if not interests:
+                raise ValidationError("Please enter at least one job interest, separated by commas.")
+        return job_interest
+
+    def clean_work_experience_description(self):
+        desc = self.cleaned_data.get('work_experience_description', '')
+        if desc:
+            if len(desc.strip()) < 20:
+                raise ValidationError("Work experience description should be at least 20 characters long.")
+        return desc
+
+    def clean_career_summary(self):
+        summary = self.cleaned_data.get('career_summary', '')
+        if summary:
+            if len(summary.strip()) < 20:
+                raise ValidationError("Career summary should be at least 20 characters long.")
+        return summary

@@ -102,21 +102,13 @@
         <!-- Required Experience -->
         <div class="info-row" style="background: white; margin-bottom: 10px;">
             <strong>Required Experience:</strong> 
-            {% if job.required_experience == 'others' %}
-                {{ job.required_experience_custom }}
-            {% else %}
-                {% for value, display in job.get_required_experience_display_dict %}
-                    {% if job.required_experience == value %}{{ display }}{% endif %}
-                {% endfor %}
-            {% endif %}
+            <span style="color: #495057;">{{ job.get_required_experience_display }}</span>
         </div>
         
         <!-- Required Education -->
         <div class="info-row" style="background: white; margin-bottom: 10px;">
             <strong>Required Education:</strong>
-            {% for value, display in job.get_required_education_display_dict %}
-                {% if job.required_education == value %}{{ display }}{% endif %}
-            {% endfor %}
+            <span style="color: #495057;">{{ job.get_required_education_display }}</span>
         </div>
         
         <!-- Required Skills -->
@@ -150,7 +142,6 @@
     </div>
     {% endif %}
 
-    <!-- Display different messages based on application status -->
     {% if has_applied %}
         {% if is_rejected %}
         <div class="alert alert-danger mt-4">
@@ -207,16 +198,21 @@
                 <small class="text-danger d-block mt-2">{{ form.resume.errors }}</small>
             {% endif %}
         </div>
+        {% if job.is_expired %}
+        <button type="submit" class="btn btn-secondary w-100" disabled>
+            <i class="fas fa-ban"></i> Application Expired
+        </button>
+        {% else %}
         <button type="submit" class="btn btn-primary w-100">
             <i class="fas fa-paper-plane"></i> Submit Application
         </button>
+        {% endif %}
     </form>
     {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     
-<!-- JavaScript to show alert when view profile button is clicked if no profile exists -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const viewProfileBtn = document.getElementById('viewProfileBtn');

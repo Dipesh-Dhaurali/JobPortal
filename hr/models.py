@@ -5,9 +5,6 @@ from django.core.exceptions import ValidationError
 from datetime import date
 
 
-# -------------------------------
-# Recruiter / HR Account
-# -------------------------------
 class hr(models.Model):
     """Recruiter/HR account linked with Django User"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,9 +17,8 @@ class hr(models.Model):
         return f"{self.user.username} (Recruiter)"
 
 
-# -------------------------------
 # Choice Constants
-# -------------------------------
+
 EMPLOYMENT_TYPE_CHOICES = (
     ('full-time', 'Full-time'),
     ('part-time', 'Part-time'),
@@ -60,9 +56,6 @@ REQUIRED_EDUCATION_CHOICES = (
 )
 
 
-# -------------------------------
-# Job Post Model
-# -------------------------------
 class JobPost(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -137,13 +130,15 @@ class JobPost(models.Model):
             return [s.strip() for s in self.required_skills.split(',') if s.strip()]
         return []
 
+    @property
+    def is_expired(self):
+        return self.lastDateToApply < date.today()
+
     def __str__(self):
         return self.title
 
 
-# -------------------------------
-# Shortlisted Candidate
-# -------------------------------
+
 class ShortlistedCandidate(models.Model):
     job = models.ForeignKey(JobPost, on_delete=models.CASCADE)
     candidate = models.OneToOneField(
@@ -157,9 +152,6 @@ class ShortlistedCandidate(models.Model):
         return f"{self.candidate.user.username} shortlisted for {self.job.title}"
 
 
-# -------------------------------
-# Selected Candidate
-# -------------------------------
 class SelectedCandidate(models.Model):
     job = models.ForeignKey(JobPost, on_delete=models.CASCADE)
     candidate = models.OneToOneField(
@@ -172,9 +164,6 @@ class SelectedCandidate(models.Model):
         return f"{self.candidate.user.username} selected for {self.job.title}"
 
 
-# -------------------------------
-# Recruiter Profile (RENAMED SAFELY)
-# -------------------------------
 class RecruiterProfile(models.Model):
     """Recruiter / Company profile (Renamed from HRProfile safely)"""
 
@@ -234,7 +223,7 @@ class RecruiterProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'hr_hrprofile'   # 🔥 keeps existing DB table
+        db_table = 'hr_hrprofile' 
         verbose_name = "Recruiter Profile"
         verbose_name_plural = "Recruiter Profiles"
 

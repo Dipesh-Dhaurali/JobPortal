@@ -84,12 +84,10 @@
   </head>
   <body>
 
-    <!-- Include navbar with search inline - search container now positioned in top-bar -->
     {% include 'hr/navbar.html' %}
 
-    <!-- Search bar moved inline here - only appears on dashboard -->
     <script>
-      // Inject search into navbar top-bar on dashboard load
+      // Add search bar to the top bar after DOM is loaded
       document.addEventListener('DOMContentLoaded', function() {
         const topBar = document.querySelector('.top-bar');
         if (topBar) {
@@ -141,7 +139,7 @@
                 <span><strong>{{ job.applycount }}</strong> Candidates Applied</span>
               </div>
               
-              <!-- Added edit and delete buttons with improved layout -->
+              <!-- Added edit and delete buttons -->
               <div class="d-grid gap-2">
                 <a href="{% url 'candidate_details' job.id %}" class="btn btn-success">
                   <i class="fas fa-eye"></i> View Applications

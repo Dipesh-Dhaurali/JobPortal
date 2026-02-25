@@ -276,6 +276,19 @@
             font-weight: 600;
         }
 
+        /* Added expired badge styling */
+        .expired-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         /* Add nested submenu styles */
         .filter-category {
             position: relative;
@@ -449,7 +462,6 @@
         <div class="search-form-wrapper">
             <form method="GET" action="{% url 'candidate_dashboard' %}" class="d-flex align-items-center" id="searchForm" style="width: 100%; margin: 0;">
                 <input type="hidden" name="filter_by" id="filterByInput" value="{{ filter_by|default:'keyword' }}">
-                <!-- Added hidden salary input fields -->
                 <input type="hidden" name="min_salary" id="min_salary_input_hidden" value="{{ min_salary }}">
                 <input type="hidden" name="max_salary" id="max_salary_input_hidden" value="{{ max_salary }}">
                 <input type="text" name="search" class="search-input" 
@@ -678,6 +690,7 @@
                     <div class="navbar-collapse" id="navbarNav">
                         <div class="nav flex-column nav-pills me-3 w-100">
                             <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
+                            <a class="nav-link" href="{% url 'recommended_jobs' %}"><i class="fas fa-robot me-2"></i>Recommended Jobs</a>
                             <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
                             <a class="nav-link" href="{% url 'applied_jobs' %}"><i class="fas fa-file-alt me-2"></i>Applied Jobs</a>
                             <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
@@ -722,7 +735,7 @@
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card job-card h-100 position-relative">
                 {% if job.id in applied_job_ids %}
-                    <!-- Check rejected status FIRST, then selected, then shortlisted, then applied -->
+                    <!-- Check status -->
                     {% if job.application_status == 'rejected' %}
                     <span class="rejected-badge"><i class="fas fa-times"></i> Rejected</span>
                     {% elif job.application_status == 'selected' %}
@@ -748,7 +761,16 @@
                         <i class="fas fa-calendar"></i> Apply by: {{ job.lastDateToApply }}
                     </p>
                     <p class="card-text">
-                        <i class="fas fa-users"></i> {{ job.applycount }} applicants
+                        <i class="fas fa-tools"></i>
+                        <strong>Required Skills:</strong>
+                        {% if job.required_skills %}
+                            {{ job.required_skills }}
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-users"></i> {{ job.applycount|default:"0" }} applicants
                     </p>
                     <a href="{% url 'job_detail' job.id %}" class="btn btn-primary w-100">
                         <i class="fas fa-info-circle"></i> View Details
@@ -765,7 +787,7 @@
     {% endif %}
 </div>
 
-<!-- Updated JavaScript for filter dropdown -->
+<!-- filter dropdown -->
 <script>
     function toggleSubcategory(event) {
         event.preventDefault();
@@ -773,7 +795,6 @@
         const submenu = button.nextElementSibling;
         const isActive = submenu.classList.contains('active');
         
-        // Close all other submenus
         document.querySelectorAll('.filter-submenu.active').forEach(menu => {
             if (menu !== submenu) {
                 menu.classList.remove('active');
@@ -781,7 +802,6 @@
             }
         });
         
-        // Toggle current submenu
         if (isActive) {
             submenu.classList.remove('active');
             button.classList.remove('expanded');
@@ -853,7 +873,7 @@
         }
     });
 
-    // Added comprehensive salary validation functions
+    // salary validation functions
     function validateSalaryInputs() {
         const minInput = document.getElementById('min_salary_input');
         const maxInput = document.getElementById('max_salary_input');
@@ -862,7 +882,6 @@
         
         let isValid = true;
         
-        // Reset error messages
         minError.textContent = '';
         maxError.textContent = '';
         minError.classList.remove('show');
@@ -873,7 +892,6 @@
         const minVal = parseFloat(minInput.value) || 0;
         const maxVal = parseFloat(maxInput.value) || 0;
         
-        // Validate minimum value (must be >= 0)
         if (minVal < 0) {
             minError.textContent = 'Minimum salary cannot be negative';
             minError.classList.add('show');
@@ -881,7 +899,7 @@
             isValid = false;
         }
         
-        // Validate maximum value (must be >= 0)
+
         if (maxVal < 0) {
             maxError.textContent = 'Maximum salary cannot be negative';
             maxError.classList.add('show');
@@ -889,7 +907,6 @@
             isValid = false;
         }
         
-        // Validate that min <= max (if both are filled)
         if (minInput.value && maxInput.value && minVal > maxVal) {
             minError.textContent = 'Minimum must be less than maximum';
             minError.classList.add('show');

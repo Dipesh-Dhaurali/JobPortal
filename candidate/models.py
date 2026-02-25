@@ -38,7 +38,7 @@ STATUS_CHOICE=(
 )
 
 EDUCATION_CHOICES = (
-    ('SEE', 'SEE (Secondary Education Examination)'),  # Updated full form from School Leaving Exam to Secondary Education Examination
+    ('SEE', 'SEE (Secondary Education Examination)'),  
     ('SLC', 'SLC (School Leaving Certificate)'),
     ('PLUS2', '+2 (Higher Secondary)'),
     ('DIPLOMA', 'Diploma'),
@@ -85,7 +85,7 @@ class candidateApplication(models.Model):
     
     def get_education_display(self):
         education_map = {
-            'SEE': 'SEE (Secondary Education Examination)',  # Updated to match the corrected full form
+            'SEE': 'SEE (Secondary Education Examination)', 
             'SLC': 'SLC (School Leaving Certificate)',
             'PLUS2': '+2 (Higher Secondary)',
             'DIPLOMA': 'Diploma',
@@ -135,6 +135,22 @@ class CandidateProfile(models.Model):
         ('percentage', 'Percentage (out of 100)'),
     )
     
+    PREFERRED_INDUSTRY_CHOICES = (
+        ('it', 'IT'),
+        ('fintech', 'FinTech'),
+        ('ecommerce', 'E-Commerce'),
+        ('healthcare', 'Healthcare'),
+        ('banking_finance', 'Banking & Finance'),
+        ('education', 'Education'),
+        ('telecommunications', 'Telecommunications'),
+        ('manufacturing', 'Manufacturing'),
+        ('engineering', 'Engineering'),
+        ('digital_marketing', 'Digital Marketing'),
+        ('management', 'Management / Managers'),
+        ('real_estate', 'Real Estate'),
+        ('insurance', 'Insurance'),
+    )
+    
     GRADUATION_YEAR_CHOICES = (
         ('currently_running', 'Currently Running'),
     ) + tuple((str(year), str(year)) for year in range(2030, 1899, -1))
@@ -145,6 +161,24 @@ class CandidateProfile(models.Model):
     preferred_job_level = models.CharField(max_length=20, choices=JOB_LEVEL_CHOICES)
     preferred_job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES)
     work_experience = models.IntegerField(default=0)
+    
+    # Additional job interest & experience details
+    job_interest = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Job interests as comma-separated text, e.g., Software Developer, Data Analyst",
+    )
+    work_experience_description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Brief description of your work experience",
+    )
+    preferred_industry = models.CharField(
+        max_length=50,
+        choices=PREFERRED_INDUSTRY_CHOICES,
+        null=True,
+        blank=True,
+    )
     
     # Education fields
     education_level = models.CharField(max_length=20, choices=EDUCATION_CHOICES)
@@ -161,6 +195,13 @@ class CandidateProfile(models.Model):
     # Skills and languages
     skills = models.TextField(help_text="e.g., Public Speaking, Computer Operation")
     languages = models.TextField(help_text="e.g., Nepali, English")
+    
+    # Career summary / mini bio
+    career_summary = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Short career summary / mini bio",
+    )
     
     # Social media accounts
     social_account_name_1 = models.CharField(max_length=100, null=True, blank=True)

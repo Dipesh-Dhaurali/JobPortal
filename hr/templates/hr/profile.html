@@ -211,7 +211,7 @@
 {% include 'hr/navbar.html' %}
 
 <div class="profile-container">
-    <!-- Cover Image Section -->
+    <!-- Cover Image Section for profile -->
     <div class="cover-image-section" id="coverImageSection">
         {% if profile and profile.cover_image %}
             <img src="{{ profile.cover_image.url }}" alt="Cover Image" id="coverImagePreview">
@@ -333,7 +333,7 @@
             </div>
         </div>
 
-        <!-- Contact Information Section -->
+        <!-- Contact Section -->
         <div class="form-section">
             <div class="section-title">
                 <i class="fas fa-phone"></i> Contact Information
@@ -390,7 +390,7 @@
             </div>
         </div>
 
-        <!-- Social Media Section -->
+    
         <div class="form-section">
             <div class="section-title">
                 <i class="fas fa-share-alt"></i> Social Media & Web
@@ -435,7 +435,7 @@
             </div>
         </div>
 
-        <!-- Submit Button -->
+       
         <div class="text-center" id="submitBtnContainer" style="padding-bottom: 30px; padding-left: 30px; padding-right: 30px;" {% if profile %}style="display: none; padding-bottom: 30px; padding-left: 30px; padding-right: 30px;"{% endif %}>
             <button type="submit" class="btn-submit">
                 <i class="fas fa-save"></i> Save Profile
@@ -457,7 +457,7 @@
         cancelBtn.style.display = 'flex';
         submitBtnContainer.style.display = 'block';
         
-        // Enable all form elements
+    
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach(input => {
             input.style.pointerEvents = 'auto';

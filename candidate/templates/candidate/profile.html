@@ -264,6 +264,32 @@
                     <div class="error-message">{{ form.work_experience.errors }}</div>
                 {% endif %}
             </div>
+
+            <div class="form-group mb-3">
+                <label for="{{ form.job_interest.id_for_label }}">{{ form.job_interest.label }}</label>
+                {{ form.job_interest }}
+                <div class="help-text">List your job interests as comma-separated text (e.g., Software Developer, Data Analyst)</div>
+                {% if form.job_interest.errors %}
+                    <div class="error-message">{{ form.job_interest.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="{{ form.preferred_industry.id_for_label }}">{{ form.preferred_industry.label }}</label>
+                {{ form.preferred_industry }}
+                {% if form.preferred_industry.errors %}
+                    <div class="error-message">{{ form.preferred_industry.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="{{ form.work_experience_description.id_for_label }}">{{ form.work_experience_description.label }}</label>
+                {{ form.work_experience_description }}
+                <div class="help-text">Provide a short paragraph describing your overall work experience.</div>
+                {% if form.work_experience_description.errors %}
+                    <div class="error-message">{{ form.work_experience_description.errors }}</div>
+                {% endif %}
+            </div>
         </div>
 
         <!-- Education Section -->
@@ -348,6 +374,22 @@
             </div>
         </div>
 
+        <!-- Career Summary Section -->
+        <div class="form-section">
+            <div class="section-title">
+                <i class="fas fa-id-badge"></i> Career Summary
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="{{ form.career_summary.id_for_label }}">{{ form.career_summary.label }}</label>
+                {{ form.career_summary }}
+                <div class="help-text">Write a short mini bio summarizing your career, strengths, and goals.</div>
+                {% if form.career_summary.errors %}
+                    <div class="error-message">{{ form.career_summary.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
         <!-- Social Media Section -->
         <div class="form-section">
             <div class="section-title">
@@ -401,19 +443,16 @@
         </div>
     </form>
 </div>
-
+    
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // GPA/Percentage validation
     const gpaTypeSelect = document.querySelector('[name="gpa_percentage_type"]');
     const gpaValueInput = document.querySelector('[name="gpa_percentage_value"]');
 
     function updateGPAConstraints() {
         const selectedType = gpaTypeSelect.value;
-        
-        // Set minimum for all types
         gpaValueInput.min = 0;
-        
-        // Set maximum based on type
         if (selectedType === 'gpa_4') {
             gpaValueInput.max = 4;
         } else if (selectedType === 'gpa_10') {
@@ -422,16 +461,11 @@
             gpaValueInput.max = 100;
         }
         
-        // Clear invalid values
         if (gpaValueInput.value < 0 || gpaValueInput.value > gpaValueInput.max) {
             gpaValueInput.value = '';
         }
     }
-
-    // Update constraints when page loads
     updateGPAConstraints();
-    
-    // Update constraints when GPA type changes
     gpaTypeSelect.addEventListener('change', updateGPAConstraints);
 
     function enableEdit() {

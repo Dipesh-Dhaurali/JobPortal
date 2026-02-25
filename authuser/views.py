@@ -21,11 +21,15 @@ def register_candidate(request):
             return render(request, 'authuser/candidateregister.html', {'msg': msg})
 
         try:
+            # Create a new User object in the database using Django's built-in create_user method.
+            # You can access its fields like user.username, user.email, user.id, etc.
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
+
+
             # Create CandidateAccount for the new user
             CandidateAccount.objects.create(user=user, account_status='active')
             messages.success(request, 'Registration successful! Please log in with your credentials.')
@@ -80,13 +84,12 @@ def login_user(request):
         )
 
         if user is not None:
-            # Block superusers and staff from logging in on normal pages
             if user.is_superuser or user.is_staff:
                 msg = "Superusers and staff members must log in through the admin panel."
                 return render(request, 'authuser/loginUser.html', {'msg': msg})
             
+            #login() creates a session and keeps the user logged in
             login(request, user)
-            # Check if HR/Recruiter
             if hr.objects.filter(user=user).exists():
                 return redirect('hrdash')
             else:
@@ -98,5 +101,6 @@ def login_user(request):
 
 
 def logoutuser(request):
+    #logout() This is built-in logout function.
     logout(request)
     return redirect('login_user')

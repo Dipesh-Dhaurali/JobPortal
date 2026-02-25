@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from hr import models
 
-# Register your models here.
 
 @admin.register(models.hr)
 class RecruiterAccountAdmin(admin.ModelAdmin):
@@ -26,8 +25,7 @@ class RecruiterAccountAdmin(admin.ModelAdmin):
         job_count = models.JobPost.objects.all().count()
         app_count = models.candidateApplication.objects.all().count()
         shortlist_count = models.ShortlistedCandidate.objects.all().count()
-        
-        # Delete all recruiter-side data
+        # Delete all recruiter-related data
         models.ShortlistedCandidate.objects.all().delete()
         models.candidateApplication.objects.all().delete()
         models.JobPost.objects.all().delete()
@@ -98,9 +96,6 @@ class JobPostAdmin(admin.ModelAdmin):
                 form.add_error(field, error[0].message if hasattr(error[0], 'message') else str(error[0]))
             raise
 
-
-# candidateApplication is now registered in candidate/admin.py
-# This ensures all candidate-related data is managed in the Candidate section of Admin
 
 
 @admin.register(models.ShortlistedCandidate)

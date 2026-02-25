@@ -9,9 +9,8 @@
   </head>
   <body>
 
-<!--#### css ####-->
 <style>
-/* Make offcanvas smaller and remove top padding */
+
 #offcanvasExample {
   width: 250px;
   max-width: 90%;
@@ -20,7 +19,7 @@
   align-items: center; 
 }
 
-/* Remove margin from nav */
+
 #offcanvasExample .nav {
   margin-top: 50px;
 }
@@ -35,7 +34,7 @@
   position: relative;
 }
 
-/* Menu button positioned absolutely on the left */
+
 .top-bar .menu-btn {
   position: absolute;
   left: 20px;
@@ -43,7 +42,6 @@
   transform: translateY(-50%);
 }
 
-/* Title styling - perfectly centered */
 .top-bar h2 {
   margin: 0;
   color: #0d6efd;
@@ -65,15 +63,11 @@
 }
 </style>
 
-<!-- Removed full HTML document structure (DOCTYPE, html, head, body tags) -->
-<!-- #### Menu and sidebar#### -->
 <div class="top-bar">
   <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
     <strong>☰ Menu</strong>
   </a>
-  <!-- Using navbar_title variable to display dynamic titles per page -->
   <h2>{{ navbar_title|safe }}</h2>
-  <!-- Removed search include - search will be inline in hrdashboard.html only -->
 </div>
 
 <!-- #### Sidebar and navbar#### -->
@@ -82,7 +76,7 @@
     <nav>
       <div class="d-flex align-items-start">
         <div class="nav flex-column nav-pills me-3 w-100">
-          <!-- Add Profile button to navigation -->
+          <!-- Add diffrents buttons on slide bars like profile , dashboard etc...-->
           <a class="nav-link" href="{% url 'hr_profile' %}"><i class="fas fa-user"></i>Profile</a>
           <a class="nav-link" href="{% url 'hrdash' %}"><i class="fas fa-chart-line"></i> Dashboard</a>
           <a class="nav-link" href="{% url 'postjob' %}"><i class="fas fa-plus"></i> Post New Job</a>

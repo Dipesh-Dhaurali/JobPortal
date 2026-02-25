@@ -224,7 +224,6 @@
     </style>
 </head>
 <body>
-    <!-- Top Bar with Yellow Menu Button -->
     <div class="top-bar">
         <a class="btn btn-warning menu-btn" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
             <strong>☰ Menu</strong>
@@ -241,6 +240,7 @@
                         <div class="navbar-collapse" id="navbarNav">
                             <div class="nav flex-column nav-pills me-3 w-100">
                                 <a class="nav-link" href="{% url 'candidate_profile' %}"><i class="fas fa-user me-2"></i>Profile</a>
+                                <a class="nav-link" href="{% url 'recommended_jobs' %}"><i class="fas fa-robot me-2"></i>Recommended Jobs</a>
                                 <a class="nav-link" href="{% url 'candidate_dashboard' %}"><i class="fas fa-briefcase me-2"></i>Browse Job</a>
                                 <a class="nav-link active" href="{% url 'applied_jobs' %}"><i class="fas fa-file-alt me-2"></i>Applied Jobs</a>
                                 <a class="nav-link" href="{% url 'logout_user' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
@@ -252,7 +252,6 @@
         </div>
     </div>
 
-    <!-- Messages -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -264,9 +263,8 @@
     </div>
     {% endif %}
 
-    <!-- Main Content -->
+
     <div class="container">
-        <!-- Tab Navigation -->
         <div class="tabs-container">
             <button class="tab-btn active" data-status="all" onclick="filterJobs(this)">  
                 <i class="fas fa-briefcase me-2"></i>All Applied<span class="count-badge">{{ total_count }}</span>
@@ -285,7 +283,7 @@
             </button>
         </div>
 
-        <!-- Applied Jobs List -->
+
         {% if applied_jobs %}
         <div id="jobs-container">
             {% for item in applied_jobs %}
@@ -308,7 +306,7 @@
                     </span>
                 </div>
 
-                <!-- Job Details -->
+
                 <div class="job-details">
                     <div class="job-detail-item">
                         <i class="fas fa-map-marker-alt"></i>
@@ -328,12 +326,12 @@
                     </div>
                 </div>
 
-                <!-- Applied Date -->
+                
                 <div class="applied-date">
                     <i class="fas fa-calendar-alt me-2"></i>Applied on {{ item.applied_at|date:"M d, Y" }}
                 </div>
 
-                <!-- Action Buttons -->
+               
                 <div class="action-buttons">
                     <a href="{% url 'job_detail' item.job.id %}" class="btn btn-primary btn-small">
                         <i class="fas fa-eye me-1"></i>View Details
@@ -348,7 +346,7 @@
             {% endfor %}
         </div>
 
-        <!-- Empty State -->
+      
         {% else %}
         <div class="empty-state">
             <i class="fas fa-inbox"></i>
@@ -361,7 +359,7 @@
         {% endif %}
     </div>
 
-    <!-- Scripts -->
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function filterJobs(button) {
@@ -372,11 +370,9 @@
             const buttons = document.querySelectorAll('.tab-btn');
             const status = button.getAttribute('data-status');
 
-            // Update active tab
             buttons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
 
-            // Filter cards
             cards.forEach(card => {
                 if (status === 'all') {
                     card.style.display = 'block';

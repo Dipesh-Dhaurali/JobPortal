@@ -77,11 +77,10 @@ class JobPostForm(forms.ModelForm):
         required_experience = cleaned_data.get('required_experience')
         required_experience_custom = cleaned_data.get('required_experience_custom')
         
-        # Validate employment_type is selected
+        # Validate form employment_type , work_mode, and required_experience fields are selected
         if not employment_type:
             self.add_error('employment_type', "Please select an Employment Type.")
         
-        # Validate work_mode is selected
         if not work_mode:
             self.add_error('work_mode', "Please select a Work Mode.")
         
@@ -95,7 +94,7 @@ class JobPostForm(forms.ModelForm):
             if salary_low > 0 and salary_high > 0 and salary_low >= salary_high:
                 raise ValidationError("Maximum salary must be greater than minimum salary")
         
-        # Validate custom experience is provided when "Others" is selected
+        # If "Others" is selected for required experience, ensure the custom field is filled
         if required_experience == 'others':
             if not required_experience_custom or required_experience_custom.strip() == '':
                 self.add_error('required_experience_custom', "Please specify the experience requirement when 'Others' is selected.")

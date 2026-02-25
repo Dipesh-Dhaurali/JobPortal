@@ -293,15 +293,13 @@
     </style>
 </head>
 <body>
-    <!-- Include navbar from HR templates -->
     {% include 'hr/navbar.html' %}
 
     <div class="container-fluid px-4" style="max-width: 1400px;">
-        <!-- Filter & Search Section -->
+        
         <div class="filter-section">
             <h5 class="mb-3">Filter Applications</h5>
             
-            <!-- Status filter tabs -->
             <div class="status-tabs">
                 <!-- All Posted Jobs tab - shows job details only -->
                 <a href="?mode=jobs" class="status-tab {% if display_mode == 'jobs' and request.GET.mode == 'jobs' %}active{% elif display_mode == 'jobs' %}active{% endif %}">
@@ -309,31 +307,31 @@
                     <span class="count-badge">{{ total_jobs }}</span>
                 </a>
                 
-                <!-- All Applications tab -->
+                <!-- Job Histry tabs sections like All Status ( all list jobs) , Not reviewd , Rejected etc..-->
                 <a href="?mode=applications&status=all" class="status-tab {% if display_mode == 'applications' and status_filter == 'all' %}active{% endif %}">
                     <i class="fas fa-briefcase"></i>All Statuses
                     <span class="count-badge">{{ total_applications }}</span>
                 </a>
                 
-                <!-- Not Reviewed (pending) tab -->
+            
                 <a href="?mode=applications&status=pending" class="status-tab {% if status_filter == 'pending' %}active{% endif %}">
                     <i class="fas fa-clock"></i>Not Reviewed
                     <span class="count-badge">{{ pending_count }}</span>
                 </a>
                 
-                <!-- Shortlisted tab -->
+            
                 <a href="?mode=applications&status=shortlisted" class="status-tab {% if status_filter == 'shortlisted' %}active{% endif %}">
                     <i class="fas fa-star"></i>Shortlisted
                     <span class="count-badge">{{ shortlisted_count }}</span>
                 </a>
                 
-                <!-- Selected tab -->
+            
                 <a href="?mode=applications&status=selected" class="status-tab {% if status_filter == 'selected' %}active{% endif %}">
                     <i class="fas fa-check"></i>Selected
                     <span class="count-badge">{{ selected_count }}</span>
                 </a>
                 
-                <!-- Rejected tab -->
+                
                 <a href="?mode=applications&status=rejected" class="status-tab {% if status_filter == 'rejected' %}active{% endif %}">
                     <i class="fas fa-times"></i>Rejected
                     <span class="count-badge">{{ rejected_count }}</span>
@@ -355,7 +353,7 @@
             </form>
         </div>
 
-        <!-- Jobs Table - shown when display_mode is 'jobs' -->
+        <!-- Job History Table - shown when display_mode is 'jobs' -->
         {% if display_mode == 'jobs' %}
             {% if all_jobs %}
             <div class="applications-table">
@@ -388,13 +386,13 @@
                                 <small>Rs {{ job.salaryLow }} - Rs {{ job.salaryHigh }}</small>
                             </td>
                             <td>
-                                <!-- Display employment type with proper styling -->
+                                <!-- Display employment type -->
                                 <span class="status-badge" style="background-color: #ffc107; color: #000;">
                                     {{ job.get_employment_type_display|upper }}
                                 </span>
                             </td>
                             <td>
-                                <!-- Display work mode with proper styling -->
+                                <!-- Display work mode -->
                                 <span class="status-badge" style="background-color: #17a2b8; color: white;">
                                     {{ job.get_work_mode_display|upper }}
                                 </span>
@@ -459,7 +457,7 @@
                                 <small class="applied-date">{{ app.applied_at|date:"M d, Y" }}</small>
                             </td>
                             <td>
-                                <!-- Display application status with proper badge styling -->
+                                <!-- Display application status-->
                                 <span class="status-badge status-{{ app.status }}">
                                     {% if app.status == 'pending' %}
                                         <i class="fas fa-clock"></i> Not Reviewed
@@ -504,7 +502,6 @@
         {% endif %}
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
