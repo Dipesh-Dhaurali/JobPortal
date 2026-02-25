@@ -23,10 +23,10 @@ numpy==2.2.3
 # ─────────────────────────────────────────────
 
 # WSGI server for production deployment (e.g. on Heroku/VPS)
-# gunicorn==21.2.0
+gunicorn==21.2.0
 
 # Serve static files efficiently in production (replaces WhiteNoise/nginx workaround)
-# whitenoise==6.8.2
+whitenoise==6.8.2
 
 # Environment variable management (recommended for hiding SECRET_KEY & email password)
 # python-decouple==3.8
