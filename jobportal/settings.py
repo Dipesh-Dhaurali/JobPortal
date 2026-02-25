@@ -33,7 +33,10 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
-ALLOWED_HOSTS = ['https://jobportal-ahp4.onrender.com/']
+ALLOWED_HOSTS = [
+    "jobportal-ahp4.onrender.com",
+    "www.jobportal-ahp4.onrender.com",
+]
 
 
 # Application definition
@@ -162,8 +165,7 @@ LOGOUT_REDIRECT_URL = 'login_user'
 # SECURE_SSL_REDIRECT = True
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
+    "https://jobportal-ahp4.onrender.com",
 ]
 
 # Session settings
