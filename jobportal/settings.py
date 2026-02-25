@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Email configuration for Gmail SMTP
 EMAIL_HOST = 'smtp.gmail.com'
@@ -33,7 +33,7 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://jobportal-ahp4.onrender.com/']
 
 
 # Application definition
