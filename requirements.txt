@@ -2,8 +2,8 @@
 #  Job Portal – Python Dependencies
 # ─────────────────────────────────────────────
 
-# Core Web Framework
-Django==5.1.7
+# Core Web Framework (align with Python 3.14 compatibility)
+Django==6.0.2
 
 # Image Processing (used for profile/resume photo uploads via ImageField)
 Pillow==10.4.0
