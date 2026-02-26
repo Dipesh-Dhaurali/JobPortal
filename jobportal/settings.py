@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes", "on")
+_default_debug = "False" if os.environ.get("RENDER") else "True"
+DEBUG = os.environ.get("DJANGO_DEBUG", _default_debug).lower() in ("1", "true", "yes", "on")
 
 # Email configuration for Gmail SMTP
 EMAIL_HOST = 'smtp.gmail.com'
@@ -48,6 +49,15 @@ else:
         "http://127.0.0.1:8000/",
         "0.0.0.0",
     ]
+
+# Normalize ALLOWED_HOSTS entries (strip schemes/trailing slashes)
+def _normalize_host(h: str) -> str:
+    h = h.strip()
+    if h.startswith("http://") or h.startswith("https://"):
+        return urlparse(h).netloc
+    return h.strip("/")
+
+ALLOWED_HOSTS = [h for h in (_normalize_host(h) for h in ALLOWED_HOSTS) if h]
 
 
 # Application definition
@@ -146,8 +156,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 _static_dir = BASE_DIR / 'static'
 STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
-# WhiteNoise: Serve static files (including images) in production
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# WhiteNoise: Serve static files
+# Use manifest in production (requires collectstatic), lighter storage in development
+if DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files configuration
 MEDIA_URL = '/media/'
