@@ -149,10 +149,7 @@ class ShortlistedCandidate(models.Model):
     notification_sent = models.BooleanField(default=False)
 
     def __str__(self):
-        try:
-            return f"{self.candidate.user.username} shortlisted for {self.job.title}"
-        except Exception:
-            return "Shortlisted Candidate"
+        return f"{self.candidate.user.username} shortlisted for {self.job.title}"
 
 
 class SelectedCandidate(models.Model):
@@ -164,10 +161,7 @@ class SelectedCandidate(models.Model):
     selected_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        try:
-            return f"{self.candidate.user.username} selected for {self.job.title}"
-        except Exception:
-            return "Selected Candidate"
+        return f"{self.candidate.user.username} selected for {self.job.title}"
 
 
 class RecruiterProfile(models.Model):

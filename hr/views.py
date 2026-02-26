@@ -263,13 +263,16 @@ def select_candidate(request, pk):
             notification_sent=True
         )
 
-    # Send email notification
-    send_hr_action_email(application, 'shortlisted')
-
-    # dashboard notification
+    # Send email notification (handle success/failure gracefully)
     candidate_user = application.user
+    email_success, email_message = send_hr_action_email(application, 'shortlisted')
+    
     messages.success(request, f"Candidate {candidate_user.username} shortlisted successfully!")
-    messages.info(request, f"Notification sent to {candidate_user.username}")
+    
+    if email_success:
+        messages.success(request, f"✓ Notification email sent to {candidate_user.email}")
+    else:
+        messages.warning(request, f"⚠ Email notification failed: {email_message}")
 
     return redirect('candidate_details', pk=application.job.id)
 
@@ -296,10 +299,17 @@ def select_final_candidate(request, pk):
             candidate=application
         )
 
-    # Send email notification
-    send_hr_action_email(application, 'selected')
+    # Send email notification (handle success/failure gracefully)
+    candidate_user = application.user
+    email_success, email_message = send_hr_action_email(application, 'selected')
 
-    messages.success(request, f"Candidate {application.user.username} selected successfully!")
+    messages.success(request, f"Candidate {candidate_user.username} selected successfully!")
+    
+    if email_success:
+        messages.success(request, f"✓ Selection email sent to {candidate_user.email}")
+    else:
+        messages.warning(request, f"⚠ Email notification failed: {email_message}")
+    
     return redirect('candidate_details', pk=application.job.id)
 
 
@@ -319,10 +329,16 @@ def reject_candidate(request, pk):
     application.status = 'rejected'
     application.save()
     
-    # Send email notification
-    send_hr_action_email(application, 'rejected')
+    # Send email notification (handle success/failure gracefully)
+    candidate_user = application.user
+    email_success, email_message = send_hr_action_email(application, 'rejected')
 
-    messages.success(request, f"Candidate {application.user.username} rejected successfully!")
+    messages.success(request, f"Candidate {candidate_user.username} rejected successfully!")
+    
+    if email_success:
+        messages.info(request, f"✓ Rejection email sent to {candidate_user.email}")
+    else:
+        messages.warning(request, f"⚠ Email notification failed: {email_message}")
     return redirect('candidate_details', pk=application.job.id)
 
 
@@ -341,11 +357,17 @@ def reject_from_shortlist(request, pk):
     application.status = 'rejected'
     application.save()
 
-    
-    # Send email notification
-    send_hr_action_email(application, 'rejected_after_shortlist')
+    # Send email notification (handle success/failure gracefully)
+    candidate_user = application.user
+    email_success, email_message = send_hr_action_email(application, 'rejected_after_shortlist')
 
-    messages.success(request, f"Candidate {application.user.username} rejected from shortlist successfully!")
+    messages.success(request, f"Candidate {candidate_user.username} rejected from shortlist successfully!")
+    
+    if email_success:
+        messages.info(request, f"✓ Rejection email sent to {candidate_user.email}")
+    else:
+        messages.warning(request, f"⚠ Email notification failed: {email_message}")
+    
     return redirect('candidate_details', pk=application.job.id)
 
 
@@ -455,10 +477,14 @@ def contact_us(request):
                 print("[DEBUG] Message saved successfully to database")
 
                 # Send email notification
-                send_contact_form_email(name, email, message_text)
+                email_success, email_message = send_contact_form_email(name, email, message_text)
 
-                msg = "Thank you for contacting us. We will get back to you soon."
-                msg_type = "success"
+                if email_success:
+                    msg = "Thank you for contacting us. We will get back to you soon."
+                    msg_type = "success"
+                else:
+                    msg = "Message received! Email notification failed, but we have your message."
+                    msg_type = "warning"
             except Exception as e:
                 print(f"[DEBUG] Error saving message: {e}")
                 msg = f"Error saving message: {e}"

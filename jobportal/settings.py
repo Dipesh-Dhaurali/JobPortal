@@ -13,9 +13,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from urllib.parse import urlparse
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file (only if file exists)
+if (BASE_DIR / '.env').exists():
+    load_dotenv(BASE_DIR / '.env')
 
 
 
@@ -35,6 +40,9 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 if not EMAIL_HOST_PASSWORD:
     EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_TIMEOUT = int(os.environ.get('EMAIL_TIMEOUT', '20'))
 
 
 _env_allowed = os.environ.get("ALLOWED_HOSTS")
@@ -217,3 +225,49 @@ if os.environ.get("RENDER"):
     if not DEBUG:
         SESSION_COOKIE_SECURE = True
         CSRF_COOKIE_SECURE = True
+
+
+# ─────────────────────────────────────────────────────────────────
+# LOGGING CONFIGURATION - Email System Diagnostics
+# ─────────────────────────────────────────────────────────────────
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {module}.{funcName}: {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'email.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.core.mail': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'hr.smsSystem': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+# Create logs directory if it doesn't exist
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)

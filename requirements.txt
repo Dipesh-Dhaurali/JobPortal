@@ -25,4 +25,4 @@ gunicorn==21.2.0
 whitenoise==6.8.2
 
 # Environment variable management (recommended for hiding SECRET_KEY & email password)
-# python-decouple==3.8
+python-dotenv==1.0.1

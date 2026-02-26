@@ -1,16 +1,38 @@
+"""
+Email notification system for HR actions and contact forms.
+Uses Django's email backend with Gmail SMTP configuration.
+"""
+
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
 from hr.models import JobPost
+import logging
+
+# Configure logger for email system
+logger = logging.getLogger(__name__)
 
 
-#applications = candidateApplication.objects.filter(user=request.user) inside views
-#Send email to candidate based on HR action (shortlist, select, reject)
 def send_hr_action_email(application, action):
-
+    """
+    Send email notification to candidate based on HR action.
+    
+    Args:
+        application: candidateApplication object
+        action: 'shortlisted', 'selected', 'rejected', or 'rejected_after_shortlist'
+        
+    Returns:
+        tuple: (success: bool, message: str)
+    """
     try:
         candidate_user = application.user
         job = application.job
+
+        # Validate action
+        valid_actions = ['shortlisted', 'selected', 'rejected', 'rejected_after_shortlist']
+        if action not in valid_actions:
+            logger.warning(f"Invalid email action: {action}")
+            return False, f"Invalid action: {action}"
 
         # Get candidate name
         candidate_name = f"{candidate_user.first_name} {candidate_user.last_name}".strip()
@@ -33,8 +55,6 @@ Congratulations and best of luck!
 Warm regards,
 HR Team
 {job.CompanyName}"""
-            
-#####################################################################################
 
         elif action == 'selected':
             subject = f"Congratulations! You Have Been Selected – {job.title}"
@@ -53,8 +73,6 @@ Welcome to the team! We look forward to working with you.
 Best wishes,
 HR Department
 {job.CompanyName}"""
-            
-#####################################################################################################
 
         elif action == 'rejected':
             subject = f"Update on Your Application – {job.title}"
@@ -73,7 +91,7 @@ We wish you all the best in your career journey.
 Sincerely,
 HR Team
 {job.CompanyName}"""
-####################
+
         elif action == 'rejected_after_shortlist':
             subject = f"Update on Your Application – {job.title}"
             message = f"""Dear {candidate_name},
@@ -91,16 +109,10 @@ We wish you all the best in your career endeavors.
 Sincerely,
 HR Team
 {job.CompanyName}"""
-            
-#################################################
         else:
-            return  # Invalid action
+            return False, f"Unhandled action: {action}"
 
 
-
-
-
-##############################################
 
         # Send email
         send_mail(
@@ -108,23 +120,33 @@ HR Team
             message=message,
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[candidate_user.email],
-            fail_silently=False,
+            fail_silently=False,  # Raise exceptions so we can catch them
         )
 
-        print(f"[EMAIL SUCCESS] {action.capitalize()} email sent to {candidate_user.email} for job {job.title}")
+        logger.info(f"✓ HR Action Email ({action}) sent to {candidate_user.email} for job: {job.title}")
+        return True, f"Email sent successfully to {candidate_user.email}"
 
     except Exception as e:
-        print(f"[EMAIL ERROR] Failed to send {action} email to {candidate_user.email}: {str(e)}")
+        error_type = type(e).__name__
+        logger.error(
+            f"✗ Failed to send {action} email to {candidate_user.email}: "
+            f"{error_type} - {str(e)}"
+        )
+        return False, f"Email delivery failed: {str(e)}"
 
 
-
-
-
-
-
-### Send email to job portal official email when contact form is submitted #################
 def send_contact_form_email(name, email, message):
-
+    """
+    Send contact form submission to job portal admin email.
+    
+    Args:
+        name: Sender's name
+        email: Sender's email address
+        message: Contact message content
+        
+    Returns:
+        tuple: (success: bool, message: str)
+    """
     try:
         subject = f"New Contact Form Submission from {name}"
         
@@ -136,18 +158,24 @@ Message:
 {message}
 
 ---
-This message was sent from the Job Portal contact form."""
-
+This message was sent from the Job Portal contact form.
+Reply-To: {email}"""
 
         send_mail(
             subject=subject,
             message=body,
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=['hrjobportal.system@gmail.com'],
+            recipient_list=[settings.EMAIL_HOST_USER],  # Send to portal admin
             fail_silently=False,
         )
 
-        print(f"[EMAIL SUCCESS] Contact form email sent to hrjobportal.system@gmail.com from {email}")
+        logger.info(f"✓ Contact Form Email received from {email} ({name})")
+        return True, f"Contact form email sent successfully"
 
     except Exception as e:
-        print(f"[EMAIL ERROR] Failed to send contact form email: {str(e)}")
+        error_type = type(e).__name__
+        logger.error(
+            f"✗ Failed to send contact form email from {email}: "
+            f"{error_type} - {str(e)}"
+        )
+        return False, f"Failed to send contact form: {str(e)}"
