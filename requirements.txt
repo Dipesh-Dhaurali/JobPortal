@@ -15,17 +15,13 @@ scikit-learn==1.6.1
 # Natural Language Processing – Stopwords for CountVectorizer
 nltk==3.9.1
 
-# Numerical Computing (required by scikit-learn / .toarray())
+
 numpy==2.2.3
 
-# ─────────────────────────────────────────────
-#  Optional / Production Dependencies
-# ─────────────────────────────────────────────
 
-# WSGI server for production deployment (e.g. on Heroku/VPS)
 gunicorn==21.2.0
 
-# Serve static files efficiently in production (replaces WhiteNoise/nginx workaround)
+
 whitenoise==6.8.2
 
 # Environment variable management (recommended for hiding SECRET_KEY & email password)
