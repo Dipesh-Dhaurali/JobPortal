@@ -104,7 +104,10 @@ class MyApplyJobList(models.Model):
         verbose_name_plural = "Job Application Trackers"
     
     def __str__(self):
-        return f"{self.user.username} - {self.job.job.title}"
+        try:
+            return f"{self.user.username} - {self.job.job.title}"
+        except Exception:
+            return f"{self.user_id} - Application"
 
 class CandidateProfile(models.Model):
     JOB_LEVEL_CHOICES = (

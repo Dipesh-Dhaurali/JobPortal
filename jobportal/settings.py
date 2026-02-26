@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-_default_debug = "False" if os.environ.get("RENDER") else "True"
-DEBUG = os.environ.get("DJANGO_DEBUG", _default_debug).lower() in ("1", "true", "yes", "on")
+# Per your request, default DEBUG to True unless explicitly overridden by DJANGO_DEBUG
+DEBUG = True
 
 # Email configuration for Gmail SMTP
 EMAIL_HOST = 'smtp.gmail.com'
