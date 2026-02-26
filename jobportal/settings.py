@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,24 +20,34 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z"
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-5o&*x$k6(chf$eg5epox!x5s*@&)x+%-2*rs=xgm*v%3*&_h9z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("1", "true", "yes", "on")
 
 # Email configuration for Gmail SMTP
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'hrjobportal.system@gmail.com'
-EMAIL_HOST_PASSWORD = 'mcib njsx exre iqbx'  
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'hrjobportal.system@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
-ALLOWED_HOSTS = [
-    "jobportal-ahp4.onrender.com",
-    "www.jobportal-ahp4.onrender.com",
-]
+_env_allowed = os.environ.get("ALLOWED_HOSTS")
+if _env_allowed:
+    ALLOWED_HOSTS = [h.strip() for h in _env_allowed.split(",") if h.strip()]
+else:
+    ALLOWED_HOSTS = [
+        "jobportal-ahp4.onrender.com",
+        "www.jobportal-ahp4.onrender.com",
+        "https://jobportal-ahp4.onrender.com/",
+        "localhost",
+        "127.0.0.1",
+        "127.0.0.1:8000",
+        "http://127.0.0.1:8000/",
+        "0.0.0.0",
+    ]
 
 
 # Application definition
@@ -89,12 +100,11 @@ WSGI_APPLICATION = "jobportal.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
+_db_url = os.environ.get("DATABASE_URL")
+if _db_url and _db_url.startswith("sqlite:///"):
+    _sqlite_path = _db_url.replace("sqlite:///", "", 1)
+    DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3", "NAME": _sqlite_path}
 
 
 # Password validation
@@ -133,9 +143,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+_static_dir = BASE_DIR / 'static'
+STATICFILES_DIRS = [_static_dir] if _static_dir.exists() else []
 
 # WhiteNoise: Serve static files (including images) in production
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -161,15 +170,33 @@ LOGOUT_REDIRECT_URL = 'login_user'
 
 # Security settings for production
 # SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# SECURE_SSL_REDIRECT = True
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://jobportal-ahp4.onrender.com",
-]
-
-# Session settings
+_env_csrf = os.environ.get("CSRF_TRUSTED_ORIGINS")
+if _env_csrf:
+    CSRF_TRUSTED_ORIGINS = [o.strip() for o in _env_csrf.split(",") if o.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://jobportal-ahp4.onrender.com",
+        "http://localhost",
+        "http://127.0.0.1:8000",
+    ]
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it if needed
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Must be False so JavaScript can read it if needed
+
+if os.environ.get("RENDER"):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    _ext = os.environ.get("RENDER_EXTERNAL_URL")
+    if _ext:
+        _p = urlparse(_ext)
+        if _p.netloc and _p.netloc not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_p.netloc)
+        _origin = f"{_p.scheme}://{_p.netloc}"
+        if _origin and _origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(_origin)
+    if not DEBUG:
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
