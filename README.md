@@ -10,9 +10,9 @@ The Job Portal project is designed to provide a platform for job seekers and emp
 - **Employer Dashboard:** Employers can manage their job postings and track applicants.
 
 ## Technologies Used
-- **Frontend:** HTML, CSS, JavaScript, React
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB
+- **Frontend:** HTML, CSS, JavaScript , Boostrap
+- **Backend:** python , Django
+- **Database:** SQLite
 
 ## Setup Instructions
 1. Clone the repository:
