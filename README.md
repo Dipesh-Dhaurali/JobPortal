@@ -12,7 +12,7 @@ The Job Portal project is designed to provide a platform for job seekers and emp
 <h2>🎥 Video Demo</h2>
 
 <video width="800" controls>
-  <source src="assets/demo.webm" type="video/webm"
+  <source src="videos/JobPortal.mp4" type="video/mp4"
 
 ## Features
 - **User Authentication:** Secure login and registration for users.
