@@ -3,6 +3,15 @@
 ## Overview
 The Job Portal project is designed to provide a platform for job seekers and employers to connect. It allows users to search for job openings, post job listings, and manage applications in a user-friendly interface.
 
+## Project demo
+
+🎥 **Watch the JobPortal project demonstration video**
+
+[▶ Watch JobPortal Demo](https://github.com/Dipesh-Dhaurali/JobPortal/releases/download/video/JobPortal.mp4)
+
+
+
+
 ## Features
 - **User Authentication:** Secure login and registration for users.
 - **Job Listings:** Browse and filter through a variety of job openings.
