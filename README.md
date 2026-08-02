@@ -6,9 +6,10 @@ The Job Portal project is designed to provide a platform for job seekers and emp
 
 ## Project demo
 
-Click the thumbnail below to watch the project demonstration video.
+Click the thumbnail below to watch the live demo.
 
-[![JobPortal Demo](https://raw.githubusercontent.com/Dipesh-Dhaurali/JobPortal/main/assets/jobportal-thumbnail.png)](https://raw.githubusercontent.com/Dipesh-Dhaurali/JobPortal/main/videos/JobPortal.mp4)
+[![JobPortal Demo](https://raw.githubusercontent.com/Dipesh-Dhaurali/JobPortal/main/assets/jobportal-thumbnail.png)](https://dipesh-dhaurali.github.io/JobPortal/)
+
 
 ## Features
 
