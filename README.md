@@ -9,6 +9,10 @@ The Job Portal project is designed to provide a platform for job seekers and emp
 
 [![JobPortal Demo](https://raw.githubusercontent.com/Dipesh-Dhaurali/JobPortal/main/assets/jobportal-thumbnail.png)](https://raw.githubusercontent.com/Dipesh-Dhaurali/JobPortal/main/videos/JobPortal.mp4)
 
+<h2>🎥 Video Demo</h2>
+
+<video width="800" controls>
+  <source src="assets/demo.webm" type="video/webm"
 
 ## Features
 - **User Authentication:** Secure login and registration for users.
